@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Campusguesser"
         tools:targetApi="31">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.GuessActivity"
             android:exported="true">
 
             <intent-filter>
