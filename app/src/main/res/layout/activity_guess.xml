@@ -6,13 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".ui.GuessActivity">
 
-    <TextView
+    <org.osmdroid.views.MapView
+        android:id="@+id/guess_map"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="156dp"
+        tools:layout_editor_absoluteY="61dp">
+
+    </org.osmdroid.views.MapView>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_margin="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_background" />
 
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GUESS"
+        android:textStyle="bold"
+        android:layout_margin="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
