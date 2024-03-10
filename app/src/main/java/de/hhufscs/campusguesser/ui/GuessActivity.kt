@@ -3,14 +3,17 @@ package de.hhufscs.campusguesser.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import de.hhufscs.campusguesser.R
+import de.hhufscs.campusguesser.core.AssetService
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LevelService
 import org.osmdroid.config.Configuration
@@ -61,12 +64,28 @@ class GuessActivity : AppCompatActivity() {
             lockGuess()
         }
 
+        val currentGuess = level.getCurrentGuess()
+
+        val assetService = AssetService()
+
+        val guessImg = findViewById<ImageView>(R.id.guess_image)
+
+        guessImg.setImageDrawable(
+            BitmapDrawable(
+                assetService.getBitmapFromAssets(
+                    currentGuess.guessImage.rawPath,
+                    this
+                )
+            )
+        )
 
     }
 
     private fun lockGuess() {
 
-        if(guessMarker == null) throw IllegalStateException("No Guess provided!")
+        if (guessMarker == null) throw IllegalStateException("No Guess provided!")
+
+        disableMapGestureDetector()
 
         val currentGuess = level.getCurrentGuess()
         val guessLocation = guessMarker!!.point
@@ -80,7 +99,6 @@ class GuessActivity : AppCompatActivity() {
 
         val actualMarker = OverlayItem("Actual", "", actualLocation)
         iconOverlay.addItem(actualMarker)
-
         refreshMap()
     }
 
@@ -104,20 +122,9 @@ class GuessActivity : AppCompatActivity() {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun setupIconOverlay() {
-        val item = OverlayItem(
-            "Title",
-            "Description",
-            GeoPoint(51.18885, 6.79551)
-        )
-
-        item.setMarker(resources.getDrawable(R.drawable.baseline_location_on_24))
-        val items = ArrayList<OverlayItem>()
-        items.add(
-            item
-        )
 
         iconOverlay = ItemizedIconOverlay(
-            items,
+            LinkedList<OverlayItem>(),
             object : OnItemGestureListener<OverlayItem?> {
                 override fun onItemSingleTapUp(index: Int, item: OverlayItem?): Boolean {
                     return false
@@ -152,11 +159,31 @@ class GuessActivity : AppCompatActivity() {
         map.apply {
             setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(true)
+        }
+        resetMapFocus()
+    }
 
-            controller.apply {
-                setZoom(19.0)
-                setCenter(GEOPOINT_HHU)
-            }
+    private fun resetMap() {
+        resetMapFocus()
+        resetOverlays()
+    }
+
+    private fun resetOverlays() {
+        iconOverlay.removeAllItems()
+        guessMarker = null
+        map.overlays.removeIf { it is Polygon }
+    }
+
+    private fun disableMapGestureDetector() {
+        map.overlays.removeIf {
+            it is MapEventsOverlay
+        }
+    }
+
+    private fun resetMapFocus() {
+        map.controller.apply {
+            setZoom(19.0)
+            setCenter(GEOPOINT_HHU)
         }
     }
 
