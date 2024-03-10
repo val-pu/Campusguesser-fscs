@@ -6,10 +6,13 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import de.hhufscs.campusguesser.R
+import de.hhufscs.campusguesser.core.Level
+import de.hhufscs.campusguesser.core.LevelService
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -19,6 +22,9 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay
 import org.osmdroid.views.overlay.ItemizedIconOverlay.OnItemGestureListener
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.OverlayItem
+import org.osmdroid.views.overlay.Polygon
+import java.lang.IllegalStateException
+import java.util.LinkedList
 
 
 class GuessActivity : AppCompatActivity() {
@@ -27,6 +33,7 @@ class GuessActivity : AppCompatActivity() {
 
     private lateinit var map: MapView
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
+    private lateinit var level: Level
     private var guessMarker: OverlayItem? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +50,38 @@ class GuessActivity : AppCompatActivity() {
         setUpOSMMap()
         setupIconOverlay()
         setupMapGuessItemListener()
+
+        val levelService = LevelService()
+
+        level = levelService.getRandomLevel()
+
+
+        val guessButton = findViewById<Button>(R.id.btn_guess)
+        guessButton.setOnClickListener {
+            lockGuess()
+        }
+
+
+    }
+
+    private fun lockGuess() {
+
+        if(guessMarker == null) throw IllegalStateException("No Guess provided!")
+
+        val currentGuess = level.getCurrentGuess()
+        val guessLocation = guessMarker!!.point
+        level.guess(guessLocation)
+
+        val actualLocation = currentGuess.geoPoint
+
+        map.overlays.add(0, Polygon().apply {
+            points = LinkedList(listOf(actualLocation as GeoPoint, guessLocation as GeoPoint))
+        })
+
+        val actualMarker = OverlayItem("Actual", "", actualLocation)
+        iconOverlay.addItem(actualMarker)
+
+        refreshMap()
     }
 
     private fun setupMapGuessItemListener() {
