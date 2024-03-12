@@ -9,6 +9,8 @@ import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -35,9 +37,12 @@ class GuessActivity : AppCompatActivity() {
     private val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
 
     private lateinit var map: MapView
+    private lateinit var guessButton: TextView
+    private lateinit var guessImage: ImageView
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private lateinit var level: Level
     private var guessMarker: OverlayItem? = null
+    private var currentlyGuessing = true
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,24 +58,50 @@ class GuessActivity : AppCompatActivity() {
         setUpOSMMap()
         setupIconOverlay()
         setupMapGuessItemListener()
+        setUpGuessButton()
 
         val levelService = LevelService()
 
         level = levelService.getRandomLevel()
 
+        nextGuess()
+    }
 
-        val guessButton = findViewById<Button>(R.id.btn_guess)
-        guessButton.setOnClickListener {
-            lockGuess()
+    private fun setUpGuessButton() {
+        guessButton = findViewById(R.id.btn_guess)
+        guessButton.setOnTouchListener { v, event ->
+
+            if(guessMarker == null) {
+                Toast.makeText(this, "Make a guess first", Toast.LENGTH_SHORT).show()
+                return@setOnTouchListener false
+            }
+
+
+
+            if (currentlyGuessing) {
+                lockGuess()
+                guessButton.setText(R.string.next_guess)
+            } else {
+                guessButton.setText(R.string.guess)
+                resetOverlays()
+                setupMapGuessItemListener()
+                nextGuess()
+            }
+
+            currentlyGuessing = !currentlyGuessing
+
+            false
         }
+    }
 
+    private fun nextGuess() {
         val currentGuess = level.getCurrentGuess()
 
         val assetService = AssetService()
 
-        val guessImg = findViewById<ImageView>(R.id.guess_image)
+        guessImage = findViewById(R.id.guess_image)
 
-        guessImg.setImageDrawable(
+        guessImage.setImageDrawable(
             BitmapDrawable(
                 assetService.getBitmapFromAssets(
                     currentGuess.guessImage.rawPath,
@@ -78,10 +109,10 @@ class GuessActivity : AppCompatActivity() {
                 )
             )
         )
-
     }
 
     private fun lockGuess() {
+
 
         if (guessMarker == null) throw IllegalStateException("No Guess provided!")
 

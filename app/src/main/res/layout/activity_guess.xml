@@ -49,9 +49,13 @@
             app:srcCompat="@drawable/ic_launcher_background"
             tools:layout_editor_absoluteX="0dp" />
 
-        <Button
+        <TextView
             android:id="@+id/btn_guess"
             android:layout_width="match_parent"
+            android:textAlignment="center"
+            android:padding="15dp"
+            android:background="@color/black"
+            android:translationZ="2dp"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
             android:text="GUESS"
