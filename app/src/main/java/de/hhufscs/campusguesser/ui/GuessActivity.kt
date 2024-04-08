@@ -7,13 +7,13 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.shashank.sony.fancytoastlib.FancyToast
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.AssetService
 import de.hhufscs.campusguesser.core.Level
@@ -38,6 +38,10 @@ class GuessActivity : AppCompatActivity() {
 
     private lateinit var map: MapView
     private lateinit var guessButton: TextView
+    private lateinit var scoreView: TextView
+    private lateinit var pointsAddedView: TextView
+
+
     private lateinit var guessImage: ImageView
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private lateinit var level: Level
@@ -60,6 +64,9 @@ class GuessActivity : AppCompatActivity() {
         setupMapGuessItemListener()
         setUpGuessButton()
 
+        scoreView = findViewById(R.id.score)
+        pointsAddedView = findViewById(R.id.addedPoints)
+
         val levelService = LevelService()
 
         level = levelService.getRandomLevel()
@@ -67,12 +74,19 @@ class GuessActivity : AppCompatActivity() {
         nextGuess()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setUpGuessButton() {
         guessButton = findViewById(R.id.btn_guess)
         guessButton.setOnTouchListener { v, event ->
 
-            if(guessMarker == null) {
-                Toast.makeText(this, "Make a guess first", Toast.LENGTH_SHORT).show()
+            if (guessMarker == null) {
+                FancyToast.makeText(
+                    this,
+                    "Make a guess first",
+                    FancyToast.LENGTH_SHORT,
+                    FancyToast.ERROR,
+                    false
+                ).show()
                 return@setOnTouchListener false
             }
 
@@ -99,6 +113,8 @@ class GuessActivity : AppCompatActivity() {
 
         val assetService = AssetService()
 
+        hideAddedPointsText()
+
         guessImage = findViewById(R.id.guess_image)
 
         guessImage.setImageDrawable(
@@ -111,6 +127,12 @@ class GuessActivity : AppCompatActivity() {
         )
     }
 
+    private fun hideAddedPointsText() {
+        pointsAddedView.animate().alpha(0f).setDuration(300).withEndAction {
+            pointsAddedView.visibility = View.INVISIBLE
+        }.start()
+    }
+
     private fun lockGuess() {
 
 
@@ -120,7 +142,14 @@ class GuessActivity : AppCompatActivity() {
 
         val currentGuess = level.getCurrentGuess()
         val guessLocation = guessMarker!!.point
-        level.guess(guessLocation)
+        val guessResult = level.guess(guessLocation)
+
+        scoreView.text = level.getPoints().toString()
+
+        showAddedPointsText()
+
+        pointsAddedView.text = "+%d".format(guessResult.earnedPoints)
+
 
         val actualLocation = currentGuess.geoPoint
 
@@ -131,6 +160,11 @@ class GuessActivity : AppCompatActivity() {
         val actualMarker = OverlayItem("Actual", "", actualLocation)
         iconOverlay.addItem(actualMarker)
         refreshMap()
+    }
+
+    private fun showAddedPointsText() {
+        pointsAddedView.visibility = View.VISIBLE
+        pointsAddedView.animate().alpha(1f).setDuration(300).start()
     }
 
     private fun setupMapGuessItemListener() {
@@ -176,6 +210,7 @@ class GuessActivity : AppCompatActivity() {
         }
 
         guessMarker = OverlayItem("The Spot!", "", newLocation)
+        guessMarker!!.setMarker(applicationContext.getDrawable(R.drawable.baseline_location_on_24))
         iconOverlay.addItem(guessMarker);
     }
 

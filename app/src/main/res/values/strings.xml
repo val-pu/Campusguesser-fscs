@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Campusguesser</string>
-    <string name="next_guess">Next Guess\n</string>
+    <string name="next_guess">Next Guess</string>
     <string name="guess">Guess</string>
 </resources>

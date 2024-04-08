@@ -1,4 +1,4 @@
 package de.hhufscs.campusguesser.core
 
-class GuessResult(points: Int) {
+class GuessResult(val earnedPoints: Int) {
 }

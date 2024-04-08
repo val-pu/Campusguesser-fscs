@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,13 +33,33 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:textStyle="bold"
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Score: 10" />
+                android:gravity="center"
+                android:text="0"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/addedPoints"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="#4CAF50"
+                app:layout_constraintBottom_toBottomOf="@+id/score"
+                app:layout_constraintStart_toEndOf="@+id/score"
+                app:layout_constraintTop_toTopOf="@+id/score"
+                tools:text="+200" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/guess_image"
@@ -48,6 +68,7 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
             app:srcCompat="@drawable/ic_launcher_background"
             tools:layout_editor_absoluteX="0dp" />
+
 
         <TextView
             android:id="@+id/btn_guess"
