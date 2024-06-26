@@ -1,15 +1,16 @@
 package de.hhufscs.campusguesser.ui
 
-import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -18,6 +19,7 @@ import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.AssetService
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LevelService
+import de.hhufscs.campusguesser.creator.CreatorActivity
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -51,6 +53,8 @@ class GuessActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Log.i("CampusGuesser", "Started GuessActivity")
+
         // OSM will das
         Configuration.getInstance().load(
             applicationContext,
@@ -58,12 +62,18 @@ class GuessActivity : AppCompatActivity() {
         )
 
         setContentView(R.layout.activity_guess)
+        // TODO: DELEET
+
+        findViewById<Button>(R.id.btn_creator).setOnClickListener {
+            startActivity(Intent(applicationContext, CreatorActivity::class.java))
+        }
+
+
 
         setUpOSMMap()
         setupIconOverlay()
         setupMapGuessItemListener()
         setUpGuessButton()
-
         scoreView = findViewById(R.id.score)
         pointsAddedView = findViewById(R.id.addedPoints)
 
@@ -215,11 +225,11 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun setUpOSMMap() {
-        requestPermissionsIfNecessary(
-            arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-        )
+//        requestPermissionsIfNecessary(
+//            arrayOf(
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//            )
+//        )
         map = findViewById<View>(R.id.guess_map) as MapView
 
         map.apply {
