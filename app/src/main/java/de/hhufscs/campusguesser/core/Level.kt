@@ -6,19 +6,20 @@ import java.util.Stack
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Level() {
+class Level(val custom: Boolean = false) {
 
     private var totalPoints = 0
-    private lateinit var guesses: List<GuessDTO>
-    private lateinit var guessStack: Stack<GuessDTO>
+    private lateinit var guesses: List<Guess>
 
-    constructor(guesses: List<GuessDTO>) : this() {
+    private lateinit var guessStack: Stack<Guess>
+
+    constructor(guesses: List<Guess>, custom: Boolean = false) : this(custom) {
         this.guesses = copyOf(guesses)
         guessStack = Stack()
         guesses.forEach(guessStack::push)
     }
 
-    fun getCurrentGuess(): GuessDTO {
+    fun getCurrentGuess(): Guess {
         return guessStack.peek()
     }
 
@@ -33,8 +34,10 @@ class Level() {
 
         val delta = euclidianDistance(actualLocation, guessLocation)
 
+        // TODO: Extract as GuessPointFunction
         val points = (100/(1+delta*2300)).toInt()
 
+        poppedGuess.points = points
         totalPoints += points;
 
         return GuessResult(points)

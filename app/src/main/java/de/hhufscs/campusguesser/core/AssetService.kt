@@ -1,17 +1,25 @@
 package de.hhufscs.campusguesser.core
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.lang.RuntimeException
 
 
-class AssetService {
+object AssetService {
     fun getBitmapFromAssets(fileName: String?, context: Context): Bitmap {
         val assetManager: AssetManager = context.assets
         val istr = assetManager.open(fileName!!)
@@ -20,15 +28,12 @@ class AssetService {
         return bitmap
     }
 
-    fun saveToInternalStorage(fileName: String, bitmap: Bitmap, context: Context) {
 
-        val directory = context.getDir(IMAGE_PATH, Context.MODE_PRIVATE)
-
-        val savePath = File(directory, fileName)
+    fun saveBitmapToInternalStorage(fileName: String, bitmap: Bitmap, context: Context) {
 
         var fos: FileOutputStream? = null
         try {
-            fos = FileOutputStream(savePath)
+            fos = context.openFileOutput(fileName, MODE_PRIVATE)
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -41,14 +46,10 @@ class AssetService {
         }
     }
 
-    private fun loadImageFromStorage(fileName: String, context: Context): Bitmap? {
-
-        val directory = context.getDir(IMAGE_PATH, Context.MODE_PRIVATE)
+    fun loadBitmapFromStorage(fileName: String, context: Context): Bitmap? {
 
         try {
-            val f = File(directory, fileName)
-            val b = BitmapFactory.decodeStream(FileInputStream(f))
-
+            val b = BitmapFactory.decodeStream(context.openFileInput(fileName) ?: return null)
             return b
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
@@ -56,9 +57,73 @@ class AssetService {
         return null
     }
 
-
-    companion object {
-        val IMAGE_PATH = "images"
+    fun saveJSONToStorage(json: JSONObject, fileName: String, context: Context) {
+        writeStringToFile(json.toString(), fileName, context)
     }
 
+    private fun writeStringToFile(data: String, fileName: String, context: Context) {
+        val outputStreamWriter = OutputStreamWriter(context.openFileOutput(fileName, MODE_PRIVATE))
+        try {
+            outputStreamWriter.write(data)
+        } catch (e: IOException) {
+            Log.e(TAG, "Failed to write File $fileName!")
+        } finally {
+            outputStreamWriter.close()
+        }
+    }
+
+    fun readJSONObjectFromFile(fileName: String, context: Context): JSONObject? {
+        val jsonString = readFile(fileName, context) ?: return null
+
+        try {
+            return JSONObject(jsonString)
+        } catch (e: JSONException) {
+            Log.e(TAG, "Could not convert contents of $fileName to JSONObject: $e")
+        }
+        return JSONObject()
+    }
+
+    private fun readFile(fileName: String, context: Context): String? {
+
+        var result: String? = null
+
+        try {
+            val inputStream = context.openFileInput(fileName) ?: return null
+
+            val inputStreamReader = InputStreamReader(inputStream)
+            val bufferedReader = BufferedReader(inputStreamReader)
+
+            val stringBuilder = StringBuilder()
+            var receiveString: String? = bufferedReader.readLine()
+            while (receiveString != null) {
+                stringBuilder.append(receiveString)
+                receiveString = bufferedReader.readLine()
+            }
+            inputStream.close()
+            result = stringBuilder.toString()
+        } catch (e: FileNotFoundException) {
+            Log.e(TAG, "File $fileName not found: $e")
+        } catch (e: IOException) {
+            Log.e(TAG, "Could not read file $fileName: $e")
+        }
+
+        return result
+    }
+
+    fun getAllSavedJSONFiles(context: Context): List<String> {
+        return context.filesDir.listFiles().asList()
+            .map(File::getName).filter {
+                it.endsWith(".json", ignoreCase = true)
+            }
+    }
+
+    fun deleteAllSavedFiles(context: Context) {
+        context.filesDir.listFiles()!!.forEach { it.delete() }
+    }
+
+
+    private const val TAG = "Campusguesser/Assets"
+    private const val IMAGE_PATH = "images"
+
 }
+

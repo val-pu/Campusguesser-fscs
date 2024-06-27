@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,18 +22,27 @@
         android:theme="@style/Theme.Campusguesser"
         tools:targetApi="31">
         <activity
-            android:name=".creator.CreatorActivity"
+            android:name=".creator.CreatorNewInstanceValidatorActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.GuessActivity"
+            android:name=".ui.menu.MenuActivity"
             android:exported="true"
-            android:screenOrientation="landscape">
+            android:label="@string/title_activity_menu"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.Campusguesser">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".creator.CreatorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.GuessActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

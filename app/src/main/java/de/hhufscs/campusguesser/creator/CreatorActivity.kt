@@ -14,90 +14,61 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Granularity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.hhufscs.campusguesser.R
+import de.hhufscs.campusguesser.core.AssetService
+import org.json.JSONObject
+import java.util.UUID
 
 class CreatorActivity : AppCompatActivity() {
     private lateinit var btnCreate: Button
     private lateinit var image: ImageView
     private lateinit var locationText: TextView
+    private lateinit var btnDeleteAllAssets: FloatingActionButton
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creator)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        btnDeleteAllAssets = findViewById(R.id.btn_delete_all)
         btnCreate = findViewById(R.id.btn_create)
-        image = findViewById(R.id.image)
         locationText = findViewById(R.id.location)
 
+
+        initGuessInstancesRecycler();
 
         setUpButtons()
 
     }
 
+    private fun initGuessInstancesRecycler() {
+        val recycler = findViewById<RecyclerView>(R.id.recycler)
+        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.adapter = CreatorInstancesRecyclerAdapter(this)
+    }
+
     private fun setUpButtons() {
+
+        btnDeleteAllAssets.setOnClickListener {
+            AssetService.deleteAllSavedFiles(this)
+            initGuessInstancesRecycler()
+        }
+
         btnCreate.setOnClickListener { _ ->
-
-            if (locationAccessPermitted()) {
-                val cameraIntent = Intent(ACTION_IMAGE_CAPTURE)
-                startActivityForResult(cameraIntent, Companion.REQUEST_IMAGE_CAPTURE)
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            }
+            startActivity(Intent(this, CreatorNewInstanceValidatorActivity::class.java))
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (imageCaptureResult(requestCode, resultCode)) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            displayImage(imageBitmap)
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun displayImage(imageBitmap: Bitmap) {
-        image.setImageBitmap(imageBitmap)
-
-        val cancellationTokenSource = CancellationTokenSource()
-
-        fusedLocationClient.getCurrentLocation(
-            CurrentLocationRequest.Builder()
-                .setGranularity(Granularity.GRANULARITY_FINE)
-                .setPriority(Priority.PRIORITY_HIGH_ACCURACY).setMaxUpdateAgeMillis(0).build(),
-            cancellationTokenSource.token
-        )
-            .addOnSuccessListener { location: Location? ->
-                locationText.text = location?.accuracy.toString()
-            }
-    }
-
-    private fun imageCaptureResult(requestCode: Int, resultCode: Int) =
-        requestCode == Companion.REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK
-
-
-    // Permissions
-
-
-    val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean -> }
-
-    private fun locationAccessPermitted() = ContextCompat.checkSelfPermission(
-        baseContext,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
 
     companion object {
         private const val REQUEST_IMAGE_CAPTURE = 42
