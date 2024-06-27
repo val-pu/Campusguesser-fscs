@@ -93,7 +93,7 @@ class GuessActivity : AppCompatActivity() {
         guessButton.setOnTouchListener { v, event ->
 
             v.performClick()
-            if (guessPresent()) {
+            if (!guessPresent()) {
                 FancyToast.makeText(
                      this,
                     "Make a guess first",
@@ -144,7 +144,7 @@ class GuessActivity : AppCompatActivity() {
 
     private fun lockGuess() {
 
-        if (guessPresent()) throw IllegalStateException("No Guess provided!")
+        if (!guessPresent()) throw IllegalStateException("No Guess provided!")
 
         disableMapGestureDetector()
 
@@ -189,7 +189,7 @@ class GuessActivity : AppCompatActivity() {
         })
     }
 
-    private fun guessPresent() = guessMarker == null
+    private fun guessPresent() = guessMarker != null
 
     private fun showAddedPointsText() {
         pointsAddedView.apply {
