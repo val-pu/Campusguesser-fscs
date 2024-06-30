@@ -42,7 +42,17 @@
         <activity
             android:name=".ui.GuessActivity"
             android:exported="false"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape"/>
+
+<!--        Pfusch von hier https://www.youtube.com/watch?v=CYRXXOM3aGI-->
+        <provider
+            android:authorities="de.hhufscs.campusguesser.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

@@ -5,15 +5,19 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Granularity
@@ -23,6 +27,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.AssetService
 import org.json.JSONObject
+import java.io.File
 import java.util.UUID
 
 class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
@@ -32,6 +37,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
     private lateinit var locationTextView: TextView
     private var location: Location? = null
     private var resultBM: Bitmap? = null
+    private lateinit var resultImagePath: String
     override fun onCreate(savedInstanceState: Bundle?) {
 
 
@@ -59,7 +65,22 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
 
             if (locationAccessPermitted()) {
                 val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+
+                val fileName = "temp"
+                val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                try {
+                    val imageFile = File.createTempFile(fileName, ".png", storageDir)
+                    resultImagePath = imageFile.absolutePath
+
+                    val imageUri = FileProvider.getUriForFile(this, "de.hhufscs.campusguesser.fileprovider", imageFile)
+
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+                    startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+
+                } catch (e: Exception) {
+                    Log.e("CampusGuesser", "Error initialising Camera: $e")
+                }
+
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
@@ -82,7 +103,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (imageCaptureResult(requestCode, resultCode)) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
+            val imageBitmap = BitmapFactory.decodeFile(resultImagePath)
             resultBM = imageBitmap
             displayImage(imageBitmap)
         }

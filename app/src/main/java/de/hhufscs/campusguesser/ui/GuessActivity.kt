@@ -2,6 +2,7 @@ package de.hhufscs.campusguesser.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
+import com.jsibbold.zoomage.ZoomageView
 import com.shashank.sony.fancytoastlib.FancyToast
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.AssetService
@@ -45,7 +47,7 @@ class GuessActivity : AppCompatActivity() {
     private lateinit var scoreView: TextView
     private lateinit var pointsAddedView: TextView
 
-    private lateinit var guessImage: ImageView
+    private lateinit var guessImage: ZoomageView
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private lateinit var level: Level
     private var guessMarker: OverlayItem? = null
@@ -95,7 +97,7 @@ class GuessActivity : AppCompatActivity() {
             v.performClick()
             if (!guessPresent()) {
                 FancyToast.makeText(
-                     this,
+                    this,
                     "Make a guess first",
                     FancyToast.LENGTH_SHORT,
                     FancyToast.ERROR,
@@ -110,11 +112,16 @@ class GuessActivity : AppCompatActivity() {
                 lockGuess()
                 guessButton.setText(R.string.next_guess)
             } else {
-                guessButton.setText(R.string.guess)
                 resetOverlays()
                 resetMapFocus()
-                setupMapGuessItemListener()
-                nextGuess()
+                if(!level.isANewGuessLeft()) {
+                    showEndScreen()
+                } else {
+                    guessButton.setText(R.string.guess)
+
+                    setupMapGuessItemListener()
+                    nextGuess()
+                }
             }
 
             currentlyGuessing = !currentlyGuessing
@@ -131,13 +138,13 @@ class GuessActivity : AppCompatActivity() {
 
         guessImage.setImageDrawable(
             BitmapDrawable(
-                if(!level.custom)
-                AssetService.getBitmapFromAssets(
-                    currentGuess.guessImage.rawPath,
-                    this
-                )
+                if (!level.custom)
+                    AssetService.getBitmapFromAssets(
+                        currentGuess.guessImage.rawPath,
+                        this
+                    )
                 else
-                AssetService.loadBitmapFromStorage(currentGuess.guessImage.rawPath, this)
+                    AssetService.loadBitmapFromStorage(currentGuess.guessImage.rawPath, this)
             )
         )
     }
@@ -157,11 +164,37 @@ class GuessActivity : AppCompatActivity() {
         val actualLocation = currentGuess.geoPoint
 
         drawLinePolygonOnMap(actualLocation, guessLocation)
+        val image =
+            BitmapDrawable(AssetService.loadBitmapFromStorage(currentGuess.guessImage.rawPath, this))
 
-        val drawable = AppCompatResources.getDrawable(applicationContext, R.drawable.round_pin_drop_24)
-        addIconToMapAtLocationWithDrawable(actualLocation, drawable)
+        image.setTargetDensity(10)
+        addIconToMapAtLocationWithDrawable(actualLocation, image.mutate())
 
         refreshMap()
+    }
+
+    private fun showEndScreen() {
+        val guessedGuesses = level.guessedGuesses
+
+        val drawable =
+            AppCompatResources.getDrawable(applicationContext, R.drawable.round_pin_drop_24)
+
+        guessedGuesses.forEach {
+
+            addGuessMarkerTo(GeoPoint(it.guessedSpot))
+
+            val originalGuessDTO = it.guess
+
+            val image =
+                BitmapDrawable(AssetService.loadBitmapFromStorage(originalGuessDTO.guessImage.rawPath, this))
+
+            image.setTargetDensity(10)
+            addIconToMapAtLocationWithDrawable(it.guess.geoPoint, image)
+
+            drawLinePolygonOnMap(it.guessedSpot, originalGuessDTO.geoPoint)
+
+        }
+
     }
 
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
@@ -171,11 +204,10 @@ class GuessActivity : AppCompatActivity() {
     }
 
 
-
     private fun addIconToMapAtLocationWithDrawable(location: IGeoPoint, drawable: Drawable?) {
         val actualMarker = OverlayItem("Actual", "", location)
 
-        drawable?.also { actualMarker.setMarker(it)  }
+        drawable?.also { actualMarker.setMarker(it) }
 
         iconOverlay.addItem(actualMarker)
     }
@@ -250,7 +282,8 @@ class GuessActivity : AppCompatActivity() {
     private fun addGuessMarkerTo(newLocation: GeoPoint) {
         guessMarker = OverlayItem("The Spot!", "", newLocation)
 
-        val drawable = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_location_on_24)
+        val drawable =
+            AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_location_on_24)
 
         guessMarker!!.setMarker(drawable)
         iconOverlay.addItem(guessMarker)

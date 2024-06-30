@@ -75,7 +75,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
+        <com.jsibbold.zoomage.ZoomageView
             android:id="@+id/guess_image"
             android:layout_width="match_parent"
             android:layout_height="0dp"

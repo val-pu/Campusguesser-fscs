@@ -1,6 +1,7 @@
 package de.hhufscs.campusguesser.core
 
 import org.osmdroid.api.IGeoPoint
+import java.util.LinkedList
 import java.util.List.copyOf
 import java.util.Stack
 import kotlin.math.pow
@@ -10,6 +11,7 @@ class Level(val custom: Boolean = false) {
 
     private var totalPoints = 0
     private lateinit var guesses: List<Guess>
+    var guessedGuesses: LinkedList<GuessedGuess> = LinkedList()
 
     private lateinit var guessStack: Stack<Guess>
 
@@ -35,16 +37,21 @@ class Level(val custom: Boolean = false) {
         val delta = euclidianDistance(actualLocation, guessLocation)
 
         // TODO: Extract as GuessPointFunction
-        val points = (100/(1+delta*2300)).toInt()
+        val points = (100 / (1 + delta * 2300)).toInt()
 
-        poppedGuess.points = points
         totalPoints += points;
+
+        guessedGuesses.add(GuessedGuess(poppedGuess, points, guessLocation))
 
         return GuessResult(points)
     }
 
     fun getPoints(): Int {
         return totalPoints
+    }
+
+    fun isANewGuessLeft(): Boolean {
+        return getGuessesLeft() != 0
     }
 
 }
