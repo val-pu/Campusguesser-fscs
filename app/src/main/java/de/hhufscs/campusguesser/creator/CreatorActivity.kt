@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.MediaStore.ACTION_IMAGE_CAPTURE
 import android.widget.Button
@@ -39,7 +40,6 @@ class CreatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creator)
 
-
         btnDeleteAllAssets = findViewById(R.id.btn_delete_all)
         btnCreate = findViewById(R.id.btn_create)
         locationText = findViewById(R.id.location)
@@ -47,7 +47,21 @@ class CreatorActivity : AppCompatActivity() {
 
         initGuessInstancesRecycler();
 
+
+
         setUpButtons()
+        object : AsyncTask<Void, Void?, Void>() {
+            override fun doInBackground(vararg params: Void?): Void? {
+
+                AssetService.getAllSavedJSONFiles(applicationContext).forEach {
+                    val fileName = it.replace(".json",".png")
+                    val img = AssetService.loadBitmapFromStorage(fileName, applicationContext)
+                    AssetService.saveBitmapToInternalStorage(fileName, img!!, applicationContext)
+                }
+                return null
+            }
+
+        }
 
     }
 

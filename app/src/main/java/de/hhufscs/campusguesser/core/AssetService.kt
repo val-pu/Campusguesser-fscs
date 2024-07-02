@@ -34,7 +34,7 @@ object AssetService {
         var fos: FileOutputStream? = null
         try {
             fos = context.openFileOutput(fileName, MODE_PRIVATE)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 70, fos)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {

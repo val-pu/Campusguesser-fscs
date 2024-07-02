@@ -26,7 +26,6 @@ android {
             )
         }
     }
-
     buildFeatures {
         viewBinding = true
         viewBinding {

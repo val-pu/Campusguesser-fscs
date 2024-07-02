@@ -9,12 +9,15 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
+import androidx.transition.Visibility
 import com.jsibbold.zoomage.ZoomageView
 import com.shashank.sony.fancytoastlib.FancyToast
 import de.hhufscs.campusguesser.R
@@ -23,6 +26,7 @@ import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LevelService
 import de.hhufscs.campusguesser.creator.CreatorActivity
+import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -38,9 +42,10 @@ import java.lang.IllegalStateException
 import java.util.LinkedList
 
 
+val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
+
 class GuessActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-    private val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
 
     private lateinit var map: MapView
     private lateinit var guessButton: TextView
@@ -65,12 +70,6 @@ class GuessActivity : AppCompatActivity() {
         )
 
         setContentView(R.layout.activity_guess)
-        // TODO: DELEET
-
-        findViewById<Button>(R.id.btn_creator).setOnClickListener {
-            startActivity(Intent(applicationContext, CreatorActivity::class.java))
-        }
-
 
         guessImage = findViewById(R.id.guess_image)
         scoreView = findViewById(R.id.score)
@@ -94,7 +93,6 @@ class GuessActivity : AppCompatActivity() {
         guessButton = findViewById(R.id.btn_guess)
         guessButton.setOnTouchListener { v, event ->
 
-            v.performClick()
             if (!guessPresent()) {
                 FancyToast.makeText(
                     this,
@@ -106,6 +104,12 @@ class GuessActivity : AppCompatActivity() {
                 return@setOnTouchListener false
             }
 
+            if(!level.isANewGuessLeft()) {
+                showEndScreen()
+
+                return@setOnTouchListener false
+            }
+
 
 
             if (currentlyGuessing) {
@@ -114,14 +118,9 @@ class GuessActivity : AppCompatActivity() {
             } else {
                 resetOverlays()
                 resetMapFocus()
-                if(!level.isANewGuessLeft()) {
-                    showEndScreen()
-                } else {
-                    guessButton.setText(R.string.guess)
-
-                    setupMapGuessItemListener()
-                    nextGuess()
-                }
+                guessButton.setText(R.string.guess)
+                setupMapGuessItemListener()
+                nextGuess()
             }
 
             currentlyGuessing = !currentlyGuessing
@@ -176,17 +175,13 @@ class GuessActivity : AppCompatActivity() {
     private fun showEndScreen() {
         val guessedGuesses = level.guessedGuesses
 
-        val drawable =
-            AppCompatResources.getDrawable(applicationContext, R.drawable.round_pin_drop_24)
-
         guessedGuesses.forEach {
 
             addGuessMarkerTo(GeoPoint(it.guessedSpot))
 
             val originalGuessDTO = it.guess
 
-            val image =
-                BitmapDrawable(AssetService.loadBitmapFromStorage(originalGuessDTO.guessImage.rawPath, this))
+            val image = BitmapDrawable(AssetService.loadBitmapFromStorage(originalGuessDTO.guessImage.rawPath, this))
 
             image.setTargetDensity(10)
             addIconToMapAtLocationWithDrawable(it.guess.geoPoint, image)
@@ -194,6 +189,20 @@ class GuessActivity : AppCompatActivity() {
             drawLinePolygonOnMap(it.guessedSpot, originalGuessDTO.geoPoint)
 
         }
+
+
+        guessButton.setText(R.string.weiter)
+
+
+        findViewById<View>(R.id.end_screen).visibility = VISIBLE
+        guessImage.visibility = INVISIBLE
+
+        guessButton.post {
+            guessButton.setOnClickListener {
+                startActivity(Intent(this, MenuActivity::class.java))
+            }
+        }
+
 
     }
 
@@ -306,10 +315,19 @@ class GuessActivity : AppCompatActivity() {
         resetMapFocus()
     }
 
+    private fun resetMapFocus() {
+        map.controller.apply {
+            setZoom(18.0)
+            setCenter(GEOPOINT_HHU)
+        }
+    }
+
     private fun resetOverlays() {
         removeAllMapIcons()
         removeGuessDistanceOverlayLine()
     }
+
+
 
     private fun removeAllMapIcons() {
         iconOverlay.removeAllItems()
@@ -323,13 +341,6 @@ class GuessActivity : AppCompatActivity() {
     private fun disableMapGestureDetector() {
         map.overlays.removeIf {
             it is MapEventsOverlay
-        }
-    }
-
-    private fun resetMapFocus() {
-        map.controller.apply {
-            setZoom(18.0)
-            setCenter(GEOPOINT_HHU)
         }
     }
 

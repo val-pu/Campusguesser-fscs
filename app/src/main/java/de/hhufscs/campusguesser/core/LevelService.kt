@@ -24,7 +24,7 @@ class LevelService {
 
         val stack = Stack<Guess>()
 
-        AssetService.getAllSavedJSONFiles(ctx).forEach {
+        AssetService.getAllSavedJSONFiles(ctx).shuffled().stream().limit(10).forEach {
             val json = AssetService.readJSONObjectFromFile(it, ctx)!!
             stack.push(Guess(GeoPoint(json.getDouble("latitude"), json.getDouble("longitude")), URI(it.replace(".json", ".png"))))
         }
