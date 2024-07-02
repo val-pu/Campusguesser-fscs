@@ -1,4 +1,4 @@
-package de.hhufscs.campusguesser.core
+package de.hhufscs.campusguesser.services
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
@@ -10,13 +10,11 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import java.lang.RuntimeException
 
 
 object AssetService {

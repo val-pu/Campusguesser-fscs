@@ -1,6 +1,7 @@
 package de.hhufscs.campusguesser.core
 
 import android.content.Context
+import de.hhufscs.campusguesser.services.AssetService
 import org.osmdroid.util.GeoPoint
 import java.net.URI
 import java.util.Stack

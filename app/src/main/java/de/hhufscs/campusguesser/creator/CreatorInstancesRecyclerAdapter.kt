@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.core.AssetService
+import de.hhufscs.campusguesser.services.AssetService
 
 class CreatorInstancesRecyclerAdapter(context: Context) :
     RecyclerView.Adapter<CreatorInstancesRecyclerAdapter.ViewHolder>() {

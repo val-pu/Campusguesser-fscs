@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -27,7 +26,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.core.AssetService
+import de.hhufscs.campusguesser.services.AssetService
 import de.hhufscs.campusguesser.ui.GEOPOINT_HHU
 import org.json.JSONObject
 import org.osmdroid.events.MapEventsReceiver

@@ -1,33 +1,18 @@
 package de.hhufscs.campusguesser.creator
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.location.Location
 import android.os.AsyncTask
 import android.os.Bundle
-import android.provider.MediaStore.ACTION_IMAGE_CAPTURE
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.Granularity
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.core.AssetService
-import org.json.JSONObject
-import java.util.UUID
+import de.hhufscs.campusguesser.services.AssetService
 
 class CreatorActivity : AppCompatActivity() {
     private lateinit var btnCreate: Button
