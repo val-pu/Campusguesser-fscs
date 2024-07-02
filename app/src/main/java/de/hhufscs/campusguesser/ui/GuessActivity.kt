@@ -287,7 +287,7 @@ class GuessActivity : AppCompatActivity() {
         guessMarker = OverlayItem("The Spot!", "", newLocation)
 
         val drawable =
-            AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_location_on_24)
+            AppCompatResources.getDrawable(applicationContext, R.drawable.location_marker_24)
 
         guessMarker!!.setMarker(drawable)
         iconOverlay.addItem(guessMarker)
