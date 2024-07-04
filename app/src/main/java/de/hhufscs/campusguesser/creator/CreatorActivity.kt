@@ -1,7 +1,6 @@
 package de.hhufscs.campusguesser.creator
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
@@ -9,17 +8,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.services.AssetService
+import de.hhufscs.campusguesser.services.GuessRepository
 
 class CreatorActivity : AppCompatActivity() {
     private lateinit var btnCreate: Button
     private lateinit var image: ImageView
     private lateinit var locationText: TextView
-    private lateinit var btnDeleteAllAssets: FloatingActionButton
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val guessRepository = GuessRepository(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,14 +26,13 @@ class CreatorActivity : AppCompatActivity() {
 
 
         initGuessInstancesRecycler();
-
         setUpButtons()
     }
 
     private fun initGuessInstancesRecycler() {
         val recycler = findViewById<RecyclerView>(R.id.recycler)
         recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = CreatorInstancesRecyclerAdapter(this)
+        recycler.adapter = CreatorInstancesRecyclerAdapter(guessRepository.getAllGuesses())
     }
 
     private fun setUpButtons() {

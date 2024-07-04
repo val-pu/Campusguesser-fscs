@@ -14,13 +14,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.drawable.toDrawable
 import com.jsibbold.zoomage.ZoomageView
 import com.shashank.sony.fancytoastlib.FancyToast
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.services.AssetService
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LevelService
+import de.hhufscs.campusguesser.services.AssetService
 import de.hhufscs.campusguesser.services.GuessRepository
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
@@ -34,7 +35,6 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay.OnItemGestureListener
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.Polygon
-import java.lang.IllegalStateException
 import java.util.LinkedList
 
 
@@ -157,7 +157,8 @@ class GuessActivity : AppCompatActivity() {
 
         drawLinePolygonOnMap(actualLocation, guessLocation)
 
-        GuessRepository(this).getPictureForGuess(currentGuess) { image ->
+
+        guessRepository.getPictureForGuess(currentGuess) { image ->
             val imageDrawable = BitmapDrawable(image)
             imageDrawable.setTargetDensity(10)
             addIconToMapAtLocationWithDrawable(actualLocation, imageDrawable.mutate())
@@ -174,15 +175,17 @@ class GuessActivity : AppCompatActivity() {
 
             addGuessMarkerTo(GeoPoint(it.guessedSpot))
 
-            val originalGuessDTO = it.guess
+            val originalGuess = it.guess
 
-            val image = BitmapDrawable(AssetService.loadBitmapFromStorage("${originalGuessDTO.guessID}.png", this))
+            guessRepository.getPictureForGuess(originalGuess) { bitmap ->
 
-            image.setTargetDensity(10)
-            addIconToMapAtLocationWithDrawable(it.guess.geoPoint, image)
+                val image = bitmap!!.toDrawable(resources)
 
-            drawLinePolygonOnMap(it.guessedSpot, originalGuessDTO.geoPoint)
+                image.setTargetDensity(10)
+                addIconToMapAtLocationWithDrawable(it.guess.geoPoint, image)
+                drawLinePolygonOnMap(it.guessedSpot, originalGuess.geoPoint)
 
+            }
         }
 
 

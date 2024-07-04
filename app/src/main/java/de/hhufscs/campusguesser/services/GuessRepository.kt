@@ -11,6 +11,7 @@ import de.hhufscs.campusguesser.services.factories.JSONObjectFactory
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
+import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -99,6 +100,18 @@ class GuessRepository(val context: Context) {
             JSONObjectFactory.coordinates(guess.geoPoint).toString(),
             "${guess.guessID}.json"
         )
+    }
+
+    fun getAllGuesses(): List<Guess> {
+
+        val guessRepository = GuessRepository(context)
+
+        return context.filesDir.listFiles()!!.asList()
+            .map(File::getName)
+            .filter { it.endsWith(".json") }
+            .map { it.replace(Regex("\\.json"), "") }
+            .map(guessRepository::getGuessFromGuessID)
+            .toList()
     }
 
     private fun writeStringToFile(data: String, fileName: String) {
