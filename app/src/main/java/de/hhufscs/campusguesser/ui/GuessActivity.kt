@@ -21,6 +21,7 @@ import de.hhufscs.campusguesser.services.AssetService
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LevelService
+import de.hhufscs.campusguesser.services.GuessRepository
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
@@ -46,6 +47,8 @@ class GuessActivity : AppCompatActivity() {
     private lateinit var guessButton: TextView
     private lateinit var scoreView: TextView
     private lateinit var pointsAddedView: TextView
+
+    private var guessRepository = GuessRepository(this)
 
     private lateinit var guessImage: ZoomageView
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
@@ -130,17 +133,12 @@ class GuessActivity : AppCompatActivity() {
 
         hideAddedPointsText()
 
-        guessImage.setImageDrawable(
-            BitmapDrawable(
-                if (!level.custom)
-                    AssetService.getBitmapFromAssets(
-                        currentGuess.guessImage.rawPath,
-                        this
-                    )
-                else
-                    AssetService.loadBitmapFromStorage(currentGuess.guessImage.rawPath, this)
+        guessRepository.getPictureForGuess(currentGuess) {
+            guessImage.setImageDrawable(
+                BitmapDrawable(it)
             )
-        )
+        }
+
     }
 
     private fun lockGuess() {
@@ -158,11 +156,13 @@ class GuessActivity : AppCompatActivity() {
         val actualLocation = currentGuess.geoPoint
 
         drawLinePolygonOnMap(actualLocation, guessLocation)
-        val image =
-            BitmapDrawable(AssetService.loadBitmapFromStorage(currentGuess.guessImage.rawPath, this))
 
-        image.setTargetDensity(10)
-        addIconToMapAtLocationWithDrawable(actualLocation, image.mutate())
+        GuessRepository(this).getPictureForGuess(currentGuess) { image ->
+            val imageDrawable = BitmapDrawable(image)
+            imageDrawable.setTargetDensity(10)
+            addIconToMapAtLocationWithDrawable(actualLocation, imageDrawable.mutate())
+        }
+
 
         refreshMap()
     }
@@ -176,7 +176,7 @@ class GuessActivity : AppCompatActivity() {
 
             val originalGuessDTO = it.guess
 
-            val image = BitmapDrawable(AssetService.loadBitmapFromStorage(originalGuessDTO.guessImage.rawPath, this))
+            val image = BitmapDrawable(AssetService.loadBitmapFromStorage("${originalGuessDTO.guessID}.png", this))
 
             image.setTargetDensity(10)
             addIconToMapAtLocationWithDrawable(it.guess.geoPoint, image)

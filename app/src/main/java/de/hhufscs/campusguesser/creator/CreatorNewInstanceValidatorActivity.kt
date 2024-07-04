@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
@@ -21,12 +22,20 @@ import de.hhufscs.campusguesser.services.MapService
 import de.hhufscs.campusguesser.services.PermissionService
 import de.hhufscs.campusguesser.services.factories.JSONObjectFactory
 import org.osmdroid.api.IGeoPoint
+import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import java.io.File
 import java.util.UUID
 
 class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
     private lateinit var image: ImageView
+    val contract = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+
+        // TODO: Was kluges so, falls das schiefläuft
+
+    }
     private lateinit var btnCreate: Button
     private lateinit var locationTextView: TextView
     private var selectedLocation: IGeoPoint? = null
@@ -41,6 +50,11 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
         setContentView(R.layout.activity_creator_new_instance_validator)
 
         image = findViewById(R.id.image)
+        Configuration.getInstance().load(
+            applicationContext,
+            PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        )
+
 
         locationService = LocationService(this)
         permissionService = PermissionService(this)
@@ -65,13 +79,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
                 takePhoto()
             } else {
                 permissionService.requestLocationPermissionAndDo(
-                    registerForActivityResult(
-                        ActivityResultContracts.RequestPermission()
-                    ) { isGranted: Boolean ->
-
-                        // TODO: Was kluges so, falls das schiefläuft
-
-                    }
+                    contract
                 )
             }
         }
@@ -137,7 +145,6 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
                 displayLocation(location)
             }
         }
-
     }
 
     fun displayLocation(location: IGeoPoint) {

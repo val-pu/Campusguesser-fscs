@@ -25,29 +25,13 @@ class CreatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creator)
 
-        btnDeleteAllAssets = findViewById(R.id.btn_delete_all)
         btnCreate = findViewById(R.id.btn_create)
         locationText = findViewById(R.id.location)
 
 
         initGuessInstancesRecycler();
 
-
-
         setUpButtons()
-        object : AsyncTask<Void, Void?, Void>() {
-            override fun doInBackground(vararg params: Void?): Void? {
-
-                AssetService.getAllSavedJSONFiles(applicationContext).forEach {
-                    val fileName = it.replace(".json",".png")
-                    val img = AssetService.loadBitmapFromStorage(fileName, applicationContext)
-                    AssetService.saveBitmapToInternalStorage(fileName, img!!, applicationContext)
-                }
-                return null
-            }
-
-        }
-
     }
 
     private fun initGuessInstancesRecycler() {
@@ -57,12 +41,6 @@ class CreatorActivity : AppCompatActivity() {
     }
 
     private fun setUpButtons() {
-
-        btnDeleteAllAssets.setOnClickListener {
-            AssetService.deleteAllSavedFiles(this)
-            initGuessInstancesRecycler()
-        }
-
         btnCreate.setOnClickListener { _ ->
             startActivity(Intent(this, CreatorNewInstanceValidatorActivity::class.java))
         }

@@ -40,13 +40,4 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/creator_guess_instance_item" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_delete_all"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/btn_create"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/round_folder_delete_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>
