@@ -127,14 +127,14 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (imageCaptureResult(requestCode, resultCode)) {
+        if (isImageCaptureResult(requestCode, resultCode)) {
             val imageBitmap = BitmapFactory.decodeFile(resultImagePath)
             resultBM = imageBitmap
             displayImage(imageBitmap)
         }
     }
 
-    private fun imageCaptureResult(requestCode: Int, resultCode: Int) =
+    private fun isImageCaptureResult(requestCode: Int, resultCode: Int) =
         requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK
 
 
