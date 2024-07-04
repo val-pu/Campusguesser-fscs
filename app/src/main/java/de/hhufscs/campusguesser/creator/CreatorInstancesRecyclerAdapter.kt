@@ -1,7 +1,6 @@
 package de.hhufscs.campusguesser.creator
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,8 @@ import de.hhufscs.campusguesser.services.GuessRepository
 
 class CreatorInstancesRecyclerAdapter(context: Context) :
     RecyclerView.Adapter<CreatorInstancesRecyclerAdapter.ViewHolder>() {
-
     val fileNames = AssetService.getAllSavedJSONFiles(context)
+    val guessRepository = GuessRepository(context)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,8 +35,12 @@ class CreatorInstancesRecyclerAdapter(context: Context) :
 
         fun bind(name: String) {
             title.text = name
-            location.text = AssetService.readJSONObjectFromFile(name, itemView.context).toString()
-            image.setImageBitmap(AssetService.loadBitmapFromStorage(name.replace(".json",".png"), itemView.context))
+
+            val guess = guessRepository.getGuessFromGuessID(name)
+            location.text = guess.geoPoint.toString()
+
+            guessRepository.getPictureForGuess(guess, image::setImageBitmap)
+
 
         }
 

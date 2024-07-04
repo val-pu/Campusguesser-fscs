@@ -15,6 +15,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
+import java.util.zip.ZipOutputStream
 
 
 object AssetService {
@@ -109,7 +110,9 @@ object AssetService {
     }
 
     fun legacyPfusch(context: Context) {
+        val zip = ZipOutputStream(context.openFileOutput("fileName.zip", MODE_PRIVATE))
         getAllSavedJSONFiles(context).forEach { fileName ->
+
             var fos: FileOutputStream? = null
             try {
                 val json = readFile(fileName,context)
