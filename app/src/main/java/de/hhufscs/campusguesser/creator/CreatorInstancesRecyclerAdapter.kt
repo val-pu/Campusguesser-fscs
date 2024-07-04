@@ -14,7 +14,6 @@ import de.hhufscs.campusguesser.services.GuessRepository
 class CreatorInstancesRecyclerAdapter(context: Context) :
     RecyclerView.Adapter<CreatorInstancesRecyclerAdapter.ViewHolder>() {
     val fileNames = AssetService.getAllSavedJSONFiles(context)
-    val guessRepository = GuessRepository(context)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -40,8 +39,6 @@ class CreatorInstancesRecyclerAdapter(context: Context) :
             location.text = guess.geoPoint.toString()
 
             guessRepository.getPictureForGuess(guess, image::setImageBitmap)
-
-
         }
 
         val title: TextView = itemView.findViewById(R.id.title)

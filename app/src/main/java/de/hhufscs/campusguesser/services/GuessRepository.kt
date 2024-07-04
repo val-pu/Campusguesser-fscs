@@ -7,6 +7,7 @@ import android.os.AsyncTask
 import android.util.Log
 import de.hhufscs.campusguesser.core.Guess
 import de.hhufscs.campusguesser.services.factories.GeoPointFactory
+import de.hhufscs.campusguesser.services.factories.JSONObjectFactory
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -14,9 +15,10 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 
 class GuessRepository(val context: Context) {
-    private val TAG = "Campusguesser/Assets"
+    private val TAG = "Campusguesser/GuessRepository"
 
     fun getPictureForGuess(guess: Guess, onBitmapLoaded: (Bitmap?) -> Unit) {
         loadBitmapFromStorage(guess.guessID, onBitmapLoaded)
@@ -28,6 +30,15 @@ class GuessRepository(val context: Context) {
         val geoPoint = GeoPointFactory.fromLocation(guessLocation!!)
 
         return Guess(geoPoint, guessID)
+    }
+
+    fun saveBitMapToStorageForGuessID(
+        bitmap: Bitmap,
+        guessID: String,
+        context: Context,
+        onBitmapSaved: () -> Unit
+    ) {
+        BitMapSaveTask(onBitmapSaved, context, guessID).execute(bitmap)
     }
 
 
@@ -43,16 +54,20 @@ class GuessRepository(val context: Context) {
     }
 
     private fun loadBitmapFromStorage(fileName: String, onBitmapLoaded: (Bitmap?) -> Unit) {
-
         var fileInputStream: FileInputStream? = null
+
+        // TODO: Vollständig auf jpegs umstellen
 
         try {
             fileInputStream = context.openFileInput("$fileName.png")
         } catch (e: FileNotFoundException) {
-            Log.i("GuessRepository", "Tried to load file $fileName as png, was not found. Retrying as jpg")
+            Log.i(
+                "GuessRepository",
+                "Tried to load file $fileName as png, was not found. Retrying as jpg"
+            )
         }
 
-        if(fileInputStream  == null) {
+        if (fileInputStream == null) {
             try {
                 fileInputStream = context.openFileInput("$fileName")
             } catch (e: FileNotFoundException) {
@@ -63,7 +78,7 @@ class GuessRepository(val context: Context) {
             }
         }
 
-        if(fileInputStream == null) {
+        if (fileInputStream == null) {
             try {
                 fileInputStream = context.openFileInput("$fileName.jpg")
             } catch (e: FileNotFoundException) {
@@ -77,6 +92,25 @@ class GuessRepository(val context: Context) {
 
         BitMapLoadTask(onBitmapLoaded)
             .execute(fileInputStream!!)
+    }
+
+    fun saveGuess(guess: Guess) {
+        writeStringToFile(
+            JSONObjectFactory.coordinates(guess.geoPoint).toString(),
+            "${guess.guessID}.json"
+        )
+    }
+
+    private fun writeStringToFile(data: String, fileName: String) {
+        val outputStreamWriter =
+            OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
+        try {
+            outputStreamWriter.write(data)
+        } catch (e: IOException) {
+            Log.e(TAG, "Failed to write File $fileName!")
+        } finally {
+            outputStreamWriter.close()
+        }
     }
 
     private fun readFile(fileName: String, context: Context): String? {
@@ -108,14 +142,44 @@ class GuessRepository(val context: Context) {
 }
 
 
-private class BitMapLoadTask(val onBitmapLoaded: (Bitmap?) -> Unit) : AsyncTask<FileInputStream, Void, Bitmap?>() {
+private class BitMapLoadTask(val onBitmapLoaded: (Bitmap?) -> Unit) :
+    AsyncTask<FileInputStream, Void, Bitmap?>() {
     @Deprecated("Deprecated da gefählich oder sowas")
     override fun onPostExecute(result: Bitmap?) {
         onBitmapLoaded(result)
     }
+
     @Deprecated("Deprecated da gefählich oder sowas")
     override fun doInBackground(vararg fileInputStream: FileInputStream): Bitmap? {
         return BitmapFactory.decodeStream(fileInputStream[0])
     }
+}
 
+private class BitMapSaveTask(val onBitmapSaved: () -> Unit, context: Context, guessID: String) :
+    AsyncTask<Bitmap, Void, Void>() {
+    val fos = context.openFileOutput("$guessID.jpg", Context.MODE_PRIVATE)
+
+
+    @Deprecated("Deprecated da gefählich oder sowas")
+    override fun onPostExecute(result: Void) {
+        onBitmapSaved()
+    }
+
+    @Deprecated("Deprecated da gefählich oder sowas")
+    override fun doInBackground(vararg bitmapsButOnlyReallyOne: Bitmap): Void? {
+        val bitmap = bitmapsButOnlyReallyOne[0]
+
+        try {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, fos)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            try {
+                fos!!.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return null
+    }
 }

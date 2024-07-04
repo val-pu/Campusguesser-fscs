@@ -12,15 +12,16 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.services.AssetService
+import de.hhufscs.campusguesser.services.GuessRepository
 import de.hhufscs.campusguesser.services.LocationService
 import de.hhufscs.campusguesser.services.MapService
 import de.hhufscs.campusguesser.services.PermissionService
-import de.hhufscs.campusguesser.services.factories.JSONObjectFactory
+import de.hhufscs.campusguesser.services.factories.GuessFactory
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
@@ -42,6 +43,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
     private var resultBM: Bitmap? = null
     private lateinit var resultImagePath: String
     private lateinit var mapService: MapService
+    private val guessRepository = GuessRepository(this)
     private lateinit var locationService: LocationService
     private lateinit var permissionService: PermissionService
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,15 +111,16 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
     }
 
     private fun saveCreatedGuess() {
-        val fileName = UUID.randomUUID().toString()
-        val jsonObject = JSONObjectFactory.coordinates(selectedLocation!!)
-        AssetService.saveJSONToStorage(jsonObject, "$fileName.json", applicationContext)
-        AssetService.saveBitmapToInternalStorage(
-            "$fileName.png",
-            resultBM!!,
-            applicationContext
-        )
-        startActivity(Intent(this, CreatorActivity::class.java))
+        val generatedGuessID = UUID.randomUUID().toString()
+        val guess = GuessFactory.fromGeoPoint(selectedLocation!!, generatedGuessID)
+
+        guessRepository.saveGuess(guess)
+
+        Toast.makeText(this, "Starting save process.", Toast.LENGTH_SHORT).show()
+        guessRepository.saveBitMapToStorageForGuessID(resultBM!!, generatedGuessID, this) {
+            startActivity(Intent(this, CreatorActivity::class.java))
+        }
+
     }
 
     @Deprecated("Deprecated in Java")
@@ -139,7 +142,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
     private fun displayImage(imageBitmap: Bitmap) {
         image.setImageBitmap(imageBitmap)
 
-        locationService.getCurrentLocation {location ->
+        locationService.getCurrentLocation { location ->
             if (location != null) {
                 mapService.moveLocationSelectorMarkerTo(location)
                 displayLocation(location)
@@ -156,8 +159,6 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
     companion object {
         private const val REQUEST_IMAGE_CAPTURE = 42
     }
-
-
 
 
 }

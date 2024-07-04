@@ -19,6 +19,7 @@ import java.util.zip.ZipOutputStream
 
 
 object AssetService {
+    val TAG = ""
     fun getBitmapFromAssets(fileName: String?, context: Context): Bitmap {
         val assetManager: AssetManager = context.assets
         val istr = assetManager.open(fileName!!)
@@ -27,23 +28,6 @@ object AssetService {
         return bitmap
     }
 
-
-    fun saveBitmapToInternalStorage(fileName: String, bitmap: Bitmap, context: Context) {
-
-        var fos: FileOutputStream? = null
-        try {
-            fos = context.openFileOutput(fileName, MODE_PRIVATE)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 70, fos)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            try {
-                fos!!.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     fun loadBitmapFromStorage(fileName: String, context: Context): Bitmap? {
 
@@ -142,7 +126,6 @@ object AssetService {
     }
 
 
-    private const val TAG = "Campusguesser/Assets"
     private const val IMAGE_PATH = "images"
 
 }
