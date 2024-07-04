@@ -21,7 +21,6 @@ import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LevelService
-import de.hhufscs.campusguesser.services.AssetService
 import de.hhufscs.campusguesser.services.GuessRepository
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
@@ -123,7 +122,7 @@ class GuessActivity : AppCompatActivity() {
 
             currentlyGuessing = !currentlyGuessing
 
-            false
+            true
         }
     }
 
