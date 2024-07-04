@@ -108,6 +108,25 @@ object AssetService {
         return result
     }
 
+    fun legacyPfusch(context: Context) {
+        getAllSavedJSONFiles(context).forEach { fileName ->
+            var fos: FileOutputStream? = null
+            try {
+                val json = readFile(fileName,context)
+                fos = context.openFileOutput(fileName, MODE_PRIVATE)
+                fos.writer().append(json).close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                try {
+                    fos!!.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
     fun getAllSavedJSONFiles(context: Context): List<String> {
         return context.filesDir.listFiles().asList()
             .map(File::getName).filter {
