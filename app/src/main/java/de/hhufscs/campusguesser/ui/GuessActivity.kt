@@ -11,6 +11,7 @@ import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
@@ -82,6 +83,12 @@ class GuessActivity : AppCompatActivity() {
 
         level = levelService.getLevelOfAllCustomPictures(this)
 
+        if(!level.isANewGuessLeft()){
+            Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
+            FancyToast.makeText(baseContext, "Junge lad dir halt Bilder rein du Knecht", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
         nextGuess()
     }
 
