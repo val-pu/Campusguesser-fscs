@@ -42,7 +42,7 @@
         <activity
             android:name=".ui.GuessActivity"
             android:exported="false"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
 
 <!--        Pfusch von hier https://www.youtube.com/watch?v=CYRXXOM3aGI-->
         <provider

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint android:id="@+id/widget" />
+        <Constraint
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/text" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint android:id="@id/widget" />
+        <Constraint
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:id="@+id/text" />
+    </ConstraintSet>
+
+    <Transition
+        app:constraintSetStart="@+id/start"
+        app:constraintSetEnd="@+id/end"
+        app:autoTransition="jumpToStart" >
+        <KeyFrameSet >
+            <KeyAttribute
+                app:motionTarget="@+id/text"
+                app:framePosition="0"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/text"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyPosition
+                app:motionTarget="@+id/text"
+                app:framePosition="41"
+                app:keyPositionType="deltaRelative" />
+        </KeyFrameSet>
+    </Transition>
+</MotionScene>
