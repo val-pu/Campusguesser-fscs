@@ -17,7 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.services.GuessRepository
+import de.hhufscs.campusguesser.services.LocalGuessRepository
 import de.hhufscs.campusguesser.services.LocationService
 import de.hhufscs.campusguesser.services.MapService
 import de.hhufscs.campusguesser.services.PermissionService
@@ -43,7 +43,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
     private var resultBM: Bitmap? = null
     private lateinit var resultImagePath: String
     private lateinit var mapService: MapService
-    private val guessRepository = GuessRepository(this)
+    private val guessRepository = LocalGuessRepository(this)
     private lateinit var locationService: LocationService
     private lateinit var permissionService: PermissionService
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,7 +117,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
 
     private fun saveCreatedGuess() {
         val generatedGuessID = UUID.randomUUID().toString()
-        val guess = GuessFactory.fromGeoPoint(selectedLocation!!, generatedGuessID)
+        val guess = GuessFactory.fromGeoPoint(selectedLocation!!, generatedGuessID, baseContext)
 
         guessRepository.saveGuess(guess)
 

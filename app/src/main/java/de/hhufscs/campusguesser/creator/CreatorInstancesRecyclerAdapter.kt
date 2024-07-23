@@ -7,8 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.hhufscs.campusguesser.R
+import de.hhufscs.campusguesser.core.IGuess
 import de.hhufscs.campusguesser.core.LocalGuess
-import de.hhufscs.campusguesser.services.GuessRepository
+import de.hhufscs.campusguesser.services.LocalGuessRepository
 
 class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
     RecyclerView.Adapter<CreatorInstancesRecyclerAdapter.ViewHolder>() {
@@ -28,14 +29,14 @@ class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val guessRepository = GuessRepository(itemView.context)
+        val guessRepository = LocalGuessRepository(itemView.context)
 
-        fun bind(guess: LocalGuess) {
-            title.text = guess.guessID
+        fun bind(guess: IGuess) {
+            title.text = "Hier fehlt ein Text"
 
-            location.text = guess.geoPoint.toString()
+            location.text = guess.getLocation().toString()
 
-            guessRepository.getPictureForGuess(guess, image::setImageBitmap)
+            guess.getPicture(image::setImageBitmap)
         }
 
         val title: TextView = itemView.findViewById(R.id.title)

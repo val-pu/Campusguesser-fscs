@@ -1,18 +1,18 @@
 package de.hhufscs.campusguesser.core
 
 import android.content.Context
-import de.hhufscs.campusguesser.services.GuessRepository
+import de.hhufscs.campusguesser.services.LocalGuessRepository
 import java.util.stream.Collectors
 
 class LocalLevelFactory {
-    private lateinit var guessRepository: GuessRepository
+    private lateinit var guessRepository: LocalGuessRepository
 
     constructor(context: Context){
-        this.guessRepository = GuessRepository(context)
+        this.guessRepository = LocalGuessRepository(context)
     }
 
     fun getLocalLevelWithNLocalGuesses(n: Int) : Level {
-        var allGuessList: List<LocalGuess> = guessRepository.getAllGuesses()
+        var allGuessList: List<LocalGuess> = guessRepository.getAllLocalGuesses()
         var guessesForLevel: List<LocalGuess> = allGuessList.shuffled()
             .stream()
             .limit(n.toLong())

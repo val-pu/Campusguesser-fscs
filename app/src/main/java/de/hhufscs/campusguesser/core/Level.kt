@@ -20,12 +20,14 @@ class Level : ILevel{
     private var guessStack: Stack<IGuess>
     private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>
     private var guessedList: LinkedList<GuessResult>
+    private var points: Int
 
     constructor(resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, guessesList: List<IGuess>){
         this.resultComputer = resultComputer
         this.guessStack = Stack<IGuess>()
         this.guessStack.addAll(guessesList)
         this.guessedList = LinkedList()
+        this.points = 0
     }
 
     override fun getCurrentGuess(): IGuess {
@@ -40,9 +42,14 @@ class Level : ILevel{
         var currentGuess: IGuess = getCurrentGuess()
         var actualSpot: IGeoPoint = currentGuess.getLocation()
         var points: Int = resultComputer.apply(guessedSpot, currentGuess.getLocation())
+        this.points += points
         var guessResult: GuessResult = GuessResult(actualSpot, guessedSpot, points)
         guessedList.add(guessResult)
         guessStack.pop()
         return guessResult
+    }
+
+    override fun getPoints(): Int {
+        return points
     }
 }

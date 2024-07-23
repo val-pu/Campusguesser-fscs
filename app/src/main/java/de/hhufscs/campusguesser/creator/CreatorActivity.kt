@@ -9,13 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.services.GuessRepository
+import de.hhufscs.campusguesser.services.LocalGuessRepository
 
 class CreatorActivity : AppCompatActivity() {
     private lateinit var btnCreate: Button
     private lateinit var image: ImageView
     private lateinit var locationText: TextView
-    private val guessRepository = GuessRepository(this)
+    private val guessRepository = LocalGuessRepository(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,7 @@ class CreatorActivity : AppCompatActivity() {
     private fun initGuessInstancesRecycler() {
         val recycler = findViewById<RecyclerView>(R.id.recycler)
         recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = CreatorInstancesRecyclerAdapter(guessRepository.getAllGuesses())
+        recycler.adapter = CreatorInstancesRecyclerAdapter(guessRepository.getAllLocalGuesses())
     }
 
     private fun setUpButtons() {

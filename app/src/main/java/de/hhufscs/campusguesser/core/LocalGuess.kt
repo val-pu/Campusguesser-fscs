@@ -3,6 +3,7 @@ package de.hhufscs.campusguesser.core
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import org.osmdroid.api.IGeoPoint
 import java.io.FileInputStream
 import java.util.LinkedList
@@ -12,7 +13,8 @@ import java.util.function.Consumer
 class LocalGuess : IGuess {
     private var pictureTask: FutureTask<Void?>
     private var context: Context
-    private var guessID: String
+    public var guessID: String
+    //ToDo !!!
     private var bitmap: Bitmap? = null
     private var waitingList: LinkedList<Consumer<Bitmap>>
     private var location: IGeoPoint
@@ -21,11 +23,13 @@ class LocalGuess : IGuess {
         this.context = context
         this.guessID = guessID
         this.pictureTask = FutureTask(this::buildBitmap, null)
+        pictureTask.run()
         this.waitingList = LinkedList()
         this.location = geoPoint
     }
 
     private fun buildBitmap(){
+        Log.i("PERSONALDEBUG", "buildBitmap: Here")
         var fileInputStream: FileInputStream = context.openFileInput("$guessID.jpg")
         var bitmap: Bitmap = BitmapFactory.decodeStream(fileInputStream)
         signInBitmap(bitmap)

@@ -15,14 +15,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
-import androidx.core.graphics.drawable.toDrawable
 import com.jsibbold.zoomage.ZoomageView
 import com.shashank.sony.fancytoastlib.FancyToast
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
-import de.hhufscs.campusguesser.core.LevelService
-import de.hhufscs.campusguesser.services.GuessRepository
+import de.hhufscs.campusguesser.core.LocalLevelFactory
+import de.hhufscs.campusguesser.services.LocalGuessRepository
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
@@ -48,7 +47,7 @@ class GuessActivity : AppCompatActivity() {
     private lateinit var scoreView: TextView
     private lateinit var pointsAddedView: TextView
 
-    private var guessRepository = GuessRepository(this)
+    private var guessRepository = LocalGuessRepository(this)
 
     private lateinit var guessImage: ZoomageView
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
@@ -79,9 +78,8 @@ class GuessActivity : AppCompatActivity() {
         setupMapGuessItemListener()
         setUpGuessButton()
 
-        val levelService = LevelService()
-
-        level = levelService.getLevelOfAllCustomPictures(this)
+        var localLevelFactory: LocalLevelFactory = LocalLevelFactory(baseContext)
+        level = localLevelFactory.getLocalLevelWithNLocalGuesses(10)
 
         if(!level.isANewGuessLeft()){
             Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
@@ -139,7 +137,8 @@ class GuessActivity : AppCompatActivity() {
 
         hideAddedPointsText()
 
-        guessRepository.getPictureForGuess(currentGuess) {
+
+        currentGuess.getPicture {
             guessImage.setImageDrawable(
                 BitmapDrawable(it)
             )
@@ -158,13 +157,12 @@ class GuessActivity : AppCompatActivity() {
         val guessResult = level.guess(guessLocation)
 
         updateUIPointsToReflectGuessResult(guessResult)
-
-        val actualLocation = currentGuess.geoPoint
+        val actualLocation = currentGuess.getLocation()
 
         drawLinePolygonOnMap(actualLocation, guessLocation)
 
 
-        guessRepository.getPictureForGuess(currentGuess) { image ->
+        currentGuess.getPicture(){ image ->
             val imageDrawable = BitmapDrawable(image)
             imageDrawable.setTargetDensity(10)
             addIconToMapAtLocationWithDrawable(actualLocation, imageDrawable.mutate())
@@ -175,24 +173,24 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun showEndScreen() {
-        val guessedGuesses = level.guessedGuesses
+        // val guessedGuesses = level.guessedGuesses
 
-        guessedGuesses.forEach {
-
-            addGuessMarkerTo(GeoPoint(it.guessedSpot))
-
-            val originalGuess = it.guess
-
-            guessRepository.getPictureForGuess(originalGuess) { bitmap ->
-
-                val image = bitmap!!.toDrawable(resources)
-
-                image.setTargetDensity(10)
-                addIconToMapAtLocationWithDrawable(it.guess.geoPoint, image)
-                drawLinePolygonOnMap(it.guessedSpot, originalGuess.geoPoint)
-
-            }
-        }
+//        guessedGuesses.forEach {
+//
+//            addGuessMarkerTo(GeoPoint(it.guessedSpot))
+//
+//            val originalGuess = it.guess
+//
+//            guessRepository.getPictureForGuess(originalGuess) { bitmap ->
+//
+//                val image = bitmap!!.toDrawable(resources)
+//
+//                image.setTargetDensity(10)
+//                addIconToMapAtLocationWithDrawable(it.guess.geoPoint, image)
+//                drawLinePolygonOnMap(it.guessedSpot, originalGuess.geoPoint)
+//
+//            }
+//        }
 
 
         guessButton.setText(R.string.weiter)
@@ -353,7 +351,7 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun setAddedPointsTextFromGuessResult(guessResult: GuessResult) {
-        pointsAddedView.text = "+%d".format(guessResult.earnedPoints)
+        pointsAddedView.text = "+%d".format(guessResult.points)
     }
 
     public override fun onResume() {
