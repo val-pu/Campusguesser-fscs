@@ -27,7 +27,8 @@ class GuessRepository(val context: Context) {
     }
 
     fun getGuessFromGuessID(guessID: String): Guess {
-        val guessLocation = readJSONObjectFromFile(guessID, context)
+        val guessLocation = readJSONObjectFromFile("$guessID.json", context)
+
 
         val geoPoint = GeoPointFactory.fromLocation(guessLocation!!)
 
@@ -40,7 +41,7 @@ class GuessRepository(val context: Context) {
         context: Context,
         onBitmapSaved: () -> Unit
     ) {
-        BitMapSaveTask(onBitmapSaved, context, guessID).execute(bitmap)
+        BitMapSaveTask(onBitmapSaved, context, guessID).execute(bitmap).get()
     }
 
 

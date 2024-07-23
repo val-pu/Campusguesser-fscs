@@ -72,17 +72,22 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
 
         btnCreate.setOnClickListener {
 
-            if (selectedLocation != null) {
-                saveCreatedGuess()
+
+
+            if(resultBM == null) {
+                if (permissionService.locationAccessGranted()) {
+                    takePhoto()
+                } else {
+                    permissionService.requestLocationPermissionAndDo(
+                        contract
+                    )
+                }
                 return@setOnClickListener
             }
 
-            if (permissionService.locationAccessGranted()) {
-                takePhoto()
-            } else {
-                permissionService.requestLocationPermissionAndDo(
-                    contract
-                )
+            if (selectedLocation != null) {
+                saveCreatedGuess()
+                return@setOnClickListener
             }
         }
 
