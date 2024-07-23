@@ -7,10 +7,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.core.Guess
+import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.services.GuessRepository
 
-class CreatorInstancesRecyclerAdapter(val guesses: List<Guess>) :
+class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
     RecyclerView.Adapter<CreatorInstancesRecyclerAdapter.ViewHolder>() {
 
 
@@ -30,7 +30,7 @@ class CreatorInstancesRecyclerAdapter(val guesses: List<Guess>) :
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val guessRepository = GuessRepository(itemView.context)
 
-        fun bind(guess: Guess) {
+        fun bind(guess: LocalGuess) {
             title.text = guess.guessID
 
             location.text = guess.geoPoint.toString()

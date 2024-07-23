@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.util.Log
-import de.hhufscs.campusguesser.core.Guess
+import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.services.factories.GeoPointFactory
 import de.hhufscs.campusguesser.services.factories.JSONObjectFactory
 import org.json.JSONException
@@ -14,7 +14,6 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
@@ -22,17 +21,17 @@ import java.io.OutputStreamWriter
 class GuessRepository(val context: Context) {
     private val TAG = "Campusguesser/GuessRepository"
 
-    fun getPictureForGuess(guess: Guess, onBitmapLoaded: (Bitmap?) -> Unit) {
+    fun getPictureForGuess(guess: LocalGuess, onBitmapLoaded: (Bitmap?) -> Unit) {
         loadBitmapFromStorage(guess.guessID, onBitmapLoaded)
     }
 
-    fun getGuessFromGuessID(guessID: String): Guess {
+    fun getGuessFromGuessID(guessID: String): LocalGuess {
         val guessLocation = readJSONObjectFromFile("$guessID.json", context)
 
 
         val geoPoint = GeoPointFactory.fromLocation(guessLocation!!)
 
-        return Guess(geoPoint, guessID)
+        return LocalGuess(geoPoint, guessID)
     }
 
     fun saveBitMapToStorageForGuessID(
@@ -97,14 +96,14 @@ class GuessRepository(val context: Context) {
             .execute(fileInputStream!!)
     }
 
-    fun saveGuess(guess: Guess) {
+    fun saveGuess(guess: LocalGuess) {
         writeStringToFile(
             JSONObjectFactory.coordinates(guess.geoPoint).toString(),
             "${guess.guessID}.json"
         )
     }
 
-    fun getAllGuesses(): List<Guess> {
+    fun getAllGuesses(): List<LocalGuess> {
 
         val guessRepository = GuessRepository(context)
 

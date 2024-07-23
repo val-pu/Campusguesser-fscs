@@ -2,63 +2,47 @@ package de.hhufscs.campusguesser.core
 
 import org.osmdroid.api.IGeoPoint
 import java.util.LinkedList
-import java.util.List.copyOf
 import java.util.Stack
+import java.util.function.BiFunction
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Level(val custom: Boolean = false) {
-
-    private var totalPoints = 0
-    private lateinit var guesses: List<Guess>
-    var guessedGuesses: LinkedList<GuessedGuess> = LinkedList()
-
-    private lateinit var guessStack: Stack<Guess>
-
-    constructor(guesses: List<Guess>, custom: Boolean = false) : this(custom) {
-        this.guesses = copyOf(guesses)
-        guessStack = Stack()
-        guesses.forEach(guessStack::push)
+class Level : ILevel{
+    companion object{
+        fun standardResultComputer(pointA: IGeoPoint, pointB: IGeoPoint) : Int {
+            var distance: Double = sqrt((pointA.latitude - pointB.latitude).pow(2) + (pointA.longitude - pointB.longitude).pow(2))
+            var points: Int = (100 / (1 + distance * 2300)).toInt()
+            return points
+        }
     }
 
-    fun getCurrentGuess(): Guess {
+
+    private var guessStack: Stack<IGuess>
+    private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>
+    private var guessedList: LinkedList<GuessResult>
+
+    constructor(resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, guessesList: List<IGuess>){
+        this.resultComputer = resultComputer
+        this.guessStack = Stack<IGuess>()
+        this.guessStack.addAll(guessesList)
+        this.guessedList = LinkedList()
+    }
+
+    override fun getCurrentGuess(): IGuess {
         return guessStack.peek()
     }
 
-    fun getGuessesLeft(): Int {
-        return guessStack.size
+    override fun isANewGuessLeft(): Boolean {
+        return guessStack.size >= 1
     }
 
-    fun guess(guessLocation: IGeoPoint): GuessResult {
-        val poppedGuess = guessStack.pop()
-
-        val actualLocation = poppedGuess.geoPoint
-
-        val delta = euclidianDistance(actualLocation, guessLocation)
-
-        // TODO: Extract as GuessPointFunction
-        val points = (100 / (1 + delta * 2300)).toInt()
-
-        totalPoints += points;
-
-        guessedGuesses.add(GuessedGuess(poppedGuess, points, guessLocation))
-
-        return GuessResult(points)
+    override fun guess(guessedSpot: IGeoPoint): GuessResult {
+        var currentGuess: IGuess = getCurrentGuess()
+        var actualSpot: IGeoPoint = currentGuess.getLocation()
+        var points: Int = resultComputer.apply(guessedSpot, currentGuess.getLocation())
+        var guessResult: GuessResult = GuessResult(actualSpot, guessedSpot, points)
+        guessedList.add(guessResult)
+        guessStack.pop()
+        return guessResult
     }
-
-    fun getPoints(): Int {
-        return totalPoints
-    }
-
-    fun isANewGuessLeft(): Boolean {
-        return getGuessesLeft() != 0
-    }
-
-}
-
-fun euclidianDistance(point1: IGeoPoint, point2: IGeoPoint): Double {
-    return sqrt(
-        (point1.latitude - point2.latitude).pow(2) +
-                (point1.longitude - point2.longitude).pow(2)
-    )
 }

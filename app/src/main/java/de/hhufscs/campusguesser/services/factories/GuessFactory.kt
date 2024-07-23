@@ -1,12 +1,12 @@
 package de.hhufscs.campusguesser.services.factories
 
-import de.hhufscs.campusguesser.core.Guess
+import de.hhufscs.campusguesser.core.LocalGuess
 import org.osmdroid.api.IGeoPoint
 
 object GuessFactory {
 
-    fun fromGeoPoint(geoPoint: IGeoPoint, name: String): Guess {
-        return Guess(geoPoint, name)
+    fun fromGeoPoint(geoPoint: IGeoPoint, name: String): LocalGuess {
+        return LocalGuess(geoPoint, name)
     }
 
 }

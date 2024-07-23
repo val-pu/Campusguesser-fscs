@@ -1,4 +1,5 @@
 package de.hhufscs.campusguesser.core
 
-class GuessResult(val earnedPoints: Int) {
-}
+import org.osmdroid.api.IGeoPoint
+
+class GuessResult(val actualSpot: IGeoPoint, val guessedSpot: IGeoPoint, val points: Int) {}
