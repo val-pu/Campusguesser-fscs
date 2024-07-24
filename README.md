@@ -10,11 +10,11 @@ have to change this.
 
 Please add new features here and mark all features whether they are tested and have documentation.
 
-| Feature / Other             | Progress | Tested? | Documentation?        |
-|-----------------------------|----------|---------|-----------------------|
-| Documentation for all files |          |         | <ul><li>[ ]</li></ul> |
-| Choose a license            |          |         | <ul><li>[ ]</li></ul> |
-| New Feature                 |          |         | <ul><li>[ ]</li></ul> |
+| Feature / Other             | Progress | Tested?                  | Documentation?           |
+|-----------------------------|----------|--------------------------|--------------------------|
+| Documentation for all files |          | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
+| Choose a license            |          | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
+| New Feature                 |          | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 
 ## Rules for Contributing
 
