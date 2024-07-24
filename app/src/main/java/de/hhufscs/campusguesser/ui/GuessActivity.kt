@@ -9,7 +9,6 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
 import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +20,6 @@ import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LocalLevelFactory
-import de.hhufscs.campusguesser.services.LocalGuessRepository
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
@@ -44,10 +42,6 @@ class GuessActivity : AppCompatActivity() {
 
     private lateinit var map: MapView
     private lateinit var guessButton: TextView
-    private lateinit var scoreView: TextView
-    private lateinit var pointsAddedView: TextView
-
-    private var guessRepository = LocalGuessRepository(this)
 
     private lateinit var guessImage: ZoomageView
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
@@ -69,8 +63,6 @@ class GuessActivity : AppCompatActivity() {
         setContentView(R.layout.activity_guess)
 
         guessImage = findViewById(R.id.guess_image)
-        scoreView = findViewById(R.id.score)
-        pointsAddedView = findViewById(R.id.addedPoints)
 
 
         setUpOSMMap()
@@ -78,7 +70,7 @@ class GuessActivity : AppCompatActivity() {
         setupMapGuessItemListener()
         setUpGuessButton()
 
-        var localLevelFactory: LocalLevelFactory = LocalLevelFactory(baseContext)
+        val localLevelFactory = LocalLevelFactory(baseContext)
         level = localLevelFactory.getLocalLevelWithNLocalGuesses(10)
 
         if(!level.isANewGuessLeft()){
@@ -175,7 +167,7 @@ class GuessActivity : AppCompatActivity() {
     private fun showEndScreen() {
         // val guessedGuesses = level.guessedGuesses
 
-//        guessedGuesses.forEach {
+// TODO       guessedGuesses.forEach {
 //
 //            addGuessMarkerTo(GeoPoint(it.guessedSpot))
 //
@@ -196,7 +188,6 @@ class GuessActivity : AppCompatActivity() {
         guessButton.setText(R.string.weiter)
 
 
-        findViewById<View>(R.id.end_screen).visibility = VISIBLE
         guessImage.visibility = INVISIBLE
 
         guessButton.post {
@@ -235,18 +226,11 @@ class GuessActivity : AppCompatActivity() {
     private fun guessPresent() = guessMarker != null
 
     private fun showAddedPointsText() {
-        pointsAddedView.apply {
-            animate().alpha(1f)
-                .setDuration(300).withEndAction {
-                    visibility = View.VISIBLE
-                }.start()
-        }
+        // TODO
     }
 
     private fun hideAddedPointsText() {
-        pointsAddedView.animate().alpha(0f).setDuration(300).withEndAction {
-            pointsAddedView.visibility = View.INVISIBLE
-        }.start()
+        // TODO
     }
 
     private fun setupMapGuessItemListener() {
@@ -347,11 +331,11 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun updateCumulativeScorePoints() {
-        scoreView.text = level.getPoints().toString()
+        // TODO
     }
 
     private fun setAddedPointsTextFromGuessResult(guessResult: GuessResult) {
-        pointsAddedView.text = "+%d".format(guessResult.points)
+        // TODO
     }
 
     public override fun onResume() {
