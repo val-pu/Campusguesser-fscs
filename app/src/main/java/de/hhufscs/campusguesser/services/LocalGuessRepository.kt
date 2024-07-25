@@ -39,7 +39,7 @@ class LocalGuessRepository(val context: Context) {
     fun saveGuess(guess: LocalGuess) {
         writeStringToFile(
             JSONObjectFactory.coordinates(guess.getLocation()).toString(),
-            "${guess.guessID}.json"
+            "${guess.getGuessID()}.json"
         )
     }
 

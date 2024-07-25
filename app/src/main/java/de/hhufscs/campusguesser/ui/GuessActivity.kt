@@ -19,7 +19,7 @@ import com.shashank.sony.fancytoastlib.FancyToast
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
-import de.hhufscs.campusguesser.core.LocalLevelFactory
+import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
@@ -71,7 +71,7 @@ class GuessActivity : AppCompatActivity() {
         setUpGuessButton()
 
         val localLevelFactory = LocalLevelFactory(baseContext)
-        level = localLevelFactory.getLocalLevelWithNLocalGuesses(10)
+        level = localLevelFactory.getLevelWithNLocalGuesses(10)
 
         if(!level.isANewGuessLeft()){
             Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")

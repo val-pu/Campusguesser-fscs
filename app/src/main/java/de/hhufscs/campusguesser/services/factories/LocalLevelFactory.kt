@@ -1,6 +1,8 @@
-package de.hhufscs.campusguesser.core
+package de.hhufscs.campusguesser.services.factories
 
 import android.content.Context
+import de.hhufscs.campusguesser.core.Level
+import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.services.LocalGuessRepository
 import java.util.stream.Collectors
 
@@ -11,12 +13,12 @@ class LocalLevelFactory {
         this.guessRepository = LocalGuessRepository(context)
     }
 
-    fun getLocalLevelWithNLocalGuesses(n: Int) : Level {
+    fun getLevelWithNLocalGuesses(n: Int) : Level {
         var allGuessList: List<LocalGuess> = guessRepository.getAllLocalGuesses()
         var guessesForLevel: List<LocalGuess> = allGuessList.shuffled()
             .stream()
             .limit(n.toLong())
             .collect(Collectors.toList());
-        return Level(Level::standardResultComputer, guessesForLevel)
+        return Level(Level.Companion::standardResultComputer, guessesForLevel)
     }
 }

@@ -13,8 +13,7 @@ import java.util.function.Consumer
 class LocalGuess : IGuess {
     private var pictureTask: FutureTask<Void?>
     private var context: Context
-    public var guessID: String
-    //ToDo !!!
+    private var guessID: String
     private var bitmap: Bitmap? = null
     private var waitingList: LinkedList<Consumer<Bitmap>>
     private var location: IGeoPoint
@@ -29,7 +28,6 @@ class LocalGuess : IGuess {
     }
 
     private fun buildBitmap(){
-        Log.i("PERSONALDEBUG", "buildBitmap: Here")
         var fileInputStream: FileInputStream = context.openFileInput("$guessID.jpg")
         var bitmap: Bitmap = BitmapFactory.decodeStream(fileInputStream)
         signInBitmap(bitmap)
@@ -37,7 +35,7 @@ class LocalGuess : IGuess {
 
     private fun signInBitmap(bitmap: Bitmap){
         this.bitmap = bitmap
-        for(consumer in this.waitingList){
+        for(consumer: Consumer<Bitmap> in this.waitingList){
             consumer.accept(bitmap)
         }
     }
@@ -52,6 +50,10 @@ class LocalGuess : IGuess {
 
     override fun getLocation(): IGeoPoint {
         return this.location
+    }
+
+    fun getGuessID(): String{
+        return this.guessID
     }
 
 }
