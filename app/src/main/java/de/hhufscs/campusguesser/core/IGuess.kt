@@ -6,5 +6,5 @@ import java.util.function.Consumer
 
 interface IGuess {
     fun getPicture(onLoaded: Consumer<Bitmap>)
-    fun getLocation() : IGeoPoint
+    fun getLocation() : IGeoPoint // ToDo: replace with getLocation(onLoaded: Consumer<Bitmap>) for support of async loading
 }
