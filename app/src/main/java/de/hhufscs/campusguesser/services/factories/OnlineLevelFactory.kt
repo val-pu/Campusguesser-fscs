@@ -1,5 +1,6 @@
 package de.hhufscs.campusguesser.services.factories
 
+import de.hhufscs.campusguesser.core.IGuess
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.core.OnlineGuess
@@ -15,10 +16,10 @@ class OnlineLevelFactory {
 
     fun getLevelWithNOnlineGuesses(n: Int) : Level {
         var allGuessList: List<String> = guessRepository.getAllOnlineGuessIdentifiers()
-        var guessesForLevel: List<OnlineGuess> = allGuessList.shuffled()
+        var guessesForLevel: List<IGuess> = allGuessList.shuffled()
             .stream()
             .limit(n.toLong())
-            .map(::OnlineGuess)
+            .map(guessRepository::getGuessFromIdentifier)
             .collect(Collectors.toList());
         return Level(Level.Companion::standardResultComputer, guessesForLevel)
     }
