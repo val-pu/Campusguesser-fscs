@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.hhufscs.campusguesser.R
+import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.services.LocalGuessRepository
+import java.util.stream.Collectors
 
 class CreatorActivity : AppCompatActivity() {
     private lateinit var btnCreate: Button
@@ -32,7 +34,11 @@ class CreatorActivity : AppCompatActivity() {
     private fun initGuessInstancesRecycler() {
         val recycler = findViewById<RecyclerView>(R.id.recycler)
         recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = CreatorInstancesRecyclerAdapter(guessRepository.getAllLocalGuesses())
+        recycler.adapter = CreatorInstancesRecyclerAdapter(guessRepository
+            .getAllLocalGuessIDs()
+            .stream()
+            .map{guessID: String -> LocalGuess(guessID, this) }
+            .collect(Collectors.toList()))
     }
 
     private fun setUpButtons() {

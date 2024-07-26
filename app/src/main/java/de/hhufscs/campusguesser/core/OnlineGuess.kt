@@ -45,16 +45,16 @@ class OnlineGuess : IGuess {
         }
     }
 
-    override fun getPicture(onLoaded: Consumer<Bitmap>) {
+    override fun getPicture(onLoaded: (Bitmap) -> Unit) {
         if(pictureTask.isDone()){
-            onLoaded.accept(this.bitmap!!)
+            onLoaded(this.bitmap!!)
         } else {
             pictureWaitingList.add(onLoaded)
         }
     }
 
-    override fun getLocation(): IGeoPoint {
-        return this.location!!
+    override fun getLocation(onLoaded: (IGeoPoint) -> Unit) {
+        onLoaded(this.location!!)
     }
 
 }

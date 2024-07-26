@@ -33,9 +33,9 @@ class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
 
         fun bind(guess: IGuess) {
             title.text = "Hier fehlt ein Text"
-
-            location.text = guess.getLocation().toString()
-
+            guess.getLocation{
+                location.text = it.toString()
+            }
             guess.getPicture(image::setImageBitmap)
         }
 

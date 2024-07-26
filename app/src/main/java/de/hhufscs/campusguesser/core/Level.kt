@@ -22,7 +22,7 @@ import kotlin.math.sqrt
 class Level : ILevel{
     companion object{
         // TODO: Could implement another formula to calculate the distance which is more accurate in regard to take the earth curvature in account
-        // This would be nice, but I think it is not that relevant
+        // This would be nice, but I think it is not that relevant // same
         fun standardResultComputer(pointA: IGeoPoint, pointB: IGeoPoint) : Int {
             var distance: Double = sqrt((pointA.latitude - pointB.latitude).pow(2) + (pointA.longitude - pointB.longitude).pow(2))
             var points: Int = (100 / (1 + distance * 2300)).toInt()
@@ -60,14 +60,15 @@ class Level : ILevel{
     stack of spots to guess. The guess result contains the actual spot, the guessed spot and the points
     given in this order.
     */
-    override fun guess(guessedSpot: IGeoPoint): GuessResult {
-        var actualSpot: IGeoPoint = getCurrentGuess().getLocation()
-        var points: Int = resultComputer.apply(guessedSpot, actualSpot)
-        this.points += points
-        var guessResult: GuessResult = GuessResult(actualSpot, guessedSpot, points)
-        guessedList.add(guessResult)
-        guessStack.pop()
-        return guessResult
+    override fun guess(guessedSpot: IGeoPoint, onCalculated: (GuessResult) -> Unit){
+        getCurrentGuess().getLocation() {
+            var points: Int = resultComputer.apply(guessedSpot, it)
+            this.points += points
+            var guessResult: GuessResult = GuessResult(it, guessedSpot, points)
+            guessedList.add(guessResult)
+            guessStack.pop()
+            onCalculated(guessResult)
+        }
     }
 
     override fun getPoints(): Int {

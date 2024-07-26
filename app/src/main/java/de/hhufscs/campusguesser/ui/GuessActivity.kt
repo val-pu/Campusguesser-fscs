@@ -146,22 +146,22 @@ class GuessActivity : AppCompatActivity() {
 
         val currentGuess = level.getCurrentGuess()
         val guessLocation = guessMarker!!.point
-        val guessResult = level.guess(guessLocation)
+        level.guess(guessLocation) {
 
-        updateUIPointsToReflectGuessResult(guessResult)
-        val actualLocation = currentGuess.getLocation()
+            updateUIPointsToReflectGuessResult(it)
+            currentGuess.getLocation {
+                drawLinePolygonOnMap(it, guessLocation)
 
-        drawLinePolygonOnMap(actualLocation, guessLocation)
+                currentGuess.getPicture() { image ->
+                    val imageDrawable = BitmapDrawable(image)
+                    imageDrawable.setTargetDensity(10)
+                    addIconToMapAtLocationWithDrawable(it, imageDrawable.mutate())
+                }
 
 
-        currentGuess.getPicture(){ image ->
-            val imageDrawable = BitmapDrawable(image)
-            imageDrawable.setTargetDensity(10)
-            addIconToMapAtLocationWithDrawable(actualLocation, imageDrawable.mutate())
+                refreshMap()
+            }
         }
-
-
-        refreshMap()
     }
 
     private fun showEndScreen() {
