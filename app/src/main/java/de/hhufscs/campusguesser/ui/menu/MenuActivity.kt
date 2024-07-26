@@ -18,7 +18,7 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
 //        AssetService.legacyPfusch(this)
 
-        findViewById<TextView>(R.id.btn_play).setOnClickListener {
+        findViewById<TextView>(R.id.btn_play_online).setOnClickListener {
             startActivity(Intent(applicationContext, GuessActivity::class.java))
         }
 

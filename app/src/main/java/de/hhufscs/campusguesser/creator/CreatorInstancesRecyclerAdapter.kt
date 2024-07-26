@@ -41,6 +41,6 @@ class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
 
         val title: TextView = itemView.findViewById(R.id.title)
         val image: ImageView = itemView.findViewById(R.id.image)
-        val location: TextView = itemView.findViewById(R.id.location)
+        val location: TextView = itemView.findViewById(R.id.app_name)
     }
 }

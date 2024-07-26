@@ -24,7 +24,7 @@ class CreatorActivity : AppCompatActivity() {
         setContentView(R.layout.activity_creator)
 
         btnCreate = findViewById(R.id.btn_create)
-        locationText = findViewById(R.id.location)
+        locationText = findViewById(R.id.app_name)
 
 
         initGuessInstancesRecycler();
