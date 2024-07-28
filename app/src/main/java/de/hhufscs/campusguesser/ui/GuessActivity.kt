@@ -20,6 +20,7 @@ import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
+import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
@@ -48,6 +49,7 @@ class GuessActivity : AppCompatActivity() {
     private lateinit var level: Level
     private var guessMarker: OverlayItem? = null
     private var currentlyGuessing = true
+    private var online: Boolean = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,14 +66,21 @@ class GuessActivity : AppCompatActivity() {
 
         guessImage = findViewById(R.id.guess_image)
 
+        this.online = intent.getBooleanExtra("online", false)
+
 
         setUpOSMMap()
         setupIconOverlay()
         setupMapGuessItemListener()
         setUpGuessButton()
 
-        val localLevelFactory = LocalLevelFactory(baseContext)
-        level = localLevelFactory.getLevelWithNLocalGuesses(10)
+        if(!online) {
+            val localLevelFactory = LocalLevelFactory(baseContext)
+            level = localLevelFactory.getLevelWithNLocalGuesses(10)
+        } else {
+            val onlineLevelFactory = OnlineLevelFactory()
+            level = onlineLevelFactory.getLevelWithNOnlineGuesses(10)
+        }
 
         if(!level.isANewGuessLeft()){
             Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
