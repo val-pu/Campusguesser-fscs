@@ -1,3 +1,4 @@
 .idea
 .gradle
-app/buildw
+local.properties
+app/build
