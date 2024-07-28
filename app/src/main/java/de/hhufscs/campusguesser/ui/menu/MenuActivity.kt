@@ -18,13 +18,13 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu_new)
 
         findViewById<TextView>(R.id.btn_play_local).setOnClickListener {
-            var localIntent: Intent = Intent(applicationContext, GuessActivity::class.java)
+            val localIntent = Intent(applicationContext, GuessActivity::class.java)
             localIntent.putExtra("online", false)
             startActivity(localIntent)
         }
 
         findViewById<TextView>(R.id.btn_play_online).setOnClickListener {
-            var onlineIntent: Intent = Intent(applicationContext, GuessActivity::class.java)
+            val onlineIntent = Intent(applicationContext, GuessActivity::class.java)
             onlineIntent.putExtra("online", true)
             startActivity(onlineIntent)
         }
