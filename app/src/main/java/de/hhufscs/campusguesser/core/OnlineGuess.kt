@@ -2,9 +2,10 @@ package de.hhufscs.campusguesser.core
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import de.hhufscs.campusguesser.services.OnlineGuessRepository
+import de.hhufscs.campusguesser.services.repositories.OnlineGuessRepository
 import de.hhufscs.campusguesser.services.async.NetworkFileThread
 import org.apache.commons.io.IOUtils
+import org.json.JSONObject
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.util.GeoPoint
 import java.net.URL
@@ -12,7 +13,6 @@ import java.net.URLConnection
 import java.util.Base64
 import java.util.LinkedList
 import java.util.Scanner
-import java.util.stream.Collectors
 
 class OnlineGuess : IGuess {
     private var pictureTask: NetworkFileThread<Bitmap>
@@ -34,15 +34,14 @@ class OnlineGuess : IGuess {
     }
 
     private fun fetchLocation(): IGeoPoint{
-        var urlString: String = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/level?id=${this.identifier}"
+        var urlString: String = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/location?id=${this.identifier}"
         var connection: URLConnection = URL(urlString).openConnection()
         var scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")
-        var locationString: String = scanner.next()
-        var locationList: List<Double> = locationString.split(";")
-            .stream()
-            .map(String::toDouble)
-            .collect(Collectors.toList())
-        var location: IGeoPoint = GeoPoint(locationList[0], locationList[1])
+        var locationJSONString: String = scanner.next()
+        var locationJSON: JSONObject = JSONObject(locationJSONString)
+        var latitude: Double = locationJSON.getDouble("latitude")
+        var longitude: Double = locationJSON.getDouble("longitude")
+        var location: IGeoPoint = GeoPoint(latitude, longitude)
         return location
     }
 

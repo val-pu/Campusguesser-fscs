@@ -16,9 +16,9 @@ class NetworkFileThread<T>: Thread{
         this.resultConsumer = resultConsumer
     }
 
-    public override fun run(){
+    override fun run(){
         this.result = runnable()
-        Log.i("PERSONALDEBUG", "run: result set to $result")
+        Log.d("PERSONALDEBUG", "run: result set to $result")
         handler.post{resultConsumer(result!!)}
     }
 }

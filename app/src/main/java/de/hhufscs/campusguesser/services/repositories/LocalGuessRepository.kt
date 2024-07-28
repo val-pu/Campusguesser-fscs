@@ -1,9 +1,8 @@
-package de.hhufscs.campusguesser.services
+package de.hhufscs.campusguesser.services.repositories
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.services.factories.JSONObjectFactory
 import org.osmdroid.api.IGeoPoint
 import java.io.File

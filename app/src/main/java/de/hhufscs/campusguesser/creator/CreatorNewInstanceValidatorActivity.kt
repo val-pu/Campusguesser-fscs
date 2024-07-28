@@ -17,7 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.services.LocalGuessRepository
+import de.hhufscs.campusguesser.services.repositories.LocalGuessRepository
 import de.hhufscs.campusguesser.services.LocationService
 import de.hhufscs.campusguesser.services.MapService
 import de.hhufscs.campusguesser.services.PermissionService

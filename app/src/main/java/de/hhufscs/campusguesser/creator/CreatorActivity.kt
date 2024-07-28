@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.LocalGuess
-import de.hhufscs.campusguesser.services.LocalGuessRepository
+import de.hhufscs.campusguesser.services.repositories.LocalGuessRepository
 import java.util.stream.Collectors
 
 class CreatorActivity : AppCompatActivity() {

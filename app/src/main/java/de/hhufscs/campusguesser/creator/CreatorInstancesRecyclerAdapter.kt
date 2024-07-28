@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.IGuess
 import de.hhufscs.campusguesser.core.LocalGuess
-import de.hhufscs.campusguesser.services.LocalGuessRepository
+import de.hhufscs.campusguesser.services.repositories.LocalGuessRepository
 
 class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
     RecyclerView.Adapter<CreatorInstancesRecyclerAdapter.ViewHolder>() {

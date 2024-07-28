@@ -3,7 +3,7 @@ package de.hhufscs.campusguesser.services.factories
 import android.content.Context
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LocalGuess
-import de.hhufscs.campusguesser.services.LocalGuessRepository
+import de.hhufscs.campusguesser.services.repositories.LocalGuessRepository
 import java.util.stream.Collectors
 
 class LocalLevelFactory {
