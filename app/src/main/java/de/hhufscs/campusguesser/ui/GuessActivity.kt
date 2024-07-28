@@ -65,15 +65,12 @@ class GuessActivity : AppCompatActivity() {
         setContentView(R.layout.activity_guess)
 
         guessImage = findViewById(R.id.guess_image)
-
-        this.online = intent.getBooleanExtra("online", false)
-
-
         setUpOSMMap()
         setupIconOverlay()
         setupMapGuessItemListener()
         setUpGuessButton()
 
+        this.online = intent.getBooleanExtra("online", false)
         if(!online) {
             val localLevelFactory = LocalLevelFactory(baseContext)
             level = localLevelFactory.getLevelWithNLocalGuesses(10)
@@ -90,7 +87,7 @@ class GuessActivity : AppCompatActivity() {
     private fun firstGuess(){
         if(!level.isANewGuessLeft()){
             Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
-            FancyToast.makeText(baseContext, "Junge lad dir halt Bilder rein du Knecht", Toast.LENGTH_LONG).show()
+            FancyToast.makeText(baseContext, "keine Bilder verfügbar du Klon", Toast.LENGTH_LONG).show()
             finish()
             return
         }

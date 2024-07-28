@@ -90,9 +90,4 @@ class LocalGuess : IGuess {
             locationWaitingList.add(onLoaded)
         }
     }
-
-    fun getGuessID(): String{
-        return this.guessID
-    }
-
 }
