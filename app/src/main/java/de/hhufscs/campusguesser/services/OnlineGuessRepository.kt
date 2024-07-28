@@ -1,21 +1,23 @@
 package de.hhufscs.campusguesser.services
 
-import de.hhufscs.campusguesser.core.IGuess
-import de.hhufscs.campusguesser.core.OnlineGuess
-import java.util.LinkedList
+import java.net.URL
+import java.net.URLConnection
+import java.util.Scanner
 
 class OnlineGuessRepository {
     companion object{
-        public var IP_ADRESS_SQL = "" //ToDo
-        public var IP_ADRESS_FILESERVER = "" //ToDo
+        var SOURCE_IP: String = "" // ToDo
+        var SOURCE_PORT: String = "" //ToDo
     }
 
     fun getAllOnlineGuessIdentifiers(): List<String>{
-        // ToDo
-        return LinkedList()
-    }
+        var urlString: String = "http://${SOURCE_IP}:${SOURCE_PORT}/allids"
+        var connection: URLConnection = URL(urlString).openConnection()
+        var scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")
+        var allIdentifiersString: String = scanner.next()
+        var identifiersList: List<String> = allIdentifiersString.split(";")
+        return identifiersList
 
-    fun getGuessFromIdentifier(identifier: String): IGuess {
-        return OnlineGuess("");
+        //ToDo: not yet async
     }
 }

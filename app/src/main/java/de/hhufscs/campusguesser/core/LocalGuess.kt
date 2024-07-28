@@ -53,6 +53,7 @@ class LocalGuess : IGuess {
         this.pictureWaitingList = LinkedList()
         this.locationWaitingList = LinkedList()
         this.location = geoPoint
+        // ToDo: Constructor only needed for saving process -> solve differently and omit doNothing()
     }
 
     private fun doNothing(){}

@@ -19,7 +19,7 @@ class OnlineLevelFactory {
         var guessesForLevel: List<IGuess> = allGuessList.shuffled()
             .stream()
             .limit(n.toLong())
-            .map(guessRepository::getGuessFromIdentifier)
+            .map(::OnlineGuess)
             .collect(Collectors.toList());
         return Level(Level.Companion::standardResultComputer, guessesForLevel)
     }
