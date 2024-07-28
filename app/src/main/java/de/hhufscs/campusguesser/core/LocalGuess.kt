@@ -4,27 +4,23 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import de.hhufscs.campusguesser.services.async.NetworkFileThread
 import de.hhufscs.campusguesser.services.factories.GeoPointFactory
 import org.json.JSONException
 import org.json.JSONObject
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.util.GeoPoint
-import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.IOException
-import java.io.InputStreamReader
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.LinkedList
 import java.util.concurrent.FutureTask
-import java.util.function.Consumer
 
 class LocalGuess : IGuess {
-    private var pictureTask: FutureTask<Void?>
-    private var locationTask: FutureTask<Void?>
+    private var pictureThread: NetworkFileThread<Bitmap>
+    private var locationThread: NetworkFileThread<IGeoPoint>
     private var context: Context
     private var guessID: String
     private var pictureWaitingList: LinkedList<(Bitmap) -> Unit>
@@ -35,33 +31,18 @@ class LocalGuess : IGuess {
     constructor(guessID: String, context: Context){
         this.context = context
         this.guessID = guessID
-        this.pictureTask = FutureTask(this::buildBitmap, null)
-        pictureTask.run()
-        this.locationTask = FutureTask(this::buildLocation, null)
-        locationTask.run()
+        this.pictureThread = NetworkFileThread(this::buildBitmap, this::signInBitmap)
+        pictureThread.start()
+        this.locationThread = NetworkFileThread(this::buildLocation, this::signInLocation)
+        locationThread.start()
         this.pictureWaitingList = LinkedList()
         this.locationWaitingList = LinkedList()
     }
 
-    constructor(geoPoint: IGeoPoint, guessID: String, context: Context){
-        this.context = context
-        this.guessID = guessID
-        this.pictureTask = FutureTask(this::doNothing, null)
-        pictureTask.run()
-        this.locationTask = FutureTask(this::doNothing, null)
-        locationTask.run()
-        this.pictureWaitingList = LinkedList()
-        this.locationWaitingList = LinkedList()
-        this.location = geoPoint
-        // ToDo: Constructor only needed for saving process -> solve differently and omit doNothing()
-    }
-
-    private fun doNothing(){}
-
-    private fun buildBitmap(){
+    private fun buildBitmap(): Bitmap{
         var fileInputStream: FileInputStream = context.openFileInput("$guessID.jpg")
         var bitmap: Bitmap = BitmapFactory.decodeStream(fileInputStream)
-        signInBitmap(bitmap)
+        return bitmap
     }
 
     private fun signInBitmap(bitmap: Bitmap){
@@ -71,19 +52,19 @@ class LocalGuess : IGuess {
         }
     }
 
-    private fun buildLocation(){
+    private fun buildLocation(): IGeoPoint{
         try{
             var file: File = File(context.filesDir, "$guessID.json")
             var fileContents: String = String(Files.readAllBytes(Paths.get(file.path)))
             var jsonObject: JSONObject = JSONObject(fileContents)
             var location: IGeoPoint = GeoPointFactory.fromLocation(jsonObject)
-            signInLocation(location)
+            return location
         } catch (e: JSONException) {
             Log.e("PERSONALDEBUG", "Could not convert contents of $guessID to JSONObject: $e")
-            signInLocation(GeoPoint(0.0,0.0))
+            return GeoPoint(0.0,0.0)
         } catch (e: IOException) {
             Log.e("PERSONALDEBUG", "Could not convert contents of $guessID to JSONObject: $e")
-            signInLocation(GeoPoint(0.0,0.0))
+            return GeoPoint(0.0,0.0)
         }
     }
 
@@ -95,7 +76,7 @@ class LocalGuess : IGuess {
     }
 
     override fun getPicture(onLoaded: (Bitmap) -> Unit) {
-        if(pictureTask.isDone()){
+        if(this.bitmap != null){
             onLoaded(this.bitmap!!)
         } else {
             pictureWaitingList.add(onLoaded)
@@ -103,7 +84,7 @@ class LocalGuess : IGuess {
     }
 
     override fun getLocation(onLoaded: (IGeoPoint) -> Unit){
-        if(locationTask.isDone()){
+        if(this.location != null){
             onLoaded(this.location!!)
         } else {
             locationWaitingList.add(onLoaded)

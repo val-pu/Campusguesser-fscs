@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.services.factories.JSONObjectFactory
+import org.osmdroid.api.IGeoPoint
 import java.io.File
 import java.io.IOException
 import java.io.OutputStreamWriter
@@ -21,13 +22,8 @@ class LocalGuessRepository(val context: Context) {
         bitmapSaveTask.run()
     }
 
-    fun saveGuess(guess: LocalGuess) {
-        guess.getLocation {
-            writeStringToFile(
-                JSONObjectFactory.coordinates(it).toString(),
-                "${guess.getGuessID()}.json"
-            )
-        }
+    fun saveGuessLocation(guessID: String, guessLocation: IGeoPoint) {
+        writeStringToFile(JSONObjectFactory.coordinates(guessLocation).toString(), "$guessID.json")
     }
 
     fun getAllLocalGuessIDs(): List<String> {

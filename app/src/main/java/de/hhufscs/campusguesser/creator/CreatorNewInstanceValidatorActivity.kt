@@ -21,7 +21,6 @@ import de.hhufscs.campusguesser.services.LocalGuessRepository
 import de.hhufscs.campusguesser.services.LocationService
 import de.hhufscs.campusguesser.services.MapService
 import de.hhufscs.campusguesser.services.PermissionService
-import de.hhufscs.campusguesser.services.factories.GuessFactory
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
@@ -117,9 +116,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
 
     private fun saveCreatedGuess() {
         val generatedGuessID = UUID.randomUUID().toString()
-        val guess = GuessFactory.fromGeoPoint(selectedLocation!!, generatedGuessID, baseContext)
-
-        guessRepository.saveGuess(guess)
+        guessRepository.saveGuessLocation(generatedGuessID, selectedLocation!!)
 
         Toast.makeText(this, "Starting save process.", Toast.LENGTH_SHORT).show()
         guessRepository.saveBitMapToStorageForGuessID(resultBM!!, generatedGuessID, this) {

@@ -14,13 +14,14 @@ class OnlineLevelFactory {
         this.guessRepository = OnlineGuessRepository()
     }
 
-    fun getLevelWithNOnlineGuesses(n: Int) : Level {
-        var allGuessList: List<String> = guessRepository.getAllOnlineGuessIdentifiers()
-        var guessesForLevel: List<IGuess> = allGuessList.shuffled()
-            .stream()
-            .limit(n.toLong())
-            .map(::OnlineGuess)
-            .collect(Collectors.toList());
-        return Level(Level.Companion::standardResultComputer, guessesForLevel)
+    fun getLevelWithNOnlineGuesses(n: Int, onLoaded: (Level) -> Unit) {
+        guessRepository.getAllOnlineGuessIdentifiers{
+            var guessesForLevel: List<IGuess> = it.shuffled()
+                .stream()
+                .limit(n.toLong())
+                .map(::OnlineGuess)
+                .collect(Collectors.toList());
+            onLoaded(Level(Level.Companion::standardResultComputer, guessesForLevel))
+        }
     }
 }

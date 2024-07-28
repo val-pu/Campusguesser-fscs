@@ -77,11 +77,17 @@ class GuessActivity : AppCompatActivity() {
         if(!online) {
             val localLevelFactory = LocalLevelFactory(baseContext)
             level = localLevelFactory.getLevelWithNLocalGuesses(10)
+            firstGuess()
         } else {
             val onlineLevelFactory = OnlineLevelFactory()
-            level = onlineLevelFactory.getLevelWithNOnlineGuesses(10)
+            onlineLevelFactory.getLevelWithNOnlineGuesses(10){
+                level = it
+                firstGuess()
+            }
         }
+    }
 
+    private fun firstGuess(){
         if(!level.isANewGuessLeft()){
             Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
             FancyToast.makeText(baseContext, "Junge lad dir halt Bilder rein du Knecht", Toast.LENGTH_LONG).show()

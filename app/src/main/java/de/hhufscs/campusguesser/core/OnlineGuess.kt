@@ -3,6 +3,7 @@ package de.hhufscs.campusguesser.core
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import de.hhufscs.campusguesser.services.OnlineGuessRepository
+import de.hhufscs.campusguesser.services.async.NetworkFileThread
 import org.apache.commons.io.IOUtils
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.util.GeoPoint
@@ -11,12 +12,11 @@ import java.net.URLConnection
 import java.util.Base64
 import java.util.LinkedList
 import java.util.Scanner
-import java.util.concurrent.FutureTask
 import java.util.stream.Collectors
 
 class OnlineGuess : IGuess {
-    private var pictureTask: FutureTask<Void?>
-    private var locationTask: FutureTask<Void?>
+    private var pictureTask: NetworkFileThread<Bitmap>
+    private var locationThread: NetworkFileThread<IGeoPoint>
     private var bitmap: Bitmap? = null
     private var pictureWaitingList: LinkedList<(Bitmap) -> Unit>
     private var locationWaitingList: LinkedList<(IGeoPoint) -> Unit>
@@ -25,15 +25,15 @@ class OnlineGuess : IGuess {
 
     constructor(identifier: String){
         this.identifier = identifier
-        this.locationTask = FutureTask(this::fetchLocation, null)
-        locationTask.run()
-        this.pictureTask = FutureTask(this::fetchBitmap, null)
-        pictureTask.run()
+        this.locationThread = NetworkFileThread<IGeoPoint>(this::fetchLocation, ::signInLocation)
+        locationThread.start()
+        this.pictureTask = NetworkFileThread<Bitmap>(this::fetchBitmap, ::signInBitmap)
+        pictureTask.start()
         this.pictureWaitingList = LinkedList()
         this.locationWaitingList = LinkedList()
     }
 
-    private fun fetchLocation(){
+    private fun fetchLocation(): IGeoPoint{
         var urlString: String = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/level?id=${this.identifier}"
         var connection: URLConnection = URL(urlString).openConnection()
         var scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")
@@ -43,7 +43,7 @@ class OnlineGuess : IGuess {
             .map(String::toDouble)
             .collect(Collectors.toList())
         var location: IGeoPoint = GeoPoint(locationList[0], locationList[1])
-        signInLocation(location)
+        return location
     }
 
     private fun signInLocation(location: IGeoPoint){
@@ -53,13 +53,13 @@ class OnlineGuess : IGuess {
         }
     }
 
-    private fun fetchBitmap(){
+    private fun fetchBitmap(): Bitmap{
         var urlString: String = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/picture?id=${this.identifier}"
         var connection: URLConnection = URL(urlString).openConnection()
         var encodedBitmapArray: ByteArray = IOUtils.toByteArray(connection.getInputStream())
         var bitmapArray: ByteArray = Base64.getDecoder().decode(encodedBitmapArray)
         var bitmap: Bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0 , bitmapArray.size)
-        signInBitmap(bitmap)
+        return bitmap
     }
 
     private fun signInBitmap(bitmap: Bitmap){
@@ -70,7 +70,7 @@ class OnlineGuess : IGuess {
     }
 
     override fun getPicture(onLoaded: (Bitmap) -> Unit) {
-        if(pictureTask.isDone()){
+        if(this.bitmap != null){
             onLoaded(this.bitmap!!)
         } else {
             pictureWaitingList.add(onLoaded)
@@ -78,7 +78,7 @@ class OnlineGuess : IGuess {
     }
 
     override fun getLocation(onLoaded: (IGeoPoint) -> Unit) {
-        if(locationTask.isDone()){
+        if(this.location != null){
             onLoaded(this.location!!)
         } else {
             locationWaitingList.add(onLoaded)
