@@ -61,7 +61,6 @@ class GuessActivity : AppCompatActivity() {
             applicationContext,
             PreferenceManager.getDefaultSharedPreferences(applicationContext)
         )
-
         setContentView(R.layout.activity_guess)
 
         guessImage = findViewById(R.id.guess_image)
