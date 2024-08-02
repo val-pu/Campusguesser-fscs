@@ -9,6 +9,7 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
 import android.view.View.INVISIBLE
+import android.view.animation.Interpolator
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 import com.jsibbold.zoomage.ZoomageView
 import com.shashank.sony.fancytoastlib.FancyToast
+import com.skydoves.progressview.ProgressViewAnimation
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
@@ -66,6 +68,21 @@ class GuessActivity : AppCompatActivity() {
         setupIconOverlay()
         setupMapGuessItemListener()
         setUpGuessButton()
+        val seconds = 100
+        Thread {
+            for (i in 1 until seconds+1) {
+                binding.progress.apply {
+                    post {
+                        labelText = "Noch ${seconds-i} Sekunden"
+                        progressAnimation = ProgressViewAnimation.BOUNCE
+                        progress = 100F/seconds*(i)
+                        // progressAnimate()
+                    }
+                    Thread.sleep(1000)
+                }
+            }
+        }.start()
+
 
         this.online = intent.getBooleanExtra("online", false)
         if(!online) {

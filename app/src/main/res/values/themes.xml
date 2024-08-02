@@ -2,8 +2,17 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Campusguesser" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.Campusguesser" parent="Base.Theme.Campusguesser" />
+    <style name="Theme.Campusguesser" parent="Base.Theme.Campusguesser" >
+    </style>
+
+    <style name="QuicksandBoldButtonStyle">
+        <item name="android:fontFamily">@font/quicksand_bold</item>
+    </style>
+
+    <style name="QuicksandTextViewStyle">
+        <item name="android:fontFamily">@font/quicksand_light</item>
+    </style>
+
 </resources>

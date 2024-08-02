@@ -27,9 +27,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="3dp"
             app:layout_constraintHorizontal_bias="0.0" >
-            <CustomAttribute
-                motion:attributeName="backgroundColor"
-                motion:customColorValue="#7F5B68" />
         </Constraint>
         <Constraint
             android:id="@id/resize_view"
@@ -39,6 +36,11 @@
             app:layout_constraintBottom_toBottomOf="parent" >
 
         </Constraint>
+        <Constraint
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/constraintLayout2"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/play_screen_minimized">
@@ -50,9 +52,7 @@
             android:layout_marginBottom="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" >
-            <CustomAttribute
-                motion:attributeName="backgroundColor"
-                motion:customColorValue="#D81B60" />
+
         </Constraint>
         <Constraint
             android:id="@id/resize_view"
