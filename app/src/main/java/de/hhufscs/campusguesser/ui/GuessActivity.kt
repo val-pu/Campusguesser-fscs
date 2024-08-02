@@ -14,11 +14,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
+import com.google.android.material.snackbar.Snackbar
 import com.jsibbold.zoomage.ZoomageView
 import com.shashank.sony.fancytoastlib.FancyToast
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
+import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
 import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
@@ -41,15 +43,12 @@ val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
 class GuessActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
 
-    private lateinit var map: MapView
-    private lateinit var guessButton: TextView
-
-    private lateinit var guessImage: ZoomageView
+    private lateinit var binding: ActivityGuessBinding
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private lateinit var level: Level
     private var guessMarker: OverlayItem? = null
     private var currentlyGuessing = true
-    private var online: Boolean = false
+    private var online = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +60,8 @@ class GuessActivity : AppCompatActivity() {
             applicationContext,
             PreferenceManager.getDefaultSharedPreferences(applicationContext)
         )
-        setContentView(R.layout.activity_guess)
-
-        guessImage = findViewById(R.id.guess_image)
+        binding = ActivityGuessBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setUpOSMMap()
         setupIconOverlay()
         setupMapGuessItemListener()
@@ -94,9 +92,8 @@ class GuessActivity : AppCompatActivity() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setUpGuessButton() {
-        guessButton = findViewById(R.id.btn_guess)
-        guessButton.setOnTouchListener { v, event ->
+     private fun setUpGuessButton() {
+        binding.btnGuess.setOnTouchListener { v, event ->
 
             if (!guessPresent()) {
                 FancyToast.makeText(
@@ -119,11 +116,11 @@ class GuessActivity : AppCompatActivity() {
 
             if (currentlyGuessing) {
                 lockGuess()
-                guessButton.setText(R.string.next_guess)
+                binding.btnGuess.setText(R.string.next_guess)
             } else {
                 resetOverlays()
                 resetMapFocus()
-                guessButton.setText(R.string.guess)
+                binding.btnGuess.setText(R.string.guess)
                 setupMapGuessItemListener()
                 nextGuess()
             }
@@ -142,7 +139,7 @@ class GuessActivity : AppCompatActivity() {
 
 
         currentGuess.getPicture {
-            guessImage.setImageDrawable(
+            binding.guessImage.setImageDrawable(
                 BitmapDrawable(it)
             )
         }
@@ -196,13 +193,13 @@ class GuessActivity : AppCompatActivity() {
 //        }
 
 
-        guessButton.setText(R.string.weiter)
+        binding.btnGuess.setText(R.string.weiter)
 
 
-        guessImage.visibility = INVISIBLE
+        binding.guessImage.visibility = INVISIBLE
 
-        guessButton.post {
-            guessButton.setOnClickListener {
+        binding.btnGuess.post {
+            binding.btnGuess.setOnClickListener {
                 startActivity(Intent(this, MenuActivity::class.java))
             }
         }
@@ -229,7 +226,7 @@ class GuessActivity : AppCompatActivity() {
         from: IGeoPoint,
         to: IGeoPoint
     ) {
-        map.overlays.add(0, Polygon().apply {
+        binding.guessMap.overlays.add(0, Polygon().apply {
             points = LinkedList(listOf(from as GeoPoint, to as GeoPoint))
         })
     }
@@ -245,7 +242,7 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun setupMapGuessItemListener() {
-        map.overlays.add(MapEventsOverlay(object : MapEventsReceiver {
+        binding.guessMap.overlays.add(MapEventsOverlay(object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(tappedLocation: GeoPoint): Boolean {
                 setGuessMarkerTo(tappedLocation)
                 refreshMap()
@@ -259,7 +256,7 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun refreshMap() {
-        map.invalidate()
+        binding.guessMap.invalidate()
     }
 
     private fun setupIconOverlay() {
@@ -277,7 +274,7 @@ class GuessActivity : AppCompatActivity() {
             }, this
         )
 
-        map.overlays.add(iconOverlay)
+        binding.guessMap.overlays.add(iconOverlay)
     }
 
     private fun setGuessMarkerTo(newLocation: GeoPoint) {
@@ -303,9 +300,7 @@ class GuessActivity : AppCompatActivity() {
 
     private fun setUpOSMMap() {
 
-        map = findViewById<View>(R.id.guess_map) as MapView
-
-        map.apply {
+        binding.guessMap.apply {
             setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(true)
         }
@@ -313,7 +308,7 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun resetMapFocus() {
-        map.controller.apply {
+        binding.guessMap.controller.apply {
             setZoom(18.0)
             setCenter(GEOPOINT_HHU)
         }
@@ -332,11 +327,11 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun removeGuessDistanceOverlayLine() {
-        map.overlays.removeIf { it is Polygon }
+        binding.guessMap.overlays.removeIf { it is Polygon }
     }
 
     private fun disableMapGestureDetector() {
-        map.overlays.removeIf {
+        binding.guessMap.overlays.removeIf {
             it is MapEventsOverlay
         }
     }
@@ -351,12 +346,12 @@ class GuessActivity : AppCompatActivity() {
 
     public override fun onResume() {
         super.onResume()
-        map.onResume()
+        binding.guessMap.onResume()
     }
 
     public override fun onPause() {
         super.onPause()
-        map.onPause()
+        binding.guessMap.onPause()
     }
 
     override fun onRequestPermissionsResult(
@@ -379,3 +374,4 @@ class GuessActivity : AppCompatActivity() {
     }
 
 }
+
