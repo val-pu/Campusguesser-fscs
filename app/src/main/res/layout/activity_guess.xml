@@ -76,9 +76,7 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_weight="200"
-        app:layout_constraintBottom_toTopOf="@id/btn_guess_wrapper"
+        app:layout_constraintBottom_toBottomOf="@+id/playerScreenMotionLayout"
         app:layout_constraintTop_toBottomOf="@id/constraintLayout3">
 
         <org.osmdroid.views.MapView
@@ -102,9 +100,10 @@
         android:layout_weight="100"
         android:animateLayoutChanges="true"
         android:background="#000077B6"
-        android:padding="3dp"
+        android:padding="6dp"
+        android:layout_marginBottom="10dp"
         app:layoutDescription="@xml/guess_picture_motion_scene"
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/btn_guess"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -124,11 +123,11 @@
             <View
                 android:id="@+id/resize_view"
                 android:layout_width="30dp"
-                android:layout_marginTop="7.5dp"
                 android:layout_height="4dp"
+                android:layout_marginTop="7.5dp"
                 android:animateLayoutChanges="true"
-                android:backgroundTint="@color/back_secondary"
                 android:background="@drawable/btn_back"
+                android:backgroundTint="@color/back_secondary"
 
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -155,33 +154,86 @@
 
     </de.hhufscs.campusguesser.ui.PlayerScreenMotionLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/btn_guess_wrapper"
+    <TextView
+        android:id="@+id/btn_guess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/btn_back"
+        android:backgroundTint="@color/skyBlue"
+        android:fontFamily="@font/quicksand_bold"
+        android:padding="10dp"
+        android:text="GUESS"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <de.hhufscs.campusguesser.ui.PlayerScreenMotionLayout
+        android:id="@+id/guessed_popup"
+        tools:visibility="gone"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        app:layoutDescription="@xml/activity_guess_xml_info_text_scene"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/btn_guess"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/info_text"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="10dp"
             android:background="@drawable/btn_back"
-            android:fontFamily="@font/quicksand_bold"
-            android:backgroundTint="@color/skyBlue"
-            android:padding="10dp"
-            android:text="GUESS"
-            android:textAlignment="center"
-            android:textColor="@color/white"
+            android:backgroundTint="#4CAF50"
+            android:padding="16dp"
+            android:translationY="150dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="match_parent"
+                tools:background="@color/back_secondary">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/quicksand_bold"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="Campus-Guru!" />
+
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Du hast X Punkte erreicht!"
+                    android:textColor="@color/white"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/btn_guess2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_back"
+                    android:backgroundTint="@color/skyBlue"
+                    android:fontFamily="@font/quicksand_bold"
+                    android:padding="10dp"
+                    android:text="WEITER"
+                    android:textAlignment="center"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </de.hhufscs.campusguesser.ui.PlayerScreenMotionLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

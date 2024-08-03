@@ -2,6 +2,7 @@ package de.hhufscs.campusguesser.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -55,6 +56,7 @@ class GuessActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         Log.i("CampusGuesser", "Started GuessActivity")
 
         // OSM will das
@@ -68,12 +70,12 @@ class GuessActivity : AppCompatActivity() {
         setupIconOverlay()
         setupMapGuessItemListener()
         setUpGuessButton()
-        val seconds = 100
+        val seconds = 10
         Thread {
             for (i in 1 until seconds+1) {
                 binding.progress.apply {
                     post {
-                        labelText = "Noch ${seconds-i} Sekunden"
+                        labelText = "${seconds-i}s"
                         progressAnimation = ProgressViewAnimation.BOUNCE
                         progress = 100F/seconds*(i)
                         // progressAnimate()
@@ -110,7 +112,7 @@ class GuessActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
      private fun setUpGuessButton() {
-        binding.btnGuess.setOnTouchListener { v, event ->
+        binding.btnGuess.setOnClickListener { v ->
 
             if (!guessPresent()) {
                 FancyToast.makeText(
@@ -120,31 +122,31 @@ class GuessActivity : AppCompatActivity() {
                     FancyToast.ERROR,
                     false
                 ).show()
-                return@setOnTouchListener false
+                return@setOnClickListener
             }
 
             if(!level.isANewGuessLeft()) {
                 showEndScreen()
 
-                return@setOnTouchListener false
+                return@setOnClickListener
             }
 
 
 
-            if (currentlyGuessing) {
-                lockGuess()
-                binding.btnGuess.setText(R.string.next_guess)
-            } else {
-                resetOverlays()
-                resetMapFocus()
-                binding.btnGuess.setText(R.string.guess)
-                setupMapGuessItemListener()
-                nextGuess()
-            }
-
-            currentlyGuessing = !currentlyGuessing
+            lockGuess()
 
             true
+        }
+
+        binding.btnGuess2.setOnClickListener {
+            binding.guessedPopup.transitionToStart()
+            nextGuess()
+            resetOverlays()
+            resetMapFocus()
+            binding.btnGuess.setText(R.string.guess)
+            setupMapGuessItemListener()
+
+
         }
     }
 
@@ -245,13 +247,15 @@ class GuessActivity : AppCompatActivity() {
     ) {
         binding.guessMap.overlays.add(0, Polygon().apply {
             points = LinkedList(listOf(from as GeoPoint, to as GeoPoint))
+            strokeColor = resources.getColor(R.color.skyBlue)
+            strokeWidth = 10F
         })
     }
 
     private fun guessPresent() = guessMarker != null
 
     private fun showAddedPointsText() {
-        // TODO
+        binding.guessedPopup.transitionToEnd()
     }
 
     private fun hideAddedPointsText() {

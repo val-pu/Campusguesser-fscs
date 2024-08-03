@@ -126,7 +126,7 @@ class PlayerScreenMotionLayout(
                 return super.onTouchEvent(event)
             }
         }
-        if (!hasTouchStarted) {
+        if (!hasTouchStarted && viewToDetectTouch != null) {
             viewToDetectTouch.getHitRect(viewRect)
             hasTouchStarted = viewRect.contains(event.x.toInt(), event.y.toInt())
         }
