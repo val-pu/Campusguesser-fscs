@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:background="@color/back_secondary">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:textColor="@color/white"
+        android:fontFamily="@font/quicksand_bold"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="Campus-Guru!" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Du hast X Punkte erreicht!"
+        android:textColor="@color/white"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:id="@+id/btn_guess2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_back"
+        android:backgroundTint="@color/skyBlue"
+        android:fontFamily="@font/quicksand_bold"
+        android:padding="10dp"
+        android:text="WEITER"
+        android:textAlignment="center"
+        android:textColor="@color/white" />
+
+</LinearLayout>
