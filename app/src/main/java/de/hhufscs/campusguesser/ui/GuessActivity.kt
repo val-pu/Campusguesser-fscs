@@ -44,7 +44,6 @@ class GuessActivity : AppCompatActivity() {
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private lateinit var level: Level
     private var guessMarker: OverlayItem? = null
-    private var currentlyGuessing = true
     private var online = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,12 +65,12 @@ class GuessActivity : AppCompatActivity() {
         setUpGuessButtons()
         val seconds = 10
         Thread {
-            for (i in 1 until seconds+1) {
+            for (i in 1 until seconds + 1) {
                 binding.progress.apply {
                     post {
-                        labelText = "${seconds-i}s"
+                        labelText = "${seconds - i}s"
                         progressAnimation = ProgressViewAnimation.BOUNCE
-                        progress = 100F/seconds*(i)
+                        progress = 100F / seconds * (i)
                         // progressAnimate()
                     }
                     Thread.sleep(1000)
@@ -81,30 +80,31 @@ class GuessActivity : AppCompatActivity() {
 
 
         this.online = intent.getBooleanExtra("online", false)
-        if(!online) {
+        if (!online) {
             val localLevelFactory = LocalLevelFactory(baseContext)
             level = localLevelFactory.getLevelWithNLocalGuesses(10)
             firstGuess()
         } else {
             val onlineLevelFactory = OnlineLevelFactory()
-            onlineLevelFactory.getLevelWithNOnlineGuesses(10){
+            onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
                 level = it
                 firstGuess()
             }
         }
     }
 
-    private fun firstGuess(){
-        if(!level.isANewGuessLeft()){
+    private fun firstGuess() {
+        if (!level.isANewGuessLeft()) {
             Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
-            FancyToast.makeText(baseContext, "keine Bilder verfügbar du Klon", Toast.LENGTH_LONG).show()
+            FancyToast.makeText(baseContext, "keine Bilder verfügbar du Klon", Toast.LENGTH_LONG)
+                .show()
             finish()
             return
         }
         nextGuess()
     }
 
-     private fun setUpGuessButtons() {
+    private fun setUpGuessButtons() {
         binding.btnGuess.setOnClickListener { v ->
 
             if (!userMadeGuess()) {
@@ -120,9 +120,10 @@ class GuessActivity : AppCompatActivity() {
 
             lockGuess()
         }
+
         binding.btnGuess2.setOnClickListener {
 
-            if(!level.isANewGuessLeft()) {
+            if (!level.isANewGuessLeft()) {
                 showEndScreen()
                 return@setOnClickListener
             }
@@ -143,6 +144,7 @@ class GuessActivity : AppCompatActivity() {
             binding.guessImage.setImageDrawable(
                 BitmapDrawable(it)
             )
+
         }
 
     }
@@ -152,10 +154,11 @@ class GuessActivity : AppCompatActivity() {
         if (!userMadeGuess()) throw IllegalStateException("No Guess provided!")
 
         disableMapGestureDetector()
+        binding.playerBackgroundView.visibility = INVISIBLE
 
         val currentGuess = level.getCurrentGuess()
         val guessLocation = guessMarker!!.point
-        level.guess(guessLocation) {
+        level.guess(guessLocation) { it ->
 
             updateUIPointsToReflectGuessResult(it)
             currentGuess.getLocation {
@@ -166,19 +169,15 @@ class GuessActivity : AppCompatActivity() {
                     imageDrawable.setTargetDensity(10)
                     addIconToMapAtLocationWithDrawable(it, imageDrawable.mutate())
                 }
-
-
                 refreshMap()
+                setMapInteractionEnabled(false)
             }
+
         }
     }
 
     private fun showEndScreen() {
 
-        binding.btnGuess.setText(R.string.weiter)
-
-
-        binding.guessImage.visibility = INVISIBLE
 
         binding.btnGuess.post {
             binding.btnGuess.setOnClickListener {
@@ -190,16 +189,24 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
+
+        binding.pointsReached.text = resources.getString(R.string.points_reached,1, guessResult.points)
+
         updateCumulativeScorePoints()
         showGuessResultInfoCard()
-        setAddedPointsTextFromGuessResult(guessResult)
+        updateCumulativeScorePoints()
 
-        val boundingBox = BoundingBox.fromGeoPointsSafe(listOf(guessResult.guessedSpot as GeoPoint,guessResult.actualSpot as GeoPoint))
+        val boundingBox = BoundingBox.fromGeoPointsSafe(
+            listOf(
+                guessResult.guessedSpot as GeoPoint,
+                guessResult.actualSpot as GeoPoint
+            )
+        )
 
-        val longWidth = abs(boundingBox.lonEast-boundingBox.lonWest)
-        val latWidth = abs(boundingBox.latNorth-boundingBox.latSouth)
-        boundingBox.lonEast += longWidth*.1
-        boundingBox.lonWest -= longWidth*.1
+        val longWidth = abs(boundingBox.lonEast - boundingBox.lonWest)
+        val latWidth = abs(boundingBox.latNorth - boundingBox.latSouth)
+        boundingBox.lonEast += longWidth * .1
+        boundingBox.lonWest -= longWidth * .1
 
         binding.guessMap.zoomToBoundingBox(boundingBox, true)
     }
@@ -293,6 +300,7 @@ class GuessActivity : AppCompatActivity() {
             setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(true)
         }
+
         resetMapFocus()
     }
 
@@ -303,11 +311,18 @@ class GuessActivity : AppCompatActivity() {
         }
     }
 
+    private fun setMapInteractionEnabled(newState: Boolean) {
+        binding.guessMap.apply {
+            setMultiTouchControls(newState)
+            isUserInteractionEnabled = false
+            isFlingEnabled = newState
+        }
+    }
+
     private fun resetOverlays() {
         removeAllMapIcons()
         removeGuessDistanceOverlayLine()
     }
-
 
 
     private fun removeAllMapIcons() {
@@ -326,12 +341,9 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun updateCumulativeScorePoints() {
-        // TODO
+        binding.points.text = resources.getString(R.string.points, level.getPoints())
     }
 
-    private fun setAddedPointsTextFromGuessResult(guessResult: GuessResult) {
-        // TODO
-    }
 
     public override fun onResume() {
         super.onResume()

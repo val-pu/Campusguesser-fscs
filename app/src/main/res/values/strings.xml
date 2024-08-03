@@ -45,4 +45,6 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="weiter">Weiter</string>
+    <string name="points">%d Pkt.</string>
+    <string name="points_reached">Du lagst %d Meter daneben und hast %d Punkte erreicht!</string>
 </resources>
