@@ -230,7 +230,9 @@
                     android:textAlignment="center"
                     android:textColor="@color/white" />
 
-            </LinearLayout>        </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </de.hhufscs.campusguesser.ui.PlayerScreenMotionLayout>
