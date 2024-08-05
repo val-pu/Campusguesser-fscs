@@ -1,15 +1,20 @@
 package de.hhufscs.campusguesser.ui
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import com.shashank.sony.fancytoastlib.FancyToast
 import com.skydoves.progressview.ProgressViewAnimation
@@ -33,6 +38,7 @@ import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.Polygon
 import java.util.LinkedList
 import kotlin.math.abs
+import kotlin.math.min
 
 
 val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
@@ -61,7 +67,7 @@ class GuessActivity : AppCompatActivity() {
         setContentView(binding.root)
         setUpOSMMap()
         setupIconOverlay()
-        setupMapGuessItemListener()
+        enableMapPointGestureDetector()
         setUpGuessButtons()
         val seconds = 10
         Thread {
@@ -127,12 +133,12 @@ class GuessActivity : AppCompatActivity() {
                 showEndScreen()
                 return@setOnClickListener
             }
-
             binding.guessedPopup.transitionToStart()
+            binding.playerBackgroundView.visibility = VISIBLE
             nextGuess()
             resetOverlays()
-            resetMapFocus()
-            setupMapGuessItemListener()
+            resetMapFocusAndAnimate()
+            setMapInteractionEnabled(true)
         }
     }
 
@@ -153,7 +159,6 @@ class GuessActivity : AppCompatActivity() {
 
         if (!userMadeGuess()) throw IllegalStateException("No Guess provided!")
 
-        disableMapGestureDetector()
         binding.playerBackgroundView.visibility = INVISIBLE
 
         val currentGuess = level.getCurrentGuess()
@@ -164,9 +169,23 @@ class GuessActivity : AppCompatActivity() {
             currentGuess.getLocation {
                 drawLinePolygonOnMap(it, guessLocation)
 
-                currentGuess.getPicture() { image ->
+                currentGuess.getPicture() { bm ->
+                    val radius = min(bm.width, bm.height) / 2F
+                    val image =
+                        Bitmap.createBitmap(bm.width, bm.height, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(image)
+                    val circlePath = Path()
+                    circlePath.addCircle(
+                        canvas.width / 2F,
+                        canvas.height / 2F,
+                        radius,
+                        Path.Direction.CW
+                    )
+                    canvas.clipPath(circlePath)
+                    canvas.drawBitmap(bm, 0F, 0F, Paint())
                     val imageDrawable = BitmapDrawable(image)
-                    imageDrawable.setTargetDensity(10)
+                    imageDrawable.setTargetDensity(30)
+
                     addIconToMapAtLocationWithDrawable(it, imageDrawable.mutate())
                 }
                 refreshMap()
@@ -190,7 +209,8 @@ class GuessActivity : AppCompatActivity() {
 
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
 
-        binding.pointsReached.text = resources.getString(R.string.points_reached,1, guessResult.points)
+        binding.pointsReached.text =
+            resources.getString(R.string.points_reached, guessResult, guessResult.points)
 
         updateCumulativeScorePoints()
         showGuessResultInfoCard()
@@ -216,6 +236,7 @@ class GuessActivity : AppCompatActivity() {
         val actualMarker = OverlayItem("Actual", "", location)
 
         drawable?.also { actualMarker.setMarker(it) }
+        actualMarker.markerHotspot = OverlayItem.HotspotPlace.CENTER
 
         iconOverlay.addItem(actualMarker)
     }
@@ -237,7 +258,7 @@ class GuessActivity : AppCompatActivity() {
         binding.guessedPopup.transitionToEnd()
     }
 
-    private fun setupMapGuessItemListener() {
+    private fun enableMapPointGestureDetector() {
         binding.guessMap.overlays.add(MapEventsOverlay(object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(tappedLocation: GeoPoint): Boolean {
                 setGuessMarkerTo(tappedLocation)
@@ -280,11 +301,8 @@ class GuessActivity : AppCompatActivity() {
 
     private fun addGuessMarkerTo(newLocation: GeoPoint) {
         guessMarker = OverlayItem("The Spot!", "", newLocation)
-
-        val drawable =
-            AppCompatResources.getDrawable(applicationContext, R.drawable.location_marker_24)
-
-        guessMarker!!.setMarker(drawable)
+        guessMarker!!.markerHotspot = OverlayItem.HotspotPlace.CENTER
+        guessMarker!!.setMarker(locationMarkerDrawable())
         iconOverlay.addItem(guessMarker)
     }
 
@@ -304,20 +322,34 @@ class GuessActivity : AppCompatActivity() {
         resetMapFocus()
     }
 
+    private fun resetMapFocusAndAnimate() {
+        binding.guessMap.controller.apply {
+            animateTo(GEOPOINT_HHU, 17.0, 500L)
+        }
+    }
+
     private fun resetMapFocus() {
         binding.guessMap.controller.apply {
-            setZoom(18.0)
             setCenter(GEOPOINT_HHU)
+            setZoom(19.0)
         }
     }
 
     private fun setMapInteractionEnabled(newState: Boolean) {
         binding.guessMap.apply {
-            setMultiTouchControls(newState)
-            isUserInteractionEnabled = false
-            isFlingEnabled = newState
+            isUserInteractionEnabled = newState
         }
     }
+
+    private fun locationMarkerDrawable(): BitmapDrawable {
+        val bm = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val c = Canvas(bm)
+        val p = Paint()
+        p.color = resources.getColor(R.color.skyBlue)
+        c.drawCircle(50F, 50F, 30F, p)
+        return BitmapDrawable(resources, bm)
+    }
+
 
     private fun resetOverlays() {
         removeAllMapIcons()
@@ -335,6 +367,7 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun disableMapGestureDetector() {
+        return
         binding.guessMap.overlays.removeIf {
             it is MapEventsOverlay
         }
