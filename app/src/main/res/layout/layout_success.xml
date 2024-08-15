@@ -17,7 +17,7 @@
         android:text="Campus-Guru!" />
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/points_reached"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Du hast X Punkte erreicht!"

@@ -1,4 +1,4 @@
-package de.hhufscs.campusguesser.ui
+package de.hhufscs.campusguesser.ui.views
 
 
 import android.content.Context
@@ -10,17 +10,6 @@ import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import de.hhufscs.campusguesser.R
 
-
-/**
- * This is where all the magic happens.
- * This View Takes up the entire screen.
- * The background of this view is actually transparent and we resize `player_background_view`
- * based on user touch. The player with the white background is what is resized, but this
- * PlayerScreenMotionLayout always takes up the entire screen.
- * So when you touch the Fragment when the player is minimized, you are actually touching this layout.
- * We calculate whether the touch is on the Mini player or not and based on that we pass the toucch to
- * parent or consume it
- */
 class PlayerScreenMotionLayout(
     context: Context,
     attributeSet: AttributeSet? = null

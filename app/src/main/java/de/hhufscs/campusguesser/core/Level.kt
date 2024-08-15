@@ -22,12 +22,12 @@ import java.util.LinkedList
 import java.util.Stack
 import java.util.function.BiFunction
 import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.sqrt
 import kotlin.math.asin
 import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sqrt
 
-class Level : ILevel{
+class Level(private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, guessesList: List<IGuess>) : ILevel{
     companion object{
         // calculate the result based on the euclidean distance
         fun standardResultComputer(pointA: IGeoPoint, pointB: IGeoPoint) : Int {
@@ -48,16 +48,10 @@ class Level : ILevel{
     }
 
     private var guessStack: Stack<IGuess>
-    private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>
     private var guessedList: LinkedList<GuessResult>
     private var points: Int
 
-    /** constructor(resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, guessesList: List<IGuess>)
-     * Simply create the level and initialize all necessary variables. For more information on each variable
-     * read the header of the file.
-     */
-    constructor(resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, guessesList: List<IGuess>){
-        this.resultComputer = resultComputer
+    init {
         this.guessStack = Stack<IGuess>()
         this.guessStack.addAll(guessesList)
         this.guessedList = LinkedList()
@@ -72,14 +66,13 @@ class Level : ILevel{
         return guessStack.size >= 1
     }
 
-    // TODO: @Chris, please write documentation, I don't know kotlin that good to understand what this function does in detail
     /** guess(guessedSpot: IGeoPoint, onCalculated: (GuessResult) -> Unit)
      * Calculates the result of a guess based on the `guessedSpot` and the actual spot given inside the
      * stack of spots to guess. The guess result contains the actual spot, the guessed spot and the points
      * given in this order.
      */
     override fun guess(guessedSpot: IGeoPoint, onCalculated: (GuessResult) -> Unit){
-        getCurrentGuess().getLocation() {
+        getCurrentGuess().getLocation {
             val points: Int = resultComputer.apply(guessedSpot, it)
             this.points += points
             val guessResult: GuessResult = GuessResult(it, guessedSpot, points)

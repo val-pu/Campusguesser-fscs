@@ -1,10 +1,13 @@
 package de.hhufscs.campusguesser.services
 
-import androidx.appcompat.content.res.AppCompatResources
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.services.factories.OverlayFactory
 import de.hhufscs.campusguesser.services.slapers.TapEventOverlay
-import de.hhufscs.campusguesser.ui.GEOPOINT_HHU
+import de.hhufscs.campusguesser.ui.game.GEOPOINT_HHU
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
@@ -59,7 +62,7 @@ class MapService(
         tapOverlay = null
         locationSelectedListener = null
     }
-    
+
     fun moveLocationSelectorMarkerTo(IGeoPoint: IGeoPoint) {
         setLocationSelectorMarkerTo(IGeoPoint)
     }
@@ -99,18 +102,22 @@ class MapService(
 
 
         locationSelectorMarker!!.apply {
-            
+
+
             setMarker(locationMarkerDrawable())
             iconOverlay.addItem(this)
         }
 
     }
 
-    private fun locationMarkerDrawable() =
-        AppCompatResources.getDrawable(
-            context,
-            R.drawable.location_marker_24
-        )
+    private fun locationMarkerDrawable(): BitmapDrawable {
+        val bm = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val c = Canvas(bm)
+        val p = Paint()
+        p.color = context.getColor(R.color.skyBlue)
+        c.drawCircle(50F, 50F, 50F, p)
+        return BitmapDrawable(context.resources, bm)
+    }
 
     private fun removeLocationSelectorMarker() {
         iconOverlay.removeItem(locationSelectorMarker)

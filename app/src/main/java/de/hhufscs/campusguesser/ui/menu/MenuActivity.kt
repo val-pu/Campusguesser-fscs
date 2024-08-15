@@ -2,13 +2,10 @@ package de.hhufscs.campusguesser.ui.menu
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.creator.CreatorActivity
-import de.hhufscs.campusguesser.databinding.ActivityMenuBinding
 import de.hhufscs.campusguesser.databinding.ActivityMenuNewBinding
-import de.hhufscs.campusguesser.ui.GuessActivity
+import de.hhufscs.campusguesser.ui.game.GuessActivity
 
 class MenuActivity : AppCompatActivity() {
 

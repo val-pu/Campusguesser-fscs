@@ -1,23 +1,20 @@
-package de.hhufscs.campusguesser.ui
+package de.hhufscs.campusguesser.ui.game
 
-import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
-import android.view.View
 import android.view.View.INVISIBLE
-import android.view.animation.Interpolator
-import android.widget.TextView
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
-import com.google.android.material.snackbar.Snackbar
-import com.jsibbold.zoomage.ZoomageView
 import com.shashank.sony.fancytoastlib.FancyToast
 import com.skydoves.progressview.ProgressViewAnimation
 import de.hhufscs.campusguesser.R
@@ -26,19 +23,22 @@ import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
 import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
+import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.ItemizedIconOverlay
 import org.osmdroid.views.overlay.ItemizedIconOverlay.OnItemGestureListener
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.Polygon
 import java.util.LinkedList
+import kotlin.math.abs
+import kotlin.math.min
 
 
 val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
@@ -50,7 +50,6 @@ class GuessActivity : AppCompatActivity() {
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private lateinit var level: Level
     private var guessMarker: OverlayItem? = null
-    private var currentlyGuessing = true
     private var online = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,16 +67,16 @@ class GuessActivity : AppCompatActivity() {
         setContentView(binding.root)
         setUpOSMMap()
         setupIconOverlay()
-        setupMapGuessItemListener()
-        setUpGuessButton()
+        enableMapPointGestureDetector()
+        setUpGuessButtons()
         val seconds = 10
         Thread {
-            for (i in 1 until seconds+1) {
+            for (i in 1 until seconds + 1) {
                 binding.progress.apply {
                     post {
-                        labelText = "${seconds-i}s"
+                        labelText = "${seconds - i}s"
                         progressAnimation = ProgressViewAnimation.BOUNCE
-                        progress = 100F/seconds*(i)
+                        progress = 100F / seconds * (i)
                         // progressAnimate()
                     }
                     Thread.sleep(1000)
@@ -87,34 +86,34 @@ class GuessActivity : AppCompatActivity() {
 
 
         this.online = intent.getBooleanExtra("online", false)
-        if(!online) {
+        if (!online) {
             val localLevelFactory = LocalLevelFactory(baseContext)
             level = localLevelFactory.getLevelWithNLocalGuesses(10)
             firstGuess()
         } else {
             val onlineLevelFactory = OnlineLevelFactory()
-            onlineLevelFactory.getLevelWithNOnlineGuesses(10){
+            onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
                 level = it
                 firstGuess()
             }
         }
     }
 
-    private fun firstGuess(){
-        if(!level.isANewGuessLeft()){
+    private fun firstGuess() {
+        if (!level.isANewGuessLeft()) {
             Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
-            FancyToast.makeText(baseContext, "keine Bilder verfügbar du Klon", Toast.LENGTH_LONG).show()
+            FancyToast.makeText(baseContext, "keine Bilder verfügbar du Klon", Toast.LENGTH_LONG)
+                .show()
             finish()
             return
         }
         nextGuess()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-     private fun setUpGuessButton() {
+    private fun setUpGuessButtons() {
         binding.btnGuess.setOnClickListener { v ->
 
-            if (!guessPresent()) {
+            if (!userMadeGuess()) {
                 FancyToast.makeText(
                     this,
                     "Make a guess first",
@@ -125,28 +124,21 @@ class GuessActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if(!level.isANewGuessLeft()) {
-                showEndScreen()
-
-                return@setOnClickListener
-            }
-
-
-
             lockGuess()
-
-            true
         }
 
         binding.btnGuess2.setOnClickListener {
+
+            if (!level.isANewGuessLeft()) {
+                showEndScreen()
+                return@setOnClickListener
+            }
             binding.guessedPopup.transitionToStart()
+            binding.playerBackgroundView.visibility = VISIBLE
             nextGuess()
             resetOverlays()
-            resetMapFocus()
-            binding.btnGuess.setText(R.string.guess)
-            setupMapGuessItemListener()
-
-
+            resetMapFocusAndAnimate()
+            setMapInteractionEnabled(true)
         }
     }
 
@@ -154,82 +146,87 @@ class GuessActivity : AppCompatActivity() {
         val currentGuess = level.getCurrentGuess()
 
 
-        hideAddedPointsText()
-
-
         currentGuess.getPicture {
             binding.guessImage.setImageDrawable(
                 BitmapDrawable(it)
             )
+
         }
 
     }
 
     private fun lockGuess() {
 
-        if (!guessPresent()) throw IllegalStateException("No Guess provided!")
+        if (!userMadeGuess()) throw IllegalStateException("No Guess provided!")
 
-        disableMapGestureDetector()
+        binding.playerBackgroundView.visibility = INVISIBLE
 
         val currentGuess = level.getCurrentGuess()
         val guessLocation = guessMarker!!.point
-        level.guess(guessLocation) {
+        level.guess(guessLocation) { it ->
 
             updateUIPointsToReflectGuessResult(it)
             currentGuess.getLocation {
                 drawLinePolygonOnMap(it, guessLocation)
 
-                currentGuess.getPicture() { image ->
+                currentGuess.getPicture() { bm ->
+                    val radius = min(bm.width, bm.height) / 2F
+                    val image =
+                        Bitmap.createBitmap(bm.width, bm.height, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(image)
+                    val circlePath = Path()
+                    circlePath.addCircle(
+                        canvas.width / 2F,
+                        canvas.height / 2F,
+                        radius,
+                        Path.Direction.CW
+                    )
+                    canvas.clipPath(circlePath)
+                    canvas.drawBitmap(bm, 0F, 0F, Paint())
                     val imageDrawable = BitmapDrawable(image)
-                    imageDrawable.setTargetDensity(10)
+                    imageDrawable.setTargetDensity(30)
+
                     addIconToMapAtLocationWithDrawable(it, imageDrawable.mutate())
                 }
-
-
                 refreshMap()
+                setMapInteractionEnabled(false)
             }
+
         }
     }
 
     private fun showEndScreen() {
-        // val guessedGuesses = level.guessedGuesses
-
-// TODO       guessedGuesses.forEach {
-//
-//            addGuessMarkerTo(GeoPoint(it.guessedSpot))
-//
-//            val originalGuess = it.guess
-//
-//            guessRepository.getPictureForGuess(originalGuess) { bitmap ->
-//
-//                val image = bitmap!!.toDrawable(resources)
-//
-//                image.setTargetDensity(10)
-//                addIconToMapAtLocationWithDrawable(it.guess.geoPoint, image)
-//                drawLinePolygonOnMap(it.guessedSpot, originalGuess.geoPoint)
-//
-//            }
-//        }
-
-
-        binding.btnGuess.setText(R.string.weiter)
-
-
-        binding.guessImage.visibility = INVISIBLE
-
-        binding.btnGuess.post {
-            binding.btnGuess.setOnClickListener {
-                startActivity(Intent(this, MenuActivity::class.java))
-            }
-        }
-
-
+        startActivity(Intent(this, EndScreenActivity::class.java))
     }
 
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
+
+        binding.pointsReached.text =
+            resources.getString(
+                R.string.points_reached,
+                guessResult.getDistance(),
+                guessResult.points
+            )
+
         updateCumulativeScorePoints()
-        showAddedPointsText()
-        setAddedPointsTextFromGuessResult(guessResult)
+        showGuessResultInfoCard()
+        updateCumulativeScorePoints()
+
+        val boundingBox = BoundingBox.fromGeoPointsSafe(
+            listOf(
+                guessResult.guessedSpot as GeoPoint,
+                guessResult.actualSpot as GeoPoint
+            )
+        )
+
+        val longWidth = abs(boundingBox.lonEast - boundingBox.lonWest)
+        val latWidth = abs(boundingBox.latNorth - boundingBox.latSouth)
+        boundingBox.lonEast += longWidth * .2
+        boundingBox.lonWest -= longWidth * .2
+        boundingBox.latSouth -= latWidth * .4
+        boundingBox.latNorth += latWidth * .2
+
+        binding.guessMap.zoomToBoundingBox(boundingBox, true)
     }
 
 
@@ -237,6 +234,7 @@ class GuessActivity : AppCompatActivity() {
         val actualMarker = OverlayItem("Actual", "", location)
 
         drawable?.also { actualMarker.setMarker(it) }
+        actualMarker.markerHotspot = OverlayItem.HotspotPlace.CENTER
 
         iconOverlay.addItem(actualMarker)
     }
@@ -252,17 +250,13 @@ class GuessActivity : AppCompatActivity() {
         })
     }
 
-    private fun guessPresent() = guessMarker != null
+    private fun userMadeGuess() = guessMarker != null
 
-    private fun showAddedPointsText() {
+    private fun showGuessResultInfoCard() {
         binding.guessedPopup.transitionToEnd()
     }
 
-    private fun hideAddedPointsText() {
-        // TODO
-    }
-
-    private fun setupMapGuessItemListener() {
+    private fun enableMapPointGestureDetector() {
         binding.guessMap.overlays.add(MapEventsOverlay(object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(tappedLocation: GeoPoint): Boolean {
                 setGuessMarkerTo(tappedLocation)
@@ -305,16 +299,13 @@ class GuessActivity : AppCompatActivity() {
 
     private fun addGuessMarkerTo(newLocation: GeoPoint) {
         guessMarker = OverlayItem("The Spot!", "", newLocation)
-
-        val drawable =
-            AppCompatResources.getDrawable(applicationContext, R.drawable.location_marker_24)
-
-        guessMarker!!.setMarker(drawable)
+        guessMarker!!.markerHotspot = OverlayItem.HotspotPlace.CENTER
+        guessMarker!!.setMarker(locationMarkerDrawable())
         iconOverlay.addItem(guessMarker)
     }
 
     private fun removeOldGuessMarker() {
-        if (guessPresent()) {
+        if (userMadeGuess()) {
             iconOverlay.removeItem(guessMarker)
         }
     }
@@ -325,21 +316,43 @@ class GuessActivity : AppCompatActivity() {
             setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(true)
         }
+
         resetMapFocus()
+    }
+
+    private fun resetMapFocusAndAnimate() {
+        binding.guessMap.controller.apply {
+            animateTo(GEOPOINT_HHU, 17.0, 500L)
+        }
     }
 
     private fun resetMapFocus() {
         binding.guessMap.controller.apply {
-            setZoom(18.0)
             setCenter(GEOPOINT_HHU)
+            setZoom(19.0)
         }
     }
+
+    private fun setMapInteractionEnabled(newState: Boolean) {
+        binding.guessMap.apply {
+            isUserInteractionEnabled = newState
+        }
+    }
+
+    private fun locationMarkerDrawable(): BitmapDrawable {
+        val bm = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val c = Canvas(bm)
+        val p = Paint()
+        p.color = resources.getColor(R.color.skyBlue)
+        c.drawCircle(50F, 50F, 30F, p)
+        return BitmapDrawable(resources, bm)
+    }
+
 
     private fun resetOverlays() {
         removeAllMapIcons()
         removeGuessDistanceOverlayLine()
     }
-
 
 
     private fun removeAllMapIcons() {
@@ -352,18 +365,16 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun disableMapGestureDetector() {
+        return
         binding.guessMap.overlays.removeIf {
             it is MapEventsOverlay
         }
     }
 
     private fun updateCumulativeScorePoints() {
-        // TODO
+        binding.points.text = resources.getString(R.string.points, level.getPoints())
     }
 
-    private fun setAddedPointsTextFromGuessResult(guessResult: GuessResult) {
-        // TODO
-    }
 
     public override fun onResume() {
         super.onResume()

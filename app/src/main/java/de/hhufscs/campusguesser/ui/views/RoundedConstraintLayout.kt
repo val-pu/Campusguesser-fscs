@@ -1,4 +1,4 @@
-package de.hhufscs.campusguesser.ui
+package de.hhufscs.campusguesser.ui.views
 
 import android.content.Context
 import android.graphics.Outline
