@@ -1,11 +1,10 @@
-package de.hhufscs.campusguesser.ui
+package de.hhufscs.campusguesser.ui.game
 
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -24,6 +23,7 @@ import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
 import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
+import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
 import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
@@ -196,21 +196,17 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun showEndScreen() {
-
-
-        binding.btnGuess.post {
-            binding.btnGuess.setOnClickListener {
-                startActivity(Intent(this, MenuActivity::class.java))
-            }
-        }
-
-
+        startActivity(Intent(this, EndScreenActivity::class.java))
     }
 
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
 
         binding.pointsReached.text =
-            resources.getString(R.string.points_reached, guessResult, guessResult.points)
+            resources.getString(
+                R.string.points_reached,
+                guessResult.getDistance(),
+                guessResult.points
+            )
 
         updateCumulativeScorePoints()
         showGuessResultInfoCard()
@@ -225,8 +221,10 @@ class GuessActivity : AppCompatActivity() {
 
         val longWidth = abs(boundingBox.lonEast - boundingBox.lonWest)
         val latWidth = abs(boundingBox.latNorth - boundingBox.latSouth)
-        boundingBox.lonEast += longWidth * .1
-        boundingBox.lonWest -= longWidth * .1
+        boundingBox.lonEast += longWidth * .2
+        boundingBox.lonWest -= longWidth * .2
+        boundingBox.latSouth -= latWidth * .4
+        boundingBox.latNorth += latWidth * .2
 
         binding.guessMap.zoomToBoundingBox(boundingBox, true)
     }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/back"
     android:orientation="vertical"
-    tools:context=".ui.GuessActivity">
+    tools:context=".ui.game.GuessActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
@@ -23,7 +23,7 @@
         <com.skydoves.progressview.ProgressView
             android:id="@+id/progress"
             android:layout_width="0dp"
-            android:layout_height="20dp"
+            android:layout_height="35dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +36,6 @@
             app:progressView_labelColorInner="@color/white"
             app:progressView_labelColorOuter="@color/black"
             app:progressView_labelSize="10sp"
-
             app:progressView_labelSpace="10dp"
             app:progressView_labelText="0"
             app:progressView_labelTypeface="bold"
@@ -44,14 +43,12 @@
             app:progressView_min="0"
             app:progressView_progress="100"
             app:progressView_progressFromPrevious="true"
-            app:progressView_radius="20dp">
-
-        </com.skydoves.progressview.ProgressView>
+            app:progressView_radius="10dp"/>
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

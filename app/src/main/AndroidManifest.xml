@@ -20,8 +20,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Campusguesser"
-        tools:targetApi="31"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+        <activity
+            android:name=".ui.game.endscreen.EndScreenActivity"
+            android:exported="false" />
         <activity
             android:name=".creator.CreatorNewInstanceValidatorActivity"
             android:exported="false" />
@@ -41,17 +44,16 @@
             android:name=".creator.CreatorActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.GuessActivity"
+            android:name=".ui.game.GuessActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
-
-<!--        Pfusch von hier https://www.youtube.com/watch?v=CYRXXOM3aGI-->
+            android:screenOrientation="portrait" /> <!-- Pfusch von hier https://www.youtube.com/watch?v=CYRXXOM3aGI -->
         <provider
-            android:authorities="de.hhufscs.campusguesser.fileprovider"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="de.hhufscs.campusguesser.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
     </application>

@@ -46,5 +46,6 @@
     </string>
     <string name="weiter">Weiter</string>
     <string name="points">%d Pkt.</string>
-    <string name="points_reached">Du lagst %d Meter daneben und hast %d Punkte erreicht!</string>
+    <string name="points_reached">Du lagst %.2f Meter daneben und hast %d Punkte erreicht!</string>
+    <string name="summary_daneben">Du lagst %.2f Meter daneben!</string>
 </resources>

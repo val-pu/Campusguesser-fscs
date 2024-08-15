@@ -4,11 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
-import androidx.appcompat.content.res.AppCompatResources
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.services.factories.OverlayFactory
 import de.hhufscs.campusguesser.services.slapers.TapEventOverlay
-import de.hhufscs.campusguesser.ui.GEOPOINT_HHU
+import de.hhufscs.campusguesser.ui.game.GEOPOINT_HHU
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
