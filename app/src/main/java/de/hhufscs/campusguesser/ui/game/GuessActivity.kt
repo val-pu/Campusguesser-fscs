@@ -15,6 +15,9 @@ import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.google.gson.Gson
+import com.google.gson.TypeAdapterFactory
+import com.google.gson.typeadapters.RuntimeTypeAdapterFactory
 import com.shashank.sony.fancytoastlib.FancyToast
 import com.skydoves.progressview.ProgressViewAnimation
 import de.hhufscs.campusguesser.R
@@ -24,7 +27,6 @@ import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
 import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
-import de.hhufscs.campusguesser.ui.menu.MenuActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -130,7 +132,7 @@ class GuessActivity : AppCompatActivity() {
         binding.btnGuess2.setOnClickListener {
 
             if (!level.isANewGuessLeft()) {
-                showEndScreen()
+                showEndActivity()
                 return@setOnClickListener
             }
             binding.guessedPopup.transitionToStart()
@@ -195,8 +197,17 @@ class GuessActivity : AppCompatActivity() {
         }
     }
 
-    private fun showEndScreen() {
-        startActivity(Intent(this, EndScreenActivity::class.java))
+    private fun showEndActivity() {
+        val endIntent = Intent(this, EndScreenActivity::class.java)
+
+
+        endIntent.putExtra(
+            "result",
+            GsonFactory.gsonForProperUseWithIGeoPoint()
+                .toJson(level.getLevelResult())
+        )
+
+        startActivity(endIntent)
     }
 
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
