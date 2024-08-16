@@ -1,5 +1,6 @@
 package de.hhufscs.campusguesser.core
 
+import de.hhufscs.campusguesser.ui.game.endscreen.LevelResultDTO
 import org.osmdroid.api.IGeoPoint
 
 interface ILevel {
@@ -11,4 +12,5 @@ interface ILevel {
     fun isANewGuessLeft() : Boolean
     fun guess(guess: IGeoPoint, onCalculated: (GuessResult) -> Unit)
     fun getPoints(): Int
+    fun getLevelResult(): LevelResultDTO
 }

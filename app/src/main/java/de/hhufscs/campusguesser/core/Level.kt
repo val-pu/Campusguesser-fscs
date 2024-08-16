@@ -17,6 +17,7 @@
 
 package de.hhufscs.campusguesser.core
 
+import de.hhufscs.campusguesser.ui.game.endscreen.LevelResultDTO
 import org.osmdroid.api.IGeoPoint
 import java.util.LinkedList
 import java.util.Stack
@@ -27,20 +28,31 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Level(private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, guessesList: List<IGuess>) : ILevel{
-    companion object{
+class Level(
+    private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>,
+    guessesList: List<IGuess>
+) : ILevel {
+    companion object {
         // calculate the result based on the euclidean distance
-        fun standardResultComputer(pointA: IGeoPoint, pointB: IGeoPoint) : Int {
-            val distance: Double = sqrt((pointA.latitude - pointB.latitude).pow(2) + (pointA.longitude - pointB.longitude).pow(2))
+        fun standardResultComputer(pointA: IGeoPoint, pointB: IGeoPoint): Int {
+            val distance: Double = sqrt(
+                (pointA.latitude - pointB.latitude).pow(2) + (pointA.longitude - pointB.longitude).pow(
+                    2
+                )
+            )
             val points: Int = (100 / (1 + distance * 2300)).toInt()
             return points
         }
 
         // calculate the result based on the great circle distance
-        fun greatCircleResultComputer(pointA: IGeoPoint, pointB: IGeoPoint) : Int {
+        fun greatCircleResultComputer(pointA: IGeoPoint, pointB: IGeoPoint): Int {
             val earthRadius: Int = 6371000
             val distance: Double = 2 * earthRadius * asin(
-                sqrt((1 - cos(abs(pointA.latitude - pointB.latitude)) + cos(pointA.latitude) * cos(pointB.latitude) * (1 - cos(abs(pointA.longitude - pointB.longitude)))) / 2)
+                sqrt(
+                    (1 - cos(abs(pointA.latitude - pointB.latitude)) + cos(pointA.latitude) * cos(
+                        pointB.latitude
+                    ) * (1 - cos(abs(pointA.longitude - pointB.longitude)))) / 2
+                )
             )
             val points: Int = (100 / (1 + distance * 2300)).toInt()
             return points
@@ -71,7 +83,7 @@ class Level(private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, g
      * stack of spots to guess. The guess result contains the actual spot, the guessed spot and the points
      * given in this order.
      */
-    override fun guess(guessedSpot: IGeoPoint, onCalculated: (GuessResult) -> Unit){
+    override fun guess(guessedSpot: IGeoPoint, onCalculated: (GuessResult) -> Unit) {
         getCurrentGuess().getLocation {
             val points: Int = resultComputer.apply(guessedSpot, it)
             this.points += points
@@ -85,4 +97,7 @@ class Level(private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, g
     override fun getPoints(): Int {
         return points
     }
+
+    override fun getLevelResult(): LevelResultDTO = LevelResultDTO(guessedList)
+
 }
