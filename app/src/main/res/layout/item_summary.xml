@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="10dp"
-    android:layout_marginVertical="5dp"
+    android:layout_marginTop="5dp"
     android:background="@color/back"
     android:elevation="2dp">
 
@@ -19,6 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView5"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginHorizontal="2dp"
         app:progressView_animation="bounce"
         app:progressView_autoAnimate="true"
         app:progressView_colorBackground="@color/white"
@@ -32,8 +32,9 @@
         app:progressView_max="100"
         app:progressView_min="0"
         app:progressView_progress="10"
+        app:progressView_highlighting="true"
         app:progressView_progressFromPrevious="true"
-        app:progressView_radius="10dp" />
+        app:progressView_radius="5dp" />
 
     <ImageView
         android:id="@+id/imageView5"

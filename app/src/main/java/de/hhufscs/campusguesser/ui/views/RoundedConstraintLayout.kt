@@ -18,7 +18,7 @@ class RoundedConstraintLayout(context: Context, attrs: AttributeSet?) :
             val top = 0;
             val right = view.width
             val bottom = view.height
-            val cornerRadiusDP = 8f
+            val cornerRadiusDP = 10.5F
             val cornerRadius = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 cornerRadiusDP,

@@ -32,17 +32,17 @@
     <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
         android:id="@+id/roundedConstraintLayout"
         android:layout_width="match_parent"
-        android:layout_gravity="center"
+        android:elevation="3dp"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="#FFC107">
+        android:layout_gravity="center"
+        android:background="@drawable/overlay_card"
+        android:layout_margin="10dp">
 
         <TextView
             android:id="@+id/textView7"
-            android:padding="5dp"
             android:layout_width="wrap_content"
-            android:textColor="@color/white"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="Erreichte Punktzahl"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,7 +50,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/back_secondary"
+            android:background="@color/back"
             android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,10 +58,10 @@
             app:layout_constraintTop_toBottomOf="@+id/textView7">
 
             <TextView
-                android:id="@+id/textView8"
+                android:id="@+id/end_score"
                 android:layout_width="wrap_content"
-                android:fontFamily="@font/quicksand_bold"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_bold"
                 android:text="9999/10000"
                 android:textColor="@color/white"
                 android:textSize="25sp"
@@ -72,30 +72,40 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 
-    <TextView
-        android:id="@+id/textView2"
+    <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        android:padding="10dp"
-        android:fontFamily="@font/quicksand_semibold"
-        android:text="Summary:" />
-
-    <View
-        android:id="@+id/divider3"
-        android:layout_marginHorizontal="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/back_secondary" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:id="@+id/summary_recycler"
         android:layout_height="0dp"
-        android:layout_weight="3"
-        app:layout_constraintBottom_toTopOf="@+id/btn_guess2"
-        tools:listitem="@layout/item_summary" />
+        android:background="@drawable/overlay_card"
+        android:layout_marginHorizontal="10dp"
+        android:elevation="2dp"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="3">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/summary_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            tools:listitem="@layout/item_summary" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_semibold"
+            android:paddingHorizontal="10dp"
+            android:padding="5dp"
+            android:text="Summary"
+            android:textColor="@color/back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 
 
     <TextView
@@ -103,8 +113,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="10dp"
         android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/btn_back"
         android:backgroundTint="@color/skyBlue"
         android:fontFamily="@font/quicksand_bold"
