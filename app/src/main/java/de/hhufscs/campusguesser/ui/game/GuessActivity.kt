@@ -45,6 +45,7 @@ val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
 
 class GuessActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
+    private val PROGESS_TIME = 10_000L
 
     private lateinit var binding: ActivityGuessBinding
     private lateinit var level: Level
@@ -73,6 +74,7 @@ class GuessActivity : AppCompatActivity() {
         setupIconOverlay()
         enableMapPointGestureDetector()
         setUpGuessButtons()
+        initProgressBar()
 
         this.online = intent.getBooleanExtra("online", false)
         if (!online) {
@@ -84,6 +86,22 @@ class GuessActivity : AppCompatActivity() {
             onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
                 level = it
                 nextGuess()
+            }
+        }
+    }
+
+    private fun initProgressBar() {
+
+        binding.progress.max = PROGESS_TIME.toFloat()
+
+        progressBarTask = object : PausableTimedTask(1000,  PROGESS_TIME) {
+            override fun onFinish() { }
+
+            override fun onTick(timePassedInMs: Long) {
+                runOnUiThread {
+                    binding.progress.progress = timePassedInMs.toFloat()
+                    binding.progress.labelText = timePassedInMs.toString()
+                }
             }
         }
     }
@@ -100,6 +118,7 @@ class GuessActivity : AppCompatActivity() {
         }
         binding.guessedPopup.transitionToStart()
         binding.playerBackgroundView.visibility = VISIBLE
+        progressBarTask.start()
         loadNextGuessPicture()
         resetOverlays()
         resetMapFocusAndAnimate()
@@ -164,6 +183,7 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun transitionToEndActivity() {
+
         val endIntent = Intent(this, EndScreenActivity::class.java)
 
         endIntent.putExtra(
