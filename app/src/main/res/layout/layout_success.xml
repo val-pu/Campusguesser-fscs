@@ -26,7 +26,7 @@
 
     <TextView
         android:layout_marginTop="10dp"
-        android:id="@+id/btn_guess2"
+        android:id="@+id/btn_next_guess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_back"

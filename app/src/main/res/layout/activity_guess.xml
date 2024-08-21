@@ -97,7 +97,7 @@
         android:background="#000077B6"
         android:padding="6dp"
         app:layoutDescription="@xml/guess_picture_motion_scene"
-        app:layout_constraintBottom_toTopOf="@+id/btn_guess"
+        app:layout_constraintBottom_toTopOf="@+id/btn_lock_guess"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -150,7 +150,7 @@
     </de.hhufscs.campusguesser.ui.views.PlayerScreenMotionLayout>
 
     <TextView
-        android:id="@+id/btn_guess"
+        android:id="@+id/btn_lock_guess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
@@ -240,7 +240,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/btn_guess2"
+                    android:id="@+id/btn_next_guess"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"

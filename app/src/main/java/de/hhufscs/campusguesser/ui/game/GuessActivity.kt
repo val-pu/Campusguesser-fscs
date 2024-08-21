@@ -15,11 +15,8 @@ import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.google.gson.Gson
-import com.google.gson.TypeAdapterFactory
-import com.google.gson.typeadapters.RuntimeTypeAdapterFactory
+import androidx.core.graphics.drawable.toDrawable
 import com.shashank.sony.fancytoastlib.FancyToast
-import com.skydoves.progressview.ProgressViewAnimation
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
@@ -27,6 +24,7 @@ import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
 import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
+import de.hhufscs.campusguesser.ui.game.endscreen.GsonFactory
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -39,6 +37,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.Polygon
 import java.util.LinkedList
+import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -71,21 +70,6 @@ class GuessActivity : AppCompatActivity() {
         setupIconOverlay()
         enableMapPointGestureDetector()
         setUpGuessButtons()
-        val seconds = 10
-        Thread {
-            for (i in 1 until seconds + 1) {
-                binding.progress.apply {
-                    post {
-                        labelText = "${seconds - i}s"
-                        progressAnimation = ProgressViewAnimation.BOUNCE
-                        progress = 100F / seconds * (i)
-                        // progressAnimate()
-                    }
-                    Thread.sleep(1000)
-                }
-            }
-        }.start()
-
 
         this.online = intent.getBooleanExtra("online", false)
         if (!online) {
@@ -109,57 +93,47 @@ class GuessActivity : AppCompatActivity() {
             finish()
             return
         }
-        nextGuess()
+        loadNextGuessPicture()
     }
 
     private fun setUpGuessButtons() {
-        binding.btnGuess.setOnClickListener { v ->
-
-            if (!userMadeGuess()) {
-                FancyToast.makeText(
-                    this,
-                    "Make a guess first",
-                    FancyToast.LENGTH_SHORT,
-                    FancyToast.ERROR,
-                    false
-                ).show()
-                return@setOnClickListener
-            }
-
-            lockGuess()
-        }
-
-        binding.btnGuess2.setOnClickListener {
-
-            if (!level.isANewGuessLeft()) {
-                showEndActivity()
-                return@setOnClickListener
-            }
-            binding.guessedPopup.transitionToStart()
-            binding.playerBackgroundView.visibility = VISIBLE
-            nextGuess()
-            resetOverlays()
-            resetMapFocusAndAnimate()
-            setMapInteractionEnabled(true)
-        }
+        binding.btnLockGuess.setOnClickListener { lockGuess() }
+        binding.btnNextGuess.setOnClickListener { nextGuess() }
     }
 
     private fun nextGuess() {
-        val currentGuess = level.getCurrentGuess()
-
-
-        currentGuess.getPicture {
-            binding.guessImage.setImageDrawable(
-                BitmapDrawable(it)
-            )
-
+        if (!level.isANewGuessLeft()) {
+            transitionToEndActivity()
+            return
         }
+        binding.guessedPopup.transitionToStart()
+        binding.playerBackgroundView.visibility = VISIBLE
+        loadNextGuessPicture()
+        resetOverlays()
+        resetMapFocusAndAnimate()
+        setMapInteractionEnabled(true)
+    }
 
+    private fun loadNextGuessPicture() {
+        level.getCurrentGuess()
+            .getPicture {
+                binding.guessImage
+                    .setImageDrawable(it.toDrawable(resources))
+            }
     }
 
     private fun lockGuess() {
 
-        if (!userMadeGuess()) throw IllegalStateException("No Guess provided!")
+        if (!userMadeGuess()) {
+            FancyToast.makeText(
+                this,
+                "Make a guess first",
+                FancyToast.LENGTH_SHORT,
+                FancyToast.ERROR,
+                false
+            ).show()
+            return
+        }
 
         binding.playerBackgroundView.visibility = INVISIBLE
 
@@ -197,7 +171,7 @@ class GuessActivity : AppCompatActivity() {
         }
     }
 
-    private fun showEndActivity() {
+    private fun transitionToEndActivity() {
         val endIntent = Intent(this, EndScreenActivity::class.java)
 
 
@@ -221,7 +195,6 @@ class GuessActivity : AppCompatActivity() {
 
         updateCumulativeScorePoints()
         showGuessResultInfoCard()
-        updateCumulativeScorePoints()
 
         val boundingBox = BoundingBox.fromGeoPointsSafe(
             listOf(

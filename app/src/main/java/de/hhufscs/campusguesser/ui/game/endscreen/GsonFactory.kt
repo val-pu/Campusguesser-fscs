@@ -1,4 +1,4 @@
-package de.hhufscs.campusguesser.ui.game
+package de.hhufscs.campusguesser.ui.game.endscreen
 
 import com.google.gson.Gson
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory
