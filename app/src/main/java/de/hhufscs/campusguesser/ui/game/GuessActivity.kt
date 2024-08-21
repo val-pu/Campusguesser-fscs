@@ -12,7 +12,6 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -25,6 +24,7 @@ import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
 import de.hhufscs.campusguesser.ui.game.endscreen.GsonFactory
+import de.hhufscs.campusguesser.ui.game.util.PausableTimedTask
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -37,7 +37,6 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.Polygon
 import java.util.LinkedList
-import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -48,9 +47,13 @@ class GuessActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
 
     private lateinit var binding: ActivityGuessBinding
-    private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private lateinit var level: Level
+
+    private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private var guessMarker: OverlayItem? = null
+
+    private lateinit var progressBarTask: PausableTimedTask
+
     private var online = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,25 +78,14 @@ class GuessActivity : AppCompatActivity() {
         if (!online) {
             val localLevelFactory = LocalLevelFactory(baseContext)
             level = localLevelFactory.getLevelWithNLocalGuesses(10)
-            firstGuess()
+            nextGuess()
         } else {
             val onlineLevelFactory = OnlineLevelFactory()
             onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
                 level = it
-                firstGuess()
+                nextGuess()
             }
         }
-    }
-
-    private fun firstGuess() {
-        if (!level.isANewGuessLeft()) {
-            Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
-            FancyToast.makeText(baseContext, "keine Bilder verfügbar du Klon", Toast.LENGTH_LONG)
-                .show()
-            finish()
-            return
-        }
-        loadNextGuessPicture()
     }
 
     private fun setUpGuessButtons() {
@@ -173,7 +165,6 @@ class GuessActivity : AppCompatActivity() {
 
     private fun transitionToEndActivity() {
         val endIntent = Intent(this, EndScreenActivity::class.java)
-
 
         endIntent.putExtra(
             "result",
@@ -346,13 +337,6 @@ class GuessActivity : AppCompatActivity() {
 
     private fun removeGuessDistanceOverlayLine() {
         binding.guessMap.overlays.removeIf { it is Polygon }
-    }
-
-    private fun disableMapGestureDetector() {
-        return
-        binding.guessMap.overlays.removeIf {
-            it is MapEventsOverlay
-        }
     }
 
     private fun updateCumulativeScorePoints() {
