@@ -15,13 +15,14 @@ abstract class PausableTimedTask(val intervalMillis: Long, val durationMillis: L
         countDownTimer = object : CountDownTimer(timeLeft, intervalMillis) {
             override fun onTick(millisUntilFinished: Long) {
                 timeLeft = millisUntilFinished
-                onTick(durationMillis - timeLeft)
+                this@PausableTimedTask.onTick(durationMillis - timeLeft)
             }
 
             override fun onFinish() {
-                onFinish()
+                stopped = true
+                this@PausableTimedTask.onFinish()
             }
-        }
+        }.start()
 
         stopped = false
     }
@@ -38,6 +39,6 @@ abstract class PausableTimedTask(val intervalMillis: Long, val durationMillis: L
     }
 
     abstract fun onFinish()
-    abstract fun onTick(timePassedInMs: Int)
+    abstract fun onTick(timePassedInMs: Long)
 
 }
