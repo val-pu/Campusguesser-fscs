@@ -28,6 +28,7 @@ abstract class PausableTimedTask(val intervalMillis: Long, val durationMillis: L
     }
 
     fun pause() {
+        if (stopped) return
         countDownTimer.cancel()
         stopped = true
     }
