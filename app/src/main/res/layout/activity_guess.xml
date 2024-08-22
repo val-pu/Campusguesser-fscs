@@ -80,7 +80,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/playerScreenMotionLayout"
         app:layout_constraintTop_toBottomOf="@id/constraintLayout3">
 
-        <de.hhufscs.campusguesser.ui.views.DisabledMapView
+        <de.hhufscs.campusguesser.ui.views.MapViewWithDisablebleUserInteraction
             android:id="@+id/guess_map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
