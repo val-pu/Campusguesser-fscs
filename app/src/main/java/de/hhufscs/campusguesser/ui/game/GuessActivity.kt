@@ -1,5 +1,6 @@
 package de.hhufscs.campusguesser.ui.game
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -15,7 +16,6 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toDrawable
-import com.shashank.sony.fancytoastlib.FancyToast
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
@@ -39,19 +39,33 @@ import org.osmdroid.views.overlay.Polygon
 import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 
 val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
 
 class GuessActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-    private val PROGESS_TIME = 10_000L
+    private val PROGESS_TIME_MILLIS = 10_000L
 
     private lateinit var binding: ActivityGuessBinding
     private lateinit var level: Level
 
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private var guessMarker: OverlayItem? = null
+        set(value) {
+            field = value
+            binding.btnLockGuess.background.setTint(
+                getColor(
+                    if (value == null) R.color.back_secondary
+                    else R.color.skyBlue
+                )
+            )
+            binding.btnLockGuess.setText(
+                if (value == null) R.string.make_a_guess
+                else R.string.lock_guess
+            )
+        }
 
     private lateinit var progressBarTask: PausableTimedTask
 
@@ -92,15 +106,21 @@ class GuessActivity : AppCompatActivity() {
 
     private fun initProgressBar() {
 
-        binding.progress.max = PROGESS_TIME.toFloat()
+        binding.progress.max = PROGESS_TIME_MILLIS.toFloat()
 
-        progressBarTask = object : PausableTimedTask(1000,  PROGESS_TIME) {
-            override fun onFinish() { }
+        progressBarTask = object : PausableTimedTask(1000, PROGESS_TIME_MILLIS) {
+            override fun onFinish() {
+                runOnUiThread {
+                    binding.progress.progress = PROGESS_TIME_MILLIS.toFloat()
+                    binding.progress.labelText = "0s"
+                    lockGuess()
+                }
+            }
 
             override fun onTick(timePassedInMs: Long) {
                 runOnUiThread {
                     binding.progress.progress = timePassedInMs.toFloat()
-                    binding.progress.labelText = timePassedInMs.toString()
+                    binding.progress.labelText = "${(PROGESS_TIME_MILLIS/1000.0 - timePassedInMs/1000.0).roundToInt()}s"
                 }
             }
         }
@@ -118,7 +138,7 @@ class GuessActivity : AppCompatActivity() {
         }
         binding.guessedPopup.transitionToStart()
         binding.playerBackgroundView.visibility = VISIBLE
-        progressBarTask.start()
+        progressBarTask.restart()
         loadNextGuessPicture()
         resetOverlays()
         resetMapFocusAndAnimate()
@@ -134,17 +154,10 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun lockGuess() {
-
-        if (!userMadeGuess()) {
-            FancyToast.makeText(
-                this,
-                "Make a guess first",
-                FancyToast.LENGTH_SHORT,
-                FancyToast.ERROR,
-                false
-            ).show()
+        if (!userMadeGuess())
             return
-        }
+
+        progressBarTask.pause()
 
         binding.playerBackgroundView.visibility = INVISIBLE
 
@@ -195,6 +208,7 @@ class GuessActivity : AppCompatActivity() {
         startActivity(endIntent)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
 
         binding.pointsReached.text =
@@ -203,6 +217,8 @@ class GuessActivity : AppCompatActivity() {
                 guessResult.getDistance(),
                 guessResult.points
             )
+        binding.levelProgress.text =
+            "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
 
         updateCumulativeScorePoints()
         showGuessResultInfoCard()
