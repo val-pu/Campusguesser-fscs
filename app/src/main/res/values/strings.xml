@@ -48,4 +48,6 @@
     <string name="points">%d Pkt.</string>
     <string name="points_reached">Du lagst %.2f Meter daneben und hast %d Punkte erreicht!</string>
     <string name="summary_daneben">Du lagst %.2f Meter daneben!</string>
+    <string name="make_a_guess">Make A Guess first!</string>
+    <string name="lock_guess">LOCK GUESS!</string>
 </resources>

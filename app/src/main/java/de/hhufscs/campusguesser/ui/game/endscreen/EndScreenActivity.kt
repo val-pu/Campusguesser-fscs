@@ -3,9 +3,7 @@ package de.hhufscs.campusguesser.ui.game.endscreen
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
 import de.hhufscs.campusguesser.databinding.ActivityEndScreenBinding
-import de.hhufscs.campusguesser.ui.game.GsonFactory
 
 class EndScreenActivity : AppCompatActivity() {
 

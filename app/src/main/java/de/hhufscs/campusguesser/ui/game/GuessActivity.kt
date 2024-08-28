@@ -1,5 +1,6 @@
 package de.hhufscs.campusguesser.ui.game
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -12,14 +13,9 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.google.gson.Gson
-import com.google.gson.TypeAdapterFactory
-import com.google.gson.typeadapters.RuntimeTypeAdapterFactory
-import com.shashank.sony.fancytoastlib.FancyToast
-import com.skydoves.progressview.ProgressViewAnimation
+import androidx.core.graphics.drawable.toDrawable
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
@@ -27,6 +23,8 @@ import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
 import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
+import de.hhufscs.campusguesser.ui.game.endscreen.GsonFactory
+import de.hhufscs.campusguesser.ui.game.util.PausableTimedTask
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -41,17 +39,36 @@ import org.osmdroid.views.overlay.Polygon
 import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 
 val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
 
 class GuessActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
+    private val PROGESS_TIME_MILLIS = 10_000L
 
     private lateinit var binding: ActivityGuessBinding
-    private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private lateinit var level: Level
+
+    private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private var guessMarker: OverlayItem? = null
+        set(value) {
+            field = value
+            binding.btnLockGuess.background.setTint(
+                getColor(
+                    if (value == null) R.color.back_secondary
+                    else R.color.skyBlue
+                )
+            )
+            binding.btnLockGuess.setText(
+                if (value == null) R.string.make_a_guess
+                else R.string.lock_guess
+            )
+        }
+
+    private lateinit var progressBarTask: PausableTimedTask
+
     private var online = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,95 +88,76 @@ class GuessActivity : AppCompatActivity() {
         setupIconOverlay()
         enableMapPointGestureDetector()
         setUpGuessButtons()
-        val seconds = 10
-        Thread {
-            for (i in 1 until seconds + 1) {
-                binding.progress.apply {
-                    post {
-                        labelText = "${seconds - i}s"
-                        progressAnimation = ProgressViewAnimation.BOUNCE
-                        progress = 100F / seconds * (i)
-                        // progressAnimate()
-                    }
-                    Thread.sleep(1000)
-                }
-            }
-        }.start()
-
+        initProgressBar()
 
         this.online = intent.getBooleanExtra("online", false)
         if (!online) {
             val localLevelFactory = LocalLevelFactory(baseContext)
             level = localLevelFactory.getLevelWithNLocalGuesses(10)
-            firstGuess()
+            nextGuess()
         } else {
             val onlineLevelFactory = OnlineLevelFactory()
             onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
                 level = it
-                firstGuess()
+                nextGuess()
             }
         }
     }
 
-    private fun firstGuess() {
-        if (!level.isANewGuessLeft()) {
-            Log.d("Campusguesser", "leider keine Daten vorhanden du Opfer")
-            FancyToast.makeText(baseContext, "keine Bilder verfügbar du Klon", Toast.LENGTH_LONG)
-                .show()
-            finish()
-            return
+    private fun initProgressBar() {
+
+        binding.progress.max = PROGESS_TIME_MILLIS.toFloat()
+
+        progressBarTask = object : PausableTimedTask(1000, PROGESS_TIME_MILLIS) {
+            override fun onFinish() {
+                runOnUiThread {
+                    binding.progress.progress = PROGESS_TIME_MILLIS.toFloat()
+                    binding.progress.labelText = "0s"
+                    lockGuess()
+                }
+            }
+
+            override fun onTick(timePassedInMs: Long) {
+                runOnUiThread {
+                    binding.progress.progress = timePassedInMs.toFloat()
+                    binding.progress.labelText = "${(PROGESS_TIME_MILLIS/1000.0 - timePassedInMs/1000.0).roundToInt()}s"
+                }
+            }
         }
-        nextGuess()
     }
 
     private fun setUpGuessButtons() {
-        binding.btnGuess.setOnClickListener { v ->
-
-            if (!userMadeGuess()) {
-                FancyToast.makeText(
-                    this,
-                    "Make a guess first",
-                    FancyToast.LENGTH_SHORT,
-                    FancyToast.ERROR,
-                    false
-                ).show()
-                return@setOnClickListener
-            }
-
-            lockGuess()
-        }
-
-        binding.btnGuess2.setOnClickListener {
-
-            if (!level.isANewGuessLeft()) {
-                showEndActivity()
-                return@setOnClickListener
-            }
-            binding.guessedPopup.transitionToStart()
-            binding.playerBackgroundView.visibility = VISIBLE
-            nextGuess()
-            resetOverlays()
-            resetMapFocusAndAnimate()
-            setMapInteractionEnabled(true)
-        }
+        binding.btnLockGuess.setOnClickListener { lockGuess() }
+        binding.btnNextGuess.setOnClickListener { nextGuess() }
     }
 
     private fun nextGuess() {
-        val currentGuess = level.getCurrentGuess()
-
-
-        currentGuess.getPicture {
-            binding.guessImage.setImageDrawable(
-                BitmapDrawable(it)
-            )
-
+        if (!level.isANewGuessLeft()) {
+            transitionToEndActivity()
+            return
         }
+        binding.guessedPopup.transitionToStart()
+        binding.playerBackgroundView.visibility = VISIBLE
+        progressBarTask.restart()
+        loadNextGuessPicture()
+        resetOverlays()
+        resetMapFocusAndAnimate()
+        setMapInteractionEnabled(true)
+    }
 
+    private fun loadNextGuessPicture() {
+        level.getCurrentGuess()
+            .getPicture {
+                binding.guessImage
+                    .setImageDrawable(it.toDrawable(resources))
+            }
     }
 
     private fun lockGuess() {
+        if (!userMadeGuess())
+            return
 
-        if (!userMadeGuess()) throw IllegalStateException("No Guess provided!")
+        progressBarTask.pause()
 
         binding.playerBackgroundView.visibility = INVISIBLE
 
@@ -197,9 +195,9 @@ class GuessActivity : AppCompatActivity() {
         }
     }
 
-    private fun showEndActivity() {
-        val endIntent = Intent(this, EndScreenActivity::class.java)
+    private fun transitionToEndActivity() {
 
+        val endIntent = Intent(this, EndScreenActivity::class.java)
 
         endIntent.putExtra(
             "result",
@@ -210,6 +208,7 @@ class GuessActivity : AppCompatActivity() {
         startActivity(endIntent)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
 
         binding.pointsReached.text =
@@ -218,10 +217,11 @@ class GuessActivity : AppCompatActivity() {
                 guessResult.getDistance(),
                 guessResult.points
             )
+        binding.levelProgress.text =
+            "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
 
         updateCumulativeScorePoints()
         showGuessResultInfoCard()
-        updateCumulativeScorePoints()
 
         val boundingBox = BoundingBox.fromGeoPointsSafe(
             listOf(
@@ -373,13 +373,6 @@ class GuessActivity : AppCompatActivity() {
 
     private fun removeGuessDistanceOverlayLine() {
         binding.guessMap.overlays.removeIf { it is Polygon }
-    }
-
-    private fun disableMapGestureDetector() {
-        return
-        binding.guessMap.overlays.removeIf {
-            it is MapEventsOverlay
-        }
     }
 
     private fun updateCumulativeScorePoints() {

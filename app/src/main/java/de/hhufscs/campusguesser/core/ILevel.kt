@@ -7,7 +7,8 @@ interface ILevel {
     companion object{
         val MAX_POINTS_PER_GUESS: Int = 100
     }
-
+    fun getGuessCount(): Int
+    fun getGuessesMadeCount(): Int
     fun getCurrentGuess() : IGuess
     fun isANewGuessLeft() : Boolean
     fun guess(guess: IGeoPoint, onCalculated: (GuessResult) -> Unit)
