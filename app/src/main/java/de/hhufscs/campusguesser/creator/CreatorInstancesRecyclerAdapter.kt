@@ -18,7 +18,7 @@ class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.creator_guess_instance_item, parent, false)
+                .inflate(R.layout.recycler_item_creatog_guess, parent, false)
         )
     }
 

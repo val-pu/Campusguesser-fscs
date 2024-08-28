@@ -35,7 +35,6 @@ class OnlineGuessRepository {
     }
 
     fun getAllOnlineGuessIdentifiers(n: Int, onLoaded: (List<String>) -> Unit){
-        var result: List<String>? = null
         fun getIdentifiersTaskN(): List<String> {return getIdentifiersTask(n)}
         var thread: NetworkFileThread<List<String>> = NetworkFileThread(::getIdentifiersTaskN){
             onLoaded(it)

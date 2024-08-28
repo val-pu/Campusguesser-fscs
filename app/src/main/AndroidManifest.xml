@@ -44,6 +44,9 @@
             android:name=".creator.CreatorActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.menu.ChooseLevelActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.game.GuessActivity"
             android:exported="false"
             android:screenOrientation="portrait" /> <!-- Pfusch von hier https://www.youtube.com/watch?v=CYRXXOM3aGI -->
