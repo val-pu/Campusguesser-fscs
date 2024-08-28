@@ -8,7 +8,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/points_reached" />
+            android:id="@+id/popup_description" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -19,7 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
-            android:id="@+id/points_reached" />
+            android:id="@+id/popup_description" />
     </ConstraintSet>
 
     <Transition
@@ -28,15 +28,15 @@
         app:autoTransition="jumpToStart" >
         <KeyFrameSet >
             <KeyAttribute
-                app:motionTarget="@+id/points_reached"
+                app:motionTarget="@+id/popup_description"
                 app:framePosition="0"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/points_reached"
+                app:motionTarget="@+id/popup_description"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyPosition
-                app:motionTarget="@+id/points_reached"
+                app:motionTarget="@+id/popup_description"
                 app:framePosition="41"
                 app:keyPositionType="deltaRelative" />
         </KeyFrameSet>
