@@ -162,11 +162,5 @@
 
     </LinearLayout>
 
-    <de.hhufscs.campusguesser.ui.views.RoundedImageView
-        android:layout_width="209dp"
-        android:layout_height="163dp"
-        app:imageSrc="@raw/hole"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

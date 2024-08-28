@@ -36,10 +36,10 @@ class ElevatedButton(context: Context?, attrs: AttributeSet?) :
             }
         }
     init {
-        val attributes = context!!.obtainStyledAttributes(attrs, R.styleable.ElevatedView, 0, 0)
+        val attributes = context!!.obtainStyledAttributes(attrs, R.styleable.ElevatedButton, 0, 0)
 
-        backPaint.color = attributes.getColor(R.styleable.ElevatedView_buttonColor, resources.getColor(R.color.button_accent))
-        backPaintSecondary.color = attributes.getColor(R.styleable.ElevatedView_buttonColorAccent, resources.getColor(R.color.secondary_btn))
+        backPaint.color = attributes.getColor(R.styleable.ElevatedButton_buttonColor, resources.getColor(R.color.button_accent))
+        backPaintSecondary.color = attributes.getColor(R.styleable.ElevatedButton_buttonColorAccent, resources.getColor(R.color.secondary_btn))
         setTextColor(WHITE)
         setOnTouchListener(this)
         attributes.recycle()

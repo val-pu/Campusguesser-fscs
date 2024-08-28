@@ -71,15 +71,14 @@
                     tools:text="1/10" />
             </LinearLayout>
 
-            <TextView
+            <de.hhufscs.campusguesser.ui.views.ElevatedButton
                 android:id="@+id/btn_do_sth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/btn_back"
-                android:backgroundTint="@color/skyBlue"
                 android:fontFamily="@font/quicksand_bold"
                 android:padding="10dp"
+                app:buttonColor="@color/very_successful_green"
                 android:text="WEITER"
                 android:textAlignment="center"
                 android:textColor="@color/white" />

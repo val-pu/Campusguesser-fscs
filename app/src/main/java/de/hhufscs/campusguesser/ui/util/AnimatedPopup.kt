@@ -7,18 +7,18 @@ import androidx.annotation.ColorRes
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionLayout.TransitionListener
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.databinding.LayoutPopupBinding
+import de.hhufscs.campusguesser.databinding.LayoutSuccessBinding
 
 class AnimatedPopup(val rootView: ViewGroup, val builder: Builder.() -> (Unit)) {
 
     val rootMotionLayout: MotionLayout
-    val binding: LayoutPopupBinding
+    val binding: LayoutSuccessBinding
 
     init {
         val layoutInflater = LayoutInflater.from(rootView.context)
-        rootMotionLayout = layoutInflater.inflate(R.layout.layout_popup, rootView)
+        rootMotionLayout = layoutInflater.inflate(R.layout.layout_success, rootView)
             .findViewById(R.id.popup)!!
-        binding = LayoutPopupBinding.bind(rootMotionLayout)
+        binding = LayoutSuccessBinding.bind(rootMotionLayout)
 
         val popupBuilder = Builder()
         builder(popupBuilder)
@@ -28,8 +28,8 @@ class AnimatedPopup(val rootView: ViewGroup, val builder: Builder.() -> (Unit)) 
                 popupBuilder.onClickListener?.onClick(it)
                 hideAndRemove {  }
             }
-// TODO:            popupCard.background.setTint(rootMotionLayout.resources.getColor(popupBuilder.mainColor))
-            btnDoSth.setPrimaryColor(popupBuilder.buttonColor)
+            popupCard.background.setTint(rootMotionLayout.resources.getColor(popupBuilder.mainColor))
+            btnDoSth.background.setTint(rootMotionLayout.resources.getColor(popupBuilder.buttonColor))
             btnDoSth.text = popupBuilder.buttonText
             popupTitle.text = popupBuilder.title
             popupDescription.text = popupBuilder.description

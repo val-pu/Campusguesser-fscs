@@ -30,7 +30,6 @@ class MenuActivity : AppCompatActivity() {
                 startActivity(localIntent)
             }
         }
-
     }
 
 }
