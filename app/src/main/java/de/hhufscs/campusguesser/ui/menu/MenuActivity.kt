@@ -12,12 +12,12 @@ import de.hhufscs.campusguesser.ui.util.AnimatedPopup
 class MenuActivity : AppCompatActivity() {
 
 
-    lateinit var binding: ActivityMenuNewBinding
+    lateinit var binding: ActivityMenuBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMenuNewBinding.inflate(layoutInflater)
+        binding = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apply {
             btnPlayLocal.setOnClickListener {
