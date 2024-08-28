@@ -1,4 +1,6 @@
 <resources>
       <dimen name="fab_margin">16dp</dimen>
     <dimen name="default_radius">10dp</dimen>
+    <dimen name="outer_padding">10dp</dimen>
+    <dimen name="outer_margin">10dp</dimen>
 </resources>

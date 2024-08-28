@@ -70,6 +70,10 @@ class Level(
         this.points = 0
     }
 
+    override fun getGuessCount(): Int = guessedList.size + guessStack.size
+
+    override fun getGuessesMadeCount(): Int = guessedList.size
+
     override fun getCurrentGuess(): IGuess {
         return guessStack.peek()
     }

@@ -3,9 +3,9 @@ package de.hhufscs.campusguesser.ui.menu
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import de.hhufscs.campusguesser.creator.CreatorActivity
 import de.hhufscs.campusguesser.databinding.ActivityMenuNewBinding
 import de.hhufscs.campusguesser.ui.game.GuessActivity
+import de.hhufscs.campusguesser.ui.util.AnimatedPopup
 
 class MenuActivity : AppCompatActivity() {
 
@@ -23,17 +23,11 @@ class MenuActivity : AppCompatActivity() {
                 localIntent.putExtra("online", false)
                 startActivity(localIntent)
             }
-            btnPlayOnline.setOnClickListener {
-                val onlineIntent = Intent(applicationContext, GuessActivity::class.java)
-                onlineIntent.putExtra("online", true)
-                startActivity(onlineIntent)
-            }
-            btnEditor.setOnClickListener {
-                startActivity(Intent(applicationContext, CreatorActivity::class.java))
-            }
         }
 
+        AnimatedPopup(binding.root) {
 
+        }.show()
     }
 
 }

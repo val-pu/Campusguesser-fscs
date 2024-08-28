@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import org.osmdroid.views.MapView
 
-class DisabledMapView(context: Context?, attrs: AttributeSet?) : MapView(context, attrs) {
+class MapViewWithDisablebleUserInteraction(context: Context?, attrs: AttributeSet?) : MapView(context, attrs) {
     var isUserInteractionEnabled = true
 
 
