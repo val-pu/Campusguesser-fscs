@@ -168,7 +168,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <de.hhufscs.campusguesser.ui.views.PlayerScreenMotionLayout
-        android:id="@+id/guessed_popup"
+        android:id="@+id/guessedPopup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 

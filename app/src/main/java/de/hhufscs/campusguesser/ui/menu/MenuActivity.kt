@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import de.hhufscs.campusguesser.databinding.ActivityMenuNewBinding
 import de.hhufscs.campusguesser.ui.game.GuessActivity
+import de.hhufscs.campusguesser.ui.util.AnimatedPopup
 
 class MenuActivity : AppCompatActivity() {
 
@@ -23,6 +24,10 @@ class MenuActivity : AppCompatActivity() {
                 startActivity(localIntent)
             }
         }
+
+        AnimatedPopup(binding.root) {
+
+        }.show()
     }
 
 }
