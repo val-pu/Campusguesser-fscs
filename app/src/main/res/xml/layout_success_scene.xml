@@ -6,8 +6,8 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="600"
-        motion:motionInterpolator="anticipate">
+        motion:duration="1000"
+        motion:motionInterpolator="easeInOut">
        <KeyFrameSet>
        </KeyFrameSet>
     </Transition>
@@ -18,9 +18,9 @@
             motion:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
             motion:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/info_text"
+            android:id="@+id/popup_card"
             android:translationY="200dp"
-            android:alpha="0" />
+            android:alpha=".6" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">

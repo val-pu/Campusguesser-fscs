@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/popup"
+    android:translationZ="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/layout_success_scene"
@@ -12,11 +13,11 @@
     tools:visibility="visible">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/info_text"
+        android:id="@+id/popup_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_back"
-        android:backgroundTint="#4CAF50"
+        android:backgroundTint="@color/very_successful_green"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -40,7 +41,7 @@
 
 
                     <TextView
-                        android:id="@+id/textView3"
+                        android:id="@+id/popup_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_bold"
@@ -49,7 +50,7 @@
                         android:textSize="20sp" />
 
                     <TextView
-                        android:id="@+id/points_reached"
+                        android:id="@+id/popup_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Du hast X Punkte erreicht!"
@@ -58,7 +59,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/level_progress"
+                    android:id="@+id/extra_text_right"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical|end"
@@ -71,7 +72,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/btn_next_guess"
+                android:id="@+id/btn_do_sth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"

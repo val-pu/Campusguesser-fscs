@@ -12,6 +12,7 @@ interface ILevel {
     fun getCurrentGuess() : IGuess
     fun isANewGuessLeft() : Boolean
     fun guess(guess: IGeoPoint, onCalculated: (GuessResult) -> Unit)
+    fun skipGuess()
     fun getPoints(): Int
     fun getLevelResult(): LevelResultDTO
 }

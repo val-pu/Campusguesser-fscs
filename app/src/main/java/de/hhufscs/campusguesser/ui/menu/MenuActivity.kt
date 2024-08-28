@@ -24,10 +24,6 @@ class MenuActivity : AppCompatActivity() {
                 startActivity(localIntent)
             }
         }
-
-        AnimatedPopup(binding.root) {
-
-        }.show()
     }
 
 }
