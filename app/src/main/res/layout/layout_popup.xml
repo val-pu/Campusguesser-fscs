@@ -1,28 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    app:layoutDescription="@xml/layout_popup_scene">
-
+    android:layout_width="match_parent"
+    android:id="@+id/popup"
+    android:layout_height="match_parent"
+    android:elevation="10dp"
+    app:layoutDescription="@xml/layout_success_scene">
     <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
-        android:id="@+id/content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/popup_card"
         android:background="@color/back"
-        android:padding="@dimen/outer_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:borderColor="@color/back_secondary"
+        app:mainColor="@color/back"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/popup_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/quicksand_bold"
+            android:text="Titel"
+            android:textSize="20sp"
             android:textColor="@color/white"
-            tools:text="Bild 1 von 10" />
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/extra_text_right"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/extra_text_right"
+            android:layout_width="wrap_content"
+            android:fontFamily="@font/quicksand_semibold"
+            android:layout_height="wrap_content"
+            android:text="EXTRA"
+            android:textSize="20sp"
+            android:textColor="@color/back_secondary"
+            app:layout_constraintBottom_toBottomOf="@+id/popup_title"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/popup_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_semibold"
+            android:text="Description"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/popup_title"
+            tools:layout_editor_absoluteX="10dp" />
+
+        <de.hhufscs.campusguesser.ui.views.ElevatedView
+            android:layout_width="match_parent"
+            android:id="@+id/btn_do_sth"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/outer_margin"
+            android:gravity="center"
+            app:buttonColor="@color/very_successful_green"
+            app:buttonColorAccent="@color/button_accent"
+            android:textColor="@color/white"
+            android:fontFamily="@font/quicksand_semibold"
+            android:layout_marginTop="10dp"
+            android:text="@string/weiter"
+            app:layout_constraintTop_toBottomOf="@+id/popup_description"
+            tools:layout_editor_absoluteX="10dp" />
     </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

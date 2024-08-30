@@ -22,7 +22,6 @@
 
         <com.skydoves.progressview.ProgressView
             android:id="@+id/progress"
-            View_labelSpace="10dp"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginStart="10dp"
@@ -31,16 +30,14 @@
             app:layout_constraintEnd_toStartOf="@+id/points"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="parent"
-            app:progressView_autoAnimate="true"
-            app:progressView_colorBackground="@color/white"
+            app:progressView_colorBackground="@color/button_accent"
             app:progressView_colorProgress="@color/skyBlue"
             app:progressView_labelColorInner="@color/white"
             app:progressView_labelColorOuter="@color/black"
             app:progressView_labelSize="16sp"
-            app:progressView_labelText="0"
             app:progressView_labelTypeface="bold"
             app:progressView_max="100"
-            app:progressView_min="0"
+            app:progressView_animation="normal"
             app:progressView_progress="100"
             app:progressView_progressFromPrevious="true"
             app:progressView_radius="10dp" />
@@ -74,7 +71,7 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="4dp"
+        android:layout_marginHorizontal="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/playerScreenMotionLayout"
         app:layout_constraintTop_toBottomOf="@id/constraintLayout3">
 
@@ -94,9 +91,10 @@
         android:layout_weight="100"
         android:animateLayoutChanges="true"
         android:background="#000077B6"
-        android:padding="6dp"
         app:layoutDescription="@xml/guess_picture_motion_scene"
         app:layout_constraintBottom_toTopOf="@+id/btn_lock_guess"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -109,7 +107,7 @@
             android:background="@drawable/btn_back"
             android:backgroundTint="@color/back"
             android:paddingHorizontal="10dp"
-            android:paddingBottom="6dp"
+            android:paddingBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -131,7 +129,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="7.5dp"
-                android:background="#3F3F3F"
+                app:mainColor="#3F3F3F"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -148,14 +146,14 @@
 
     </de.hhufscs.campusguesser.ui.views.PlayerScreenMotionLayout>
 
-    <TextView
+    <de.hhufscs.campusguesser.ui.views.ElevatedView
         android:id="@+id/btn_lock_guess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/btn_back"
         android:backgroundTint="@color/skyBlue"
+        app:buttonColorAccent="@color/button_accent"
         android:fontFamily="@font/quicksand_bold"
         android:padding="10dp"
         android:text="GUESS"

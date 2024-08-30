@@ -43,14 +43,13 @@ import org.osmdroid.views.overlay.Polygon
 import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 
 val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
 
 class GuessActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-    private val PROGESS_TIME_MILLIS = 10_000L
+    private val PROGESS_TIME_MILLIS = 100_000L
 
     private lateinit var binding: ActivityGuessBinding
     private lateinit var level: Level
@@ -59,12 +58,11 @@ class GuessActivity : AppCompatActivity() {
     private var guessMarker: OverlayItem? = null
         set(value) {
             field = value
-            binding.btnLockGuess.background.setTint(
-                getColor(
-                    if (value == null) R.color.back_secondary
-                    else R.color.skyBlue
-                )
+            binding.btnLockGuess.setPrimaryColor(
+                if (value == null) R.color.back_secondary
+                else R.color.skyBlue
             )
+            binding.btnLockGuess.lockPress = value == null
             binding.btnLockGuess.setText(
                 if (value == null) R.string.make_a_guess
                 else R.string.lock_guess
@@ -112,11 +110,10 @@ class GuessActivity : AppCompatActivity() {
 
         binding.progress.max = PROGESS_TIME_MILLIS.toFloat()
 
-        progressBarTask = object : PausableTimedTask(1000, PROGESS_TIME_MILLIS) {
+        progressBarTask = object : PausableTimedTask(2000, PROGESS_TIME_MILLIS) {
             override fun onFinish() {
                 runOnUiThread {
                     binding.progress.progress = PROGESS_TIME_MILLIS.toFloat()
-                    binding.progress.labelText = "0s"
                     lockGuess()
                 }
             }
@@ -124,8 +121,6 @@ class GuessActivity : AppCompatActivity() {
             override fun onTick(timePassedInMs: Long) {
                 runOnUiThread {
                     binding.progress.progress = timePassedInMs.toFloat()
-                    binding.progress.labelText =
-                        "${(PROGESS_TIME_MILLIS / 1000.0 - timePassedInMs / 1000.0).roundToInt()}s"
                 }
             }
         }
@@ -158,13 +153,16 @@ class GuessActivity : AppCompatActivity() {
 
     @UiThread
     private fun lockGuess() {
-        binding.playerBackgroundView.visibility = INVISIBLE
-        progressBarTask.pause()
 
-        if (!userMadeGuess()) {
+        if (!userMadeGuess() && !progressBarTask.isStopped()) {
+            return
+        }
+        binding.playerBackgroundView.visibility = INVISIBLE
+        if (!userMadeGuess() && progressBarTask.isStopped()) {
             showUnsuccessfulGuessInfoPopUp()
             return
         }
+        progressBarTask.pause()
 
         val currentGuess = level.getCurrentGuess()
         val guessLocation = guessMarker!!.point
@@ -222,10 +220,10 @@ class GuessActivity : AppCompatActivity() {
                 nextGuess()
             }
             description = resources.getString(
-                    R.string.points_reached,
-                    guessResult.getDistance(),
-                    guessResult.points
-                )
+                R.string.points_reached,
+                guessResult.getDistance(),
+                guessResult.points
+            )
             extraTextRight = "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
         }.show()
     }
@@ -239,6 +237,7 @@ class GuessActivity : AppCompatActivity() {
                 nextGuess()
             }
             description = "Du hast 0 Punkte erhalten."
+            title = "Zeit abgelaufen!"
             extraTextRight = "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
         }.show()
     }
