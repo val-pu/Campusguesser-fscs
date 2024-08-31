@@ -16,7 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.toRectF
 import de.hhufscs.campusguesser.R
 
-class RoundedConstraintLayout(context: Context, attrs: AttributeSet?) :
+open class RoundedConstraintLayout(context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
     val cornerRadiusDP = 10.5F
     val cornerRadiusInPx = TypedValue.applyDimension(
@@ -42,7 +42,12 @@ class RoundedConstraintLayout(context: Context, attrs: AttributeSet?) :
     val mainColor: Int
     @ColorInt
     val borderColor: Int
-    val borderWidth: Float
+    var borderWidth: Float = 0F
+        set(value) {
+            field = value
+            borderWidthInPx = resources.displayMetrics.density * borderWidth
+        }
+    var borderWidthInPx: Float = 0F
 
     init {
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.RoundedConstraintLayout,0,0)
@@ -56,14 +61,10 @@ class RoundedConstraintLayout(context: Context, attrs: AttributeSet?) :
         attributes.recycle()
 
         setBackgroundColor(Color.LTGRAY) // Damit was gezeichnet wird, seems stoopid, ist aber notwendig
-
-    }
-
-    override fun onViewAdded(view: View?) {
-        super.onViewAdded(view)
         outlineProvider = mOutlineProvider
         clipToOutline = true
     }
+
 
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {

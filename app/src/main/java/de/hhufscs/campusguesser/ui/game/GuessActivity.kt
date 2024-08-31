@@ -49,7 +49,7 @@ val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
 
 class GuessActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-    private val PROGESS_TIME_MILLIS = 100_000L
+    private val PROGESS_TIME_MILLIS = 50_000L
 
     private lateinit var binding: ActivityGuessBinding
     private lateinit var level: Level
@@ -60,9 +60,9 @@ class GuessActivity : AppCompatActivity() {
             field = value
             binding.btnLockGuess.setPrimaryColor(
                 if (value == null) R.color.back_secondary
-                else R.color.skyBlue
+                else R.color.very_successful_green
             )
-            binding.btnLockGuess.lockPress = value == null
+            //binding.btnLockGuess.lockPress = value == null
             binding.btnLockGuess.setText(
                 if (value == null) R.string.make_a_guess
                 else R.string.lock_guess
