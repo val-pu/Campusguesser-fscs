@@ -27,7 +27,7 @@
             tools:srcCompat="@tools:sample/avatars" />
     </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 
-    <de.hhufscs.campusguesser.ui.views.ElevatedView
+    <de.hhufscs.campusguesser.ui.views.ElevatedButton
         android:layout_margin="@dimen/outer_margin"
         android:id="@+id/btn_create_wrapper"
         android:layout_width="match_parent"

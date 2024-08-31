@@ -38,7 +38,7 @@
         android:layout_margin="@dimen/outer_margin"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <de.hhufscs.campusguesser.ui.views.ElevatedView
+        <de.hhufscs.campusguesser.ui.views.ElevatedButton
             android:layout_width="0dp"
             android:layout_weight="1"
             android:fontFamily="@font/quicksand_bold"
@@ -52,7 +52,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <de.hhufscs.campusguesser.ui.views.ElevatedView
+        <de.hhufscs.campusguesser.ui.views.ElevatedButton
             android:layout_width="0dp"
             android:layout_weight="1"
             android:fontFamily="@font/quicksand_bold"

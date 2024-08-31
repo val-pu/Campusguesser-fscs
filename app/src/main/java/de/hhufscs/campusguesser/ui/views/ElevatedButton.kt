@@ -16,7 +16,7 @@ import androidx.core.graphics.toRectF
 import com.google.android.material.button.MaterialButton
 import de.hhufscs.campusguesser.R
 
-class ElevatedView(context: Context?, attrs: AttributeSet?) :
+class ElevatedButton(context: Context?, attrs: AttributeSet?) :
     MaterialButton(
         context!!, attrs
     ), View.OnTouchListener {

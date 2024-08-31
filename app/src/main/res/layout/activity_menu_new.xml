@@ -23,7 +23,7 @@
         app:srcCompat="@drawable/map_24"
         tools:ignore="RtlSymmetry" />
 
-    <de.hhufscs.campusguesser.ui.views.ElevatedView
+    <de.hhufscs.campusguesser.ui.views.ElevatedButton
         android:id="@+id/btn_play_local"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
-        <de.hhufscs.campusguesser.ui.views.ElevatedView
+        <de.hhufscs.campusguesser.ui.views.ElevatedButton
             android:id="@+id/elevatedView"
             android:layout_width="match_parent"
             app:buttonColor="@color/very_successful_green"
@@ -135,7 +135,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_play_local"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-        <de.hhufscs.campusguesser.ui.views.ElevatedView
+        <de.hhufscs.campusguesser.ui.views.ElevatedButton
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="Editor"
@@ -147,7 +147,7 @@
             app:iconGravity="end"
             app:buttonColor="@color/button_accent"
             android:layout_height="wrap_content"/>
-        <de.hhufscs.campusguesser.ui.views.ElevatedView
+        <de.hhufscs.campusguesser.ui.views.ElevatedButton
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="Browse Levels"

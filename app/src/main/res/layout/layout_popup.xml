@@ -51,7 +51,7 @@
             app:layout_constraintTop_toBottomOf="@+id/popup_title"
             tools:layout_editor_absoluteX="10dp" />
 
-        <de.hhufscs.campusguesser.ui.views.ElevatedView
+        <de.hhufscs.campusguesser.ui.views.ElevatedButton
             android:layout_width="match_parent"
             android:id="@+id/btn_do_sth"
             android:layout_height="wrap_content"

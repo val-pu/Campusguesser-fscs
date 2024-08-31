@@ -146,7 +146,7 @@
 
     </de.hhufscs.campusguesser.ui.views.PlayerScreenMotionLayout>
 
-    <de.hhufscs.campusguesser.ui.views.ElevatedView
+    <de.hhufscs.campusguesser.ui.views.ElevatedButton
         android:id="@+id/btn_lock_guess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
