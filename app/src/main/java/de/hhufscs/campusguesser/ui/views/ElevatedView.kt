@@ -3,6 +3,7 @@ package de.hhufscs.campusguesser.ui.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color.WHITE
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
@@ -37,8 +38,9 @@ class ElevatedView(context: Context?, attrs: AttributeSet?) :
     init {
         val attributes = context!!.obtainStyledAttributes(attrs, R.styleable.ElevatedView, 0, 0)
 
-        backPaint.color = attributes.getColor(R.styleable.ElevatedView_buttonColor, resources.getColor(R.color.skyBlue))
-        backPaintSecondary.color = attributes.getColor(R.styleable.ElevatedView_buttonColorAccent, resources.getColor(R.color.white))
+        backPaint.color = attributes.getColor(R.styleable.ElevatedView_buttonColor, resources.getColor(R.color.button_accent))
+        backPaintSecondary.color = attributes.getColor(R.styleable.ElevatedView_buttonColorAccent, resources.getColor(R.color.secondary_btn))
+        setTextColor(WHITE)
         setOnTouchListener(this)
         attributes.recycle()
     }
