@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:background="@color/back"
+    app:mainColor="@color/back"
     android:elevation="2dp">
 
 
@@ -36,15 +37,14 @@
         app:progressView_progressFromPrevious="true"
         app:progressView_radius="5dp" />
 
-    <ImageView
+    <de.hhufscs.campusguesser.ui.views.RoundedImageView
         android:id="@+id/imageView5"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:background="@color/skyBlue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:imageSrc="@raw/hole" />
 
     <TextView
         android:textColor="@color/white"

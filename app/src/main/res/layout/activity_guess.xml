@@ -31,7 +31,7 @@
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="parent"
             app:progressView_colorBackground="@color/button_accent"
-            app:progressView_colorProgress="@color/skyBlue"
+            app:progressView_colorProgress="@color/very_successful_green"
             app:progressView_labelColorInner="@color/white"
             app:progressView_labelColorOuter="@color/black"
             app:progressView_labelSize="16sp"
@@ -49,7 +49,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_clear_black_24dp" />
+            app:srcCompat="@drawable/ic_clear_black_24dp"
+            app:tint="@color/secondary_btn" />
 
         <TextView
             android:id="@+id/points"
@@ -153,7 +154,6 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="10dp"
         android:backgroundTint="@color/skyBlue"
-        app:buttonColorAccent="@color/button_accent"
         android:fontFamily="@font/quicksand_bold"
         android:padding="10dp"
         android:text="GUESS"

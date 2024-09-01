@@ -59,7 +59,7 @@ class GuessActivity : AppCompatActivity() {
         set(value) {
             field = value
             binding.btnLockGuess.setPrimaryColor(
-                if (value == null) R.color.back_secondary
+                if (value == null) R.color.button_accent
                 else R.color.very_successful_green
             )
             //binding.btnLockGuess.lockPress = value == null
