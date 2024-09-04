@@ -12,9 +12,11 @@
     app:layout_constraintStart_toStartOf="parent"
     tools:visibility="visible">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
         android:id="@+id/popup_card"
         android:layout_width="match_parent"
+        app:mainColor="@color/back"
+
         android:layout_height="wrap_content"
         android:background="@drawable/btn_back"
         android:backgroundTint="@color/very_successful_green"
@@ -84,7 +86,7 @@
                 android:textColor="@color/white" />
 
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
