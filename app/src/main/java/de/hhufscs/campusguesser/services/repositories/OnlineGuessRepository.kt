@@ -34,9 +34,36 @@ class OnlineGuessRepository {
         }
     }
 
-    fun getAllOnlineGuessIdentifiers(n: Int, onLoaded: (List<String>) -> Unit){
+    fun getNOnlineGuessIdentifiers(n: Int, onLoaded: (List<String>) -> Unit){
         fun getIdentifiersTaskN(): List<String> {return getIdentifiersTask(n)}
         var thread: NetworkFileThread<List<String>> = NetworkFileThread(::getIdentifiersTaskN){
+            onLoaded(it)
+        }
+        thread.start()
+    }
+
+    private fun getIdentifiersUUIDTask(uuid: String): List<String>{
+        try {
+            var urlString: String = "http://$SOURCE_IP:$SOURCE_PORT/level?id=${uuid}"
+            var connection: URLConnection = URL(urlString).openConnection()
+            connection.connectTimeout = 3000
+            var scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")
+            var jsonString: String = scanner.next()
+            var outerJSONObject: JSONObject = JSONObject(jsonString)
+            var jsonArray: JSONArray = outerJSONObject.getJSONArray("guesses")
+            var identifiersList: LinkedList<String> = LinkedList()
+            for(index in 0..<jsonArray.length()){
+                identifiersList.add(jsonArray.getJSONObject(index).getString("id"))
+            }
+            return identifiersList
+        } catch(e: SocketTimeoutException){
+            return LinkedList()
+        }
+    }
+
+    fun getIdentifiersByLevelUUID(uuid: String, onLoaded: (List<String>) -> Unit){
+        fun getIdentifiersTaskUUIDX(): List<String> {return getIdentifiersUUIDTask(uuid)}
+        var thread: NetworkFileThread<List<String>> = NetworkFileThread(::getIdentifiersTaskUUIDX){
             onLoaded(it)
         }
         thread.start()

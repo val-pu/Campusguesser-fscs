@@ -14,12 +14,22 @@ class OnlineLevelFactory {
     }
 
     fun getLevelWithNOnlineGuesses(n: Int, onLoaded: (Level) -> Unit) {
-        guessRepository.getAllOnlineGuessIdentifiers(n){
+        guessRepository.getNOnlineGuessIdentifiers(n){
             var guessesForLevel: List<IGuess> = it.shuffled()
                 .stream()
                 .map(::OnlineGuess)
                 .collect(Collectors.toList());
             onLoaded(Level(Level.Companion::standardResultComputer, guessesForLevel))
+        }
+    }
+
+    fun getLevelByUUID(uuid: String, onLoaded: (Level) -> Unit){
+        guessRepository.getIdentifiersByLevelUUID(uuid){
+            var guessesForLevel: List<IGuess> = it.shuffled()
+                .stream()
+                .map(::OnlineGuess)
+                .collect(Collectors.toList())
+            onLoaded(Level(Level.Companion::standardResultComputer,guessesForLevel))
         }
     }
 }

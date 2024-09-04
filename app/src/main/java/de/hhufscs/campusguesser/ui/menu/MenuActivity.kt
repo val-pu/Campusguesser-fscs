@@ -29,6 +29,10 @@ class MenuActivity : AppCompatActivity() {
                 localIntent.putExtra("online", false)
                 startActivity(localIntent)
             }
+
+            btnBrowser.setOnClickListener{
+                startActivity(Intent(applicationContext, ChooseLevelActivity::class.java))
+            }
         }
     }
 
