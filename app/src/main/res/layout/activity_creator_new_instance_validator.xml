@@ -3,36 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/back"
     android:layout_height="match_parent"
     tools:context=".creator.CreatorNewInstanceValidatorActivity">
 
-    <ImageView
-        android:id="@+id/image"
+    <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
+        android:id="@+id/roundedConstraintLayout3"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:layout_marginHorizontal="@dimen/outer_margin"
+        app:borderColor="@color/back_secondary"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        app:mainColor="@color/back"
+        tools:layout_editor_absoluteX="10dp">
 
-    <Button
-        android:id="@+id/btn_create"
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+    </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
+
+    <de.hhufscs.campusguesser.ui.views.ElevatedButton
+        android:layout_margin="@dimen/outer_margin"
+        android:id="@+id/btn_create_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Take Picture"
+        android:text="Speichern"
+        app:buttonColor="@color/button_accent"
+        android:fontFamily="@font/quicksand_bold"
+        app:buttonColorAccent="@color/secondary_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
         android:id="@+id/constraintLayout"
+        app:borderColor="@color/back_secondary"
+        app:mainColor="@color/back"
+        android:layout_margin="@dimen/outer_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_back"
-        android:padding="5dp"
+        android:padding="@dimen/outer_padding"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image">
+        app:layout_constraintTop_toBottomOf="@+id/roundedConstraintLayout3">
 
         <TextView
             android:id="@+id/textView"
@@ -52,14 +71,36 @@
             android:textColor="@color/base_contrast"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 
-    <org.osmdroid.views.MapView
-        app:layout_constraintBottom_toTopOf="@+id/btn_create"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/map"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+    <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_width="0dp"/>
+        android:layout_margin="@dimen/outer_margin"
+        app:layout_constraintBottom_toTopOf="@+id/btn_create_wrapper"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toTopOf="@+id/btn_create_wrapper"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+    </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_bold"
+        android:padding="10dp"
+        android:text="Wo entstand das Foto?"
+        android:textColor="@color/white"
+        android:textSize="@dimen/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

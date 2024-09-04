@@ -3,13 +3,14 @@ package de.hhufscs.campusguesser.creator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.RecyclerView
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.IGuess
 import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.services.repositories.LocalGuessRepository
+import de.hhufscs.campusguesser.ui.views.RoundedImageView
 
 class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
     RecyclerView.Adapter<CreatorInstancesRecyclerAdapter.ViewHolder>() {
@@ -36,11 +37,13 @@ class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
             guess.getLocation{
                 location.text = it.toString()
             }
-            guess.getPicture(image::setImageBitmap)
+            guess.getPicture {
+                bitmap -> image.drawable = bitmap.toDrawable(itemView.resources)
+            }
         }
 
         val title: TextView = itemView.findViewById(R.id.title)
-        val image: ImageView = itemView.findViewById(R.id.image)
+        val image: RoundedImageView = itemView.findViewById(R.id.image)
         val location: TextView = itemView.findViewById(R.id.app_name)
     }
 }

@@ -33,9 +33,10 @@
         android:id="@+id/roundedConstraintLayout"
         android:layout_width="match_parent"
         android:elevation="3dp"
+        app:mainColor="@color/back"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/overlay_card"
+        android:padding="@dimen/outer_padding"
         android:layout_margin="10dp">
 
         <TextView
@@ -43,6 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            android:fontFamily="@font/quicksand_bold"
+            android:textColor="@color/white"
             android:text="Erreichte Punktzahl"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,7 +53,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/back"
             android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -78,7 +80,9 @@
         android:background="@drawable/overlay_card"
         android:layout_marginHorizontal="10dp"
         android:elevation="2dp"
+        app:mainColor="@color/back"
         android:layout_marginBottom="10dp"
+        android:padding="@dimen/outer_padding"
         android:layout_weight="3">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -96,11 +100,11 @@
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/quicksand_semibold"
+            android:fontFamily="@font/quicksand_bold"
             android:paddingHorizontal="10dp"
             android:padding="5dp"
             android:text="Summary"
-            android:textColor="@color/back"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -108,7 +112,7 @@
     </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 
 
-    <TextView
+    <de.hhufscs.campusguesser.ui.views.ElevatedButton
         android:id="@+id/btn_next_guess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -12,7 +12,10 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View.INVISIBLE
+import android.view.View.OnClickListener
 import android.view.View.VISIBLE
+import android.view.ViewGroup
+import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -25,6 +28,7 @@ import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
 import de.hhufscs.campusguesser.ui.game.endscreen.GsonFactory
 import de.hhufscs.campusguesser.ui.game.util.PausableTimedTask
+import de.hhufscs.campusguesser.ui.util.AnimatedPopup
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -55,12 +59,11 @@ class GuessActivity : AppCompatActivity() {
     private var guessMarker: OverlayItem? = null
         set(value) {
             field = value
-            binding.btnLockGuess.background.setTint(
-                getColor(
-                    if (value == null) R.color.back_secondary
-                    else R.color.skyBlue
-                )
+            binding.btnLockGuess.setPrimaryColor(
+                if (value == null) R.color.button_accent
+                else R.color.very_successful_green
             )
+            //binding.btnLockGuess.lockPress = value == null
             binding.btnLockGuess.setText(
                 if (value == null) R.string.make_a_guess
                 else R.string.lock_guess
@@ -120,7 +123,8 @@ class GuessActivity : AppCompatActivity() {
             override fun onTick(timePassedInMs: Long) {
                 runOnUiThread {
                     binding.progress.progress = timePassedInMs.toFloat()
-                    binding.progress.labelText = "${(PROGESS_TIME_MILLIS/1000.0 - timePassedInMs/1000.0).roundToInt()}s"
+                    binding.progress.labelText =
+                        "${(PROGESS_TIME_MILLIS / 1000.0 - timePassedInMs / 1000.0).roundToInt()}s"
                 }
             }
         }
@@ -128,7 +132,6 @@ class GuessActivity : AppCompatActivity() {
 
     private fun setUpGuessButtons() {
         binding.btnLockGuess.setOnClickListener { lockGuess() }
-        binding.btnNextGuess.setOnClickListener { nextGuess() }
     }
 
     private fun nextGuess() {
@@ -136,7 +139,6 @@ class GuessActivity : AppCompatActivity() {
             transitionToEndActivity()
             return
         }
-        binding.guessedPopup.transitionToStart()
         binding.playerBackgroundView.visibility = VISIBLE
         progressBarTask.restart()
         loadNextGuessPicture()
@@ -153,13 +155,15 @@ class GuessActivity : AppCompatActivity() {
             }
     }
 
+    @UiThread
     private fun lockGuess() {
-        if (!userMadeGuess())
-            return
-
+        binding.playerBackgroundView.visibility = INVISIBLE
         progressBarTask.pause()
 
-        binding.playerBackgroundView.visibility = INVISIBLE
+        if (!userMadeGuess()) {
+            showUnsuccessfulGuessInfoPopUp()
+            return
+        }
 
         val currentGuess = level.getCurrentGuess()
         val guessLocation = guessMarker!!.point
@@ -183,7 +187,7 @@ class GuessActivity : AppCompatActivity() {
                     )
                     canvas.clipPath(circlePath)
                     canvas.drawBitmap(bm, 0F, 0F, Paint())
-                    val imageDrawable = BitmapDrawable(image)
+                    val imageDrawable = image.toDrawable(resources)
                     imageDrawable.setTargetDensity(30)
 
                     addIconToMapAtLocationWithDrawable(it, imageDrawable.mutate())
@@ -208,20 +212,42 @@ class GuessActivity : AppCompatActivity() {
         startActivity(endIntent)
     }
 
+    private fun showSuccessfulGuessInfoPopUp(guessResult: GuessResult) {
+        AnimatedPopup(binding.root as ViewGroup) {
+            mainColor = R.color.back
+            buttonColor = R.color.very_successful_green
+            buttonText = "WEITER"
+            onClickListener = OnClickListener {
+                nextGuess()
+            }
+            description = resources.getString(
+                    R.string.points_reached,
+                    guessResult.getDistance(),
+                    guessResult.points
+                )
+            extraTextRight = "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
+        }.show()
+    }
+
+    private fun showUnsuccessfulGuessInfoPopUp() {
+        AnimatedPopup(binding.root as ViewGroup) {
+            mainColor = R.color.back
+            buttonColor = R.color.very_unsuccessful_red
+            buttonText = "WEITER"
+            onClickListener = OnClickListener {
+                nextGuess()
+            }
+            description = "Du hast 0 Punkte erhalten."
+            extraTextRight = "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
+        }.show()
+    }
+
     @SuppressLint("SetTextI18n")
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
 
-        binding.pointsReached.text =
-            resources.getString(
-                R.string.points_reached,
-                guessResult.getDistance(),
-                guessResult.points
-            )
-        binding.levelProgress.text =
-            "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
-
+        showSuccessfulGuessInfoPopUp(guessResult)
         updateCumulativeScorePoints()
-        showGuessResultInfoCard()
+
 
         val boundingBox = BoundingBox.fromGeoPointsSafe(
             listOf(
@@ -256,15 +282,14 @@ class GuessActivity : AppCompatActivity() {
     ) {
         binding.guessMap.overlays.add(0, Polygon().apply {
             points = LinkedList(listOf(from as GeoPoint, to as GeoPoint))
-            strokeColor = resources.getColor(R.color.skyBlue)
-            strokeWidth = 10F
+            strokeColor = resources.getColor(R.color.back)
+            strokeWidth = 20F
         })
     }
 
     private fun userMadeGuess() = guessMarker != null
 
     private fun showGuessResultInfoCard() {
-        binding.guessedPopup.transitionToEnd()
     }
 
     private fun enableMapPointGestureDetector() {

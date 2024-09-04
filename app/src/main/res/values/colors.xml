@@ -9,4 +9,8 @@
     <color name="skyBlue">#2196F3</color>
     <color name="back">#333333</color>
     <color name="back_secondary">#969696</color>
+    <color name="very_successful_green">#419644</color>
+    <color name="very_unsuccessful_red">#F44336</color>
+    <color name="button_accent">#6B6B6B</color>
+    <color name="secondary_btn">#505050</color>
 </resources>

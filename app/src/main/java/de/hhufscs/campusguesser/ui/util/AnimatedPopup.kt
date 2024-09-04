@@ -1,21 +1,41 @@
 package de.hhufscs.campusguesser.ui.util
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.annotation.ColorRes
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionLayout.TransitionListener
 import de.hhufscs.campusguesser.R
+import de.hhufscs.campusguesser.databinding.LayoutSuccessBinding
 
 class AnimatedPopup(val rootView: ViewGroup, val builder: Builder.() -> (Unit)) {
 
     val rootMotionLayout: MotionLayout
+    val binding: LayoutSuccessBinding
 
     init {
         val layoutInflater = LayoutInflater.from(rootView.context)
         rootMotionLayout = layoutInflater.inflate(R.layout.layout_success, rootView)
             .findViewById(R.id.popup)!!
+        binding = LayoutSuccessBinding.bind(rootMotionLayout)
+
+        val popupBuilder = Builder()
+        builder(popupBuilder)
+
+        binding.apply {
+            btnDoSth.setOnClickListener {
+                popupBuilder.onClickListener?.onClick(it)
+                hideAndRemove {  }
+            }
+            popupCard.background.setTint(rootMotionLayout.resources.getColor(popupBuilder.mainColor))
+            btnDoSth.background.setTint(rootMotionLayout.resources.getColor(popupBuilder.buttonColor))
+            btnDoSth.text = popupBuilder.buttonText
+            popupTitle.text = popupBuilder.title
+            popupDescription.text = popupBuilder.description
+            extraTextRight.text = popupBuilder.extraTextRight
+        }
+
     }
 
     fun show() {
@@ -56,11 +76,14 @@ class AnimatedPopup(val rootView: ViewGroup, val builder: Builder.() -> (Unit)) 
     }
 
     class Builder {
-        lateinit var color: Color
+        @ColorRes
+        var mainColor: Int = R.color.dark
+        var buttonColor: Int = R.color.skyBlue
         var onClickListener: OnClickListener? = null
         var buttonText: CharSequence = "Okay"
         var extraTextRight: CharSequence = ""
-        var description: CharSequence = ""
+        var description: CharSequence = "Eine Description woo"
+        var title: CharSequence = "Ein Titel!"
     }
 
 }

@@ -66,7 +66,7 @@ class CreatorNewInstanceValidatorActivity : AppCompatActivity() {
         }
 
 
-        btnCreate = findViewById(R.id.btn_create)
+        btnCreate = findViewById(R.id.btn_create_wrapper)
         locationTextView = findViewById(R.id.app_name)
 
         btnCreate.setOnClickListener {

@@ -32,13 +32,13 @@
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/content"
+            android:id="@+id/popup_card"
             android:layout_marginBottom="32dp"
             android:rotation="0"
             android:translationX="0dp"
             android:alpha="1" />
         <Constraint
-            android:id="@+id/content"
+            android:id="@+id/popup_card"
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             motion:layout_constraintStart_toStartOf="parent"
             android:scaleY="2" />
         <Constraint
-            android:id="@+id/content"
+            android:id="@+id/popup_card"
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             motion:layout_constraintStart_toStartOf="parent"
             android:scaleY="2" />
         <Constraint
-            android:id="@+id/content"
+            android:id="@+id/popup_card"
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

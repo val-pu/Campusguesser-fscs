@@ -98,6 +98,10 @@ class Level(
         }
     }
 
+    override fun skipGuess() {
+
+    }
+
     override fun getPoints(): Int {
         return points
     }
