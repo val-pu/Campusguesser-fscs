@@ -72,8 +72,6 @@ class GuessActivity : AppCompatActivity() {
 
     private lateinit var progressBarTask: PausableTimedTask
 
-    private var online = false
-
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -93,16 +91,24 @@ class GuessActivity : AppCompatActivity() {
         setUpGuessButtons()
         initProgressBar()
 
-        this.online = intent.getBooleanExtra("online", false)
+        var online = intent.getBooleanExtra("online", false)
+        var onlineuuid = intent.getStringExtra("uuid")
         if (!online) {
             val localLevelFactory = LocalLevelFactory(baseContext)
             level = localLevelFactory.getLevelWithNLocalGuesses(10)
             nextGuess()
         } else {
             val onlineLevelFactory = OnlineLevelFactory()
-            onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
-                level = it
-                nextGuess()
+            if(onlineuuid == null){
+                onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
+                    level = it
+                    nextGuess()
+                }
+            } else {
+                onlineLevelFactory.getLevelByUUID(onlineuuid){
+                    level = it
+                    nextGuess()
+                }
             }
         }
     }

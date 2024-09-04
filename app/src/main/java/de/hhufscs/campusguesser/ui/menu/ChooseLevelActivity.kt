@@ -20,7 +20,7 @@ class ChooseLevelActivity: AppCompatActivity() {
         repository.getAllLevelInformations {
             binding.apply{
                 levelOverviewRecycler.layoutManager = LinearLayoutManager(applicationContext)
-                levelOverviewRecycler.adapter = ChooseLevelRecyclerAdapter(it)
+                levelOverviewRecycler.adapter = ChooseLevelRecyclerAdapter(it, applicationContext)
             }
         }
     }
