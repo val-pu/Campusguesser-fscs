@@ -28,37 +28,7 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Level(
-    private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>,
-    guessesList: List<IGuess>
-) : ILevel {
-    companion object {
-        // calculate the result based on the euclidean distance
-        fun standardResultComputer(pointA: IGeoPoint, pointB: IGeoPoint): Int {
-            val distance: Double = sqrt(
-                (pointA.latitude - pointB.latitude).pow(2) + (pointA.longitude - pointB.longitude).pow(
-                    2
-                )
-            )
-            val points: Int = (100 / (1 + distance * 2300)).toInt()
-            return points
-        }
-
-        // calculate the result based on the great circle distance
-        fun greatCircleResultComputer(pointA: IGeoPoint, pointB: IGeoPoint): Int {
-            val earthRadius: Int = 6371000
-            val distance: Double = 2 * earthRadius * asin(
-                sqrt(
-                    (1 - cos(abs(pointA.latitude - pointB.latitude)) + cos(pointA.latitude) * cos(
-                        pointB.latitude
-                    ) * (1 - cos(abs(pointA.longitude - pointB.longitude)))) / 2
-                )
-            )
-            val points: Int = (100 / (1 + distance * 2300)).toInt()
-            return points
-        }
-    }
-
+class Level(private var resultComputer: BiFunction<IGeoPoint, IGeoPoint, Int>, guessesList: List<IGuess>) : ILevel {
     private var guessStack: Stack<IGuess>
     private var guessedList: LinkedList<GuessResult>
     private var points: Int

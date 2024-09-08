@@ -45,12 +45,13 @@ import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-
-val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
-
 class GuessActivity : AppCompatActivity() {
+    companion object{
+        val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
+    }
+
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-    private val PROGESS_TIME_MILLIS = 10_000L
+    private val PROGESS_TIME_MILLIS = 30_000L
 
     private lateinit var binding: ActivityGuessBinding
     private lateinit var level: Level
@@ -90,6 +91,7 @@ class GuessActivity : AppCompatActivity() {
         enableMapPointGestureDetector()
         setUpGuessButtons()
         initProgressBar()
+        binding.imageView.setOnClickListener(){finish()}
 
         var online = intent.getBooleanExtra("online", false)
         var onlineuuid = intent.getStringExtra("uuid")
@@ -207,7 +209,7 @@ class GuessActivity : AppCompatActivity() {
 
     private fun transitionToEndActivity() {
 
-        val endIntent = Intent(this, EndScreenActivity::class.java)
+        val endIntent = Intent(baseContext, EndScreenActivity::class.java)
 
         endIntent.putExtra(
             "result",
@@ -216,6 +218,7 @@ class GuessActivity : AppCompatActivity() {
         )
 
         startActivity(endIntent)
+        finish()
     }
 
     private fun showSuccessfulGuessInfoPopUp(guessResult: GuessResult) {

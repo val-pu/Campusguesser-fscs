@@ -1,6 +1,7 @@
 package de.hhufscs.campusguesser.services.factories
 
 import android.content.Context
+import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LocalGuess
 import de.hhufscs.campusguesser.services.repositories.LocalGuessRepository
@@ -22,6 +23,6 @@ class LocalLevelFactory {
             .limit(n.toLong())
             .map{guessID: String -> LocalGuess(guessID, context)}
             .collect(Collectors.toList());
-        return Level(Level.Companion::standardResultComputer, guessesForLevel)
+        return Level(GuessResult.Companion::standardResultComputer, guessesForLevel)
     }
 }

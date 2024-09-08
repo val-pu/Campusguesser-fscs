@@ -7,7 +7,7 @@ import android.graphics.drawable.BitmapDrawable
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.services.factories.OverlayFactory
 import de.hhufscs.campusguesser.services.slapers.TapEventOverlay
-import de.hhufscs.campusguesser.ui.game.GEOPOINT_HHU
+import de.hhufscs.campusguesser.ui.game.GuessActivity
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
@@ -18,7 +18,7 @@ import org.osmdroid.views.overlay.OverlayItem
 
 class MapService(
     val mapView: MapView,
-    val baseFocusPoint: IGeoPoint = GEOPOINT_HHU,
+    val baseFocusPoint: IGeoPoint = GuessActivity.GEOPOINT_HHU,
     val baseZoom: Double = 18.0
 ) {
     private val context = mapView.context

@@ -1,5 +1,6 @@
 package de.hhufscs.campusguesser.services.factories
 
+import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.IGuess
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.OnlineGuess
@@ -19,7 +20,7 @@ class OnlineLevelFactory {
                 .stream()
                 .map(::OnlineGuess)
                 .collect(Collectors.toList());
-            onLoaded(Level(Level.Companion::standardResultComputer, guessesForLevel))
+            onLoaded(Level(GuessResult.Companion::standardResultComputer, guessesForLevel))
         }
     }
 
@@ -29,7 +30,7 @@ class OnlineLevelFactory {
                 .stream()
                 .map(::OnlineGuess)
                 .collect(Collectors.toList())
-            onLoaded(Level(Level.Companion::standardResultComputer,guessesForLevel))
+            onLoaded(Level(GuessResult.Companion::standardResultComputer,guessesForLevel))
         }
     }
 }

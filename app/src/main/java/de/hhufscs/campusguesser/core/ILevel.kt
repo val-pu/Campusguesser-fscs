@@ -4,9 +4,6 @@ import de.hhufscs.campusguesser.ui.game.endscreen.LevelResultDTO
 import org.osmdroid.api.IGeoPoint
 
 interface ILevel {
-    companion object{
-        val MAX_POINTS_PER_GUESS: Int = 100
-    }
     fun getGuessCount(): Int
     fun getGuessesMadeCount(): Int
     fun getCurrentGuess() : IGuess

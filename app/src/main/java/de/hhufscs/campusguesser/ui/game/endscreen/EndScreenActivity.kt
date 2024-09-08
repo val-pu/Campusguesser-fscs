@@ -18,13 +18,11 @@ class EndScreenActivity : AppCompatActivity() {
         binding = ActivityEndScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         binding.summaryRecycler.apply {
             layoutManager = LinearLayoutManager(applicationContext)
-
             val guesses = levelResult.results
-
             adapter = EndScreenSummaryAdapter(guesses)
         }
+        binding.endScore.text = "${levelResult.points()}/${levelResult.maxPoints()}"
     }
 }

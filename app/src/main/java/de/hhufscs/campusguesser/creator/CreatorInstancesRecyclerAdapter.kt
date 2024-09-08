@@ -1,5 +1,6 @@
 package de.hhufscs.campusguesser.creator
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +39,8 @@ class CreatorInstancesRecyclerAdapter(val guesses: List<LocalGuess>) :
                 location.text = it.toString()
             }
             guess.getPicture {
-                bitmap -> image.drawable = bitmap.toDrawable(itemView.resources)
+                Log.d("PERSONALDEBUG", "bind: trying to fetch picture")
+                image.drawable = it.toDrawable(itemView.resources)
             }
         }
 

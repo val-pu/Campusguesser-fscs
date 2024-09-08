@@ -29,7 +29,7 @@ class CreatorActivity : AppCompatActivity() {
         recycler.adapter = CreatorInstancesRecyclerAdapter(guessRepository
             .getAllLocalGuessIDs()
             .stream()
-            .map { guessID: String -> LocalGuess(guessID, this) }
+            .map { guessID: String -> LocalGuess(guessID, baseContext) }
             .collect(Collectors.toList()))
     }
 
