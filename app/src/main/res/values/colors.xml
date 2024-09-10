@@ -11,6 +11,11 @@
     <color name="back_secondary">#969696</color>
     <color name="very_successful_green">#419644</color>
     <color name="very_unsuccessful_red">#F44336</color>
+    <color name="integral_paint_stat_view">#83969696</color>
+    <color name="integral_paint_stroke_stat_view">#4C4C4C</color>
     <color name="button_accent">#6B6B6B</color>
     <color name="secondary_btn">#505050</color>
+    <color name="point_stat_view">@color/back</color>
+    <color name="stroke_stat_view">@color/button_accent</color>
+    <color name="top_paint_stat_view">#FFEA00</color>
 </resources>

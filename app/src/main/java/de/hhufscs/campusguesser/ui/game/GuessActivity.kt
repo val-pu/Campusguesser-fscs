@@ -9,6 +9,8 @@ import android.graphics.Path
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View.INVISIBLE
@@ -47,7 +49,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 class GuessActivity : AppCompatActivity() {
-    companion object{
+    companion object {
         val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
     }
 
@@ -56,6 +58,7 @@ class GuessActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGuessBinding
     private lateinit var level: Level
+    private lateinit var loadingPopUp: AnimatedLoadingPopUp
 
     private lateinit var iconOverlay: ItemizedIconOverlay<OverlayItem>
     private var guessMarker: OverlayItem? = null
@@ -92,29 +95,32 @@ class GuessActivity : AppCompatActivity() {
         enableMapPointGestureDetector()
         setUpGuessButtons()
         initProgressBar()
-        binding.imageView.setOnClickListener(){finish()}
+        binding.imageView.setOnClickListener() { finish() }
 
         var online = intent.getBooleanExtra("online", false)
         var onlineuuid = intent.getStringExtra("uuid")
+
+        loadingPopUp = AnimatedLoadingPopUp(binding.root)
+
+
         if (!online) {
             val localLevelFactory = LocalLevelFactory(baseContext)
             level = localLevelFactory.getLevelWithNLocalGuesses(10)
             nextGuess()
         } else {
             val onlineLevelFactory = OnlineLevelFactory()
-            if(onlineuuid == null){
+            if (onlineuuid == null) {
                 onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
                     level = it
                     nextGuess()
                 }
             } else {
-                onlineLevelFactory.getLevelByUUID(onlineuuid){
+                onlineLevelFactory.getLevelByUUID(onlineuuid) {
                     level = it
                     nextGuess()
                 }
             }
         }
-        AnimatedLoadingPopUp(binding.root)
     }
 
     private fun initProgressBar() {
@@ -150,18 +156,19 @@ class GuessActivity : AppCompatActivity() {
             return
         }
         binding.playerBackgroundView.visibility = VISIBLE
-        val loadingAnimation = AnimatedLoadingPopUp(binding.root)
+        loadingPopUp.show()
         loadNextGuessPicture {
-            runOnUiThread {
-                Log.i("Rmovein","daw")
-                loadingAnimation.hideAndRemove {
-                    progressBarTask.restart()
+            Handler(Looper.getMainLooper()).postDelayed({
+                runOnUiThread {
+                    resetMapFocus()
+                    Log.i("Rmovein", "daw")
+                    loadingPopUp.hideAndRemove {
+                        progressBarTask.restart()
+                    }
+                    resetOverlays()
+                    setMapInteractionEnabled(true)
                 }
-                resetOverlays()
-                resetMapFocusAndAnimate()
-                setMapInteractionEnabled(true)
-
-            }
+            }, 1000)
         }
     }
 
@@ -241,10 +248,10 @@ class GuessActivity : AppCompatActivity() {
                 nextGuess()
             }
             description = resources.getString(
-                    R.string.points_reached,
-                    guessResult.getDistance(),
-                    guessResult.points
-                )
+                R.string.points_reached,
+                guessResult.getDistance(),
+                guessResult.points
+            )
             extraTextRight = "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
         }.show()
     }
@@ -374,12 +381,6 @@ class GuessActivity : AppCompatActivity() {
         }
 
         resetMapFocus()
-    }
-
-    private fun resetMapFocusAndAnimate() {
-        binding.guessMap.controller.apply {
-            animateTo(GEOPOINT_HHU, 17.0, 500L)
-        }
     }
 
     private fun resetMapFocus() {

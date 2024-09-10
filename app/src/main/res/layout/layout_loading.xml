@@ -2,36 +2,66 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/popup_loading"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:elevation="10dp"
+    android:alpha="0"
     android:background="@color/back"
-    android:alpha="1"
-    app:layoutDescription="@xml/layout_success_scene">
+    android:elevation="10dp"
+    android:translationZ="10dp"
+    app:layoutDescription="@xml/layout_success_scene"
+    tools:alpha="1">
 
 
     <de.hhufscs.campusguesser.ui.views.LoadingAnimation
         android:id="@+id/loadingAnimation2"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toTopOf="@+id/statViewContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias=".7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
-        android:textColor="@color/white"
-        android:fontFamily="@font/quicksand_bold"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_bold"
         android:text="Lade Bild...."
+        android:textColor="@color/white"
+        app:layout_constraintVertical_bias=".2"
         android:textSize="@dimen/title"
-        app:layout_constraintBottom_toTopOf="@+id/loadingAnimation2"
+        app:flow_lastVerticalBias="2"
+        app:layout_constraintBottom_toTopOf="@+id/statViewContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
+        android:id="@+id/statViewContainer"
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/default_radius"
+        app:mainColor="@color/back"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_medium"
+            android:padding="@dimen/outer_padding"
+            android:text="Verlauf"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hhufscs.campusguesser.ui.views.StatView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView8" />
+    </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

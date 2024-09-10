@@ -1,33 +1,37 @@
 package de.hhufscs.campusguesser.ui.util
 
 import android.view.LayoutInflater
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
+import de.hhufscs.campusguesser.databinding.LayoutLoadingBinding
 
 
 class AnimatedLoadingPopUp(val rootView: ViewGroup) {
 
-    val binding: ActivityGuessBinding
-    val rootLayout: ViewGroup
+    val binding: LayoutLoadingBinding
+    val rootLayout: View
+
     init {
         val layoutInflater = LayoutInflater.from(rootView.context)
-         rootLayout= layoutInflater.inflate(R.layout.activity_guess, rootView)
-            .findViewById(R.id.root_thingy)!!
-        binding = ActivityGuessBinding.bind(rootLayout)
+        rootLayout = layoutInflater.inflate(R.layout.layout_loading, rootView,false)
+            .findViewById(R.id.popup_loading)
+        binding = LayoutLoadingBinding.bind(rootLayout)
+        rootView.addView(rootLayout)
+    }
 
-        // binding.root.animate().setDuration(1000L).alpha(1F).start()
-
+    fun show() {
+        rootLayout.animate().setDuration(400).alpha(1F).start()
     }
 
     fun hideAndRemove(onFinish: (() -> Unit)? = null) {
-        //binding.root.animate().setDuration(1000L).alpha(0F).start()
-        //}
-        rootView.post {
-            Thread.sleep(100)
-            rootView.removeView(rootView.findViewById(R.id.root_thingy))
-
-        }
+        binding.popupLoading.visibility = VISIBLE
+        rootLayout.animate().setDuration(400).alpha(0F).withEndAction {
+            onFinish?.invoke()
+        }.start()
 
 
     }
