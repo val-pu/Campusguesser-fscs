@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/back"
     android:orientation="vertical"
+    android:id="@+id/root_thingy"
     tools:context=".ui.game.GuessActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout

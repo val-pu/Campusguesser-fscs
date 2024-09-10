@@ -28,6 +28,7 @@ import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
 import de.hhufscs.campusguesser.ui.game.endscreen.GsonFactory
 import de.hhufscs.campusguesser.ui.game.util.PausableTimedTask
+import de.hhufscs.campusguesser.ui.util.AnimatedLoadingPopUp
 import de.hhufscs.campusguesser.ui.util.AnimatedPopup
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
@@ -113,6 +114,7 @@ class GuessActivity : AppCompatActivity() {
                 }
             }
         }
+        AnimatedLoadingPopUp(binding.root)
     }
 
     private fun initProgressBar() {
@@ -148,18 +150,27 @@ class GuessActivity : AppCompatActivity() {
             return
         }
         binding.playerBackgroundView.visibility = VISIBLE
-        progressBarTask.restart()
-        loadNextGuessPicture()
-        resetOverlays()
-        resetMapFocusAndAnimate()
-        setMapInteractionEnabled(true)
+        val loadingAnimation = AnimatedLoadingPopUp(binding.root)
+        loadNextGuessPicture {
+            runOnUiThread {
+                Log.i("Rmovein","daw")
+                loadingAnimation.hideAndRemove {
+                    progressBarTask.restart()
+                }
+                resetOverlays()
+                resetMapFocusAndAnimate()
+                setMapInteractionEnabled(true)
+
+            }
+        }
     }
 
-    private fun loadNextGuessPicture() {
+    private fun loadNextGuessPicture(onSuccess: () -> Unit = { }) {
         level.getCurrentGuess()
             .getPicture {
                 binding.guessImage
                     .setImageDrawable(it.toDrawable(resources))
+                onSuccess()
             }
     }
 
