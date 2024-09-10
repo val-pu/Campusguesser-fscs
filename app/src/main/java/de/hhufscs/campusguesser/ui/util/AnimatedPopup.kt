@@ -19,7 +19,6 @@ class AnimatedPopup(val rootView: ViewGroup, val builder: Builder.() -> (Unit)) 
         rootMotionLayout = layoutInflater.inflate(R.layout.layout_success, rootView)
             .findViewById(R.id.popup)!!
         binding = LayoutSuccessBinding.bind(rootMotionLayout)
-
         val popupBuilder = Builder()
         builder(popupBuilder)
 

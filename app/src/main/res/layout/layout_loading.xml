@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/popup_loading"
+    android:layout_height="match_parent"
+    android:elevation="10dp"
+    android:background="@color/back"
+    android:alpha="1"
+    app:layoutDescription="@xml/layout_success_scene">
+
+
+    <de.hhufscs.campusguesser.ui.views.LoadingAnimation
+        android:id="@+id/loadingAnimation2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias=".7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:textColor="@color/white"
+        android:fontFamily="@font/quicksand_bold"
+        android:layout_height="wrap_content"
+        android:text="Lade Bild...."
+        android:textSize="@dimen/title"
+        app:layout_constraintBottom_toTopOf="@+id/loadingAnimation2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
