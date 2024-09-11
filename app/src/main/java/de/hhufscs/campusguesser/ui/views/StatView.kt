@@ -16,20 +16,20 @@ import de.hhufscs.campusguesser.R
 class StatView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     val strokePaint = Paint().apply {
-        strokeWidth = 10F
-        color = resources.getColor(R.color.very_successful_green)
+        strokeWidth = 8F
+        color = resources.getColor(R.color.skyBlue)
         strokeCap = Paint.Cap.ROUND
     }
 
     val strokePaintBad = Paint().apply {
-        strokeWidth = 10F
+        strokeWidth = 8F
         color = resources.getColor(R.color.very_unsuccessful_red)
         strokeCap = Paint.Cap.ROUND
     }
 
     val strokePaintTop = Paint().apply {
-        strokeWidth = 10F
-        color = resources.getColor(R.color.top_paint_stat_view)
+        strokeWidth = 8F
+        color = resources.getColor(R.color.skyBlue)
         strokeCap = Paint.Cap.ROUND
         setPathEffect(DashPathEffect(floatArrayOf(5f,25F), 0f))
     }
@@ -45,6 +45,7 @@ class StatView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     val integralPaint = Paint().apply {
         strokeWidth = 10F
         color = resources.getColor(R.color.integral_paint_stat_view)
+        alpha = 50
     }
 
     val sumPaint = Paint().apply {
@@ -89,9 +90,8 @@ class StatView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         }
         p.lineTo(calcIndexX(dataPoints.size - 1), calcPointY(0))
         p.lineTo(delta, calcPointY(0))
-        canvas.drawPath(p, integralPaint)
-        canvas.drawPath(p, integralPaintStroke)
-
+//        canvas.drawPath(p, integralPaint)
+//        canvas.drawPath(p, integralPaintStroke)
         // MAXIMUM Anzeige
 
         canvas.drawLine(

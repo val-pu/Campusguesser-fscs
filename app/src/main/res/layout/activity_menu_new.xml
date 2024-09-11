@@ -162,12 +162,4 @@
 
     </LinearLayout>
 
-    <de.hhufscs.campusguesser.ui.views.StatView
-        android:id="@+id/loadingAnimation"
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

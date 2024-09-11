@@ -17,19 +17,21 @@ class AnimatedLoadingPopUp(val rootView: ViewGroup) {
 
     init {
         val layoutInflater = LayoutInflater.from(rootView.context)
-        rootLayout = layoutInflater.inflate(R.layout.layout_loading, rootView,false)
+        rootLayout = layoutInflater.inflate(R.layout.layout_loading, rootView, false)
             .findViewById(R.id.popup_loading)
         binding = LayoutLoadingBinding.bind(rootLayout)
         rootView.addView(rootLayout)
     }
 
     fun show() {
+        rootLayout.scaleX = 1F
+        rootLayout.scaleY = 1F
         rootLayout.animate().setDuration(400).alpha(1F).start()
     }
 
     fun hideAndRemove(onFinish: (() -> Unit)? = null) {
         binding.popupLoading.visibility = VISIBLE
-        rootLayout.animate().setDuration(400).alpha(0F).withEndAction {
+        rootLayout.animate().setDuration(400).scaleXBy(1F).scaleYBy(1F).alpha(0F).withEndAction {
             onFinish?.invoke()
         }.start()
 

@@ -168,7 +168,7 @@ class GuessActivity : AppCompatActivity() {
                     resetOverlays()
                     setMapInteractionEnabled(true)
                 }
-            }, 1000)
+            }, 3000)
         }
     }
 
