@@ -51,6 +51,7 @@ import kotlin.math.roundToInt
 class GuessActivity : AppCompatActivity() {
     companion object {
         val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
+        val GEOPOINT_LLANFAIRPWLLGWYNGYLLGOGERYCHWYRNDROBWLLLLANTYSILIOGOGOGOCH = GeoPoint(53.22069, -4.20932)
     }
 
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
@@ -186,15 +187,20 @@ class GuessActivity : AppCompatActivity() {
         binding.playerBackgroundView.visibility = INVISIBLE
         progressBarTask.pause()
 
+        var guessLocation: IGeoPoint
         if (!userMadeGuess()) {
             showUnsuccessfulGuessInfoPopUp()
-            return
+            guessLocation = GEOPOINT_LLANFAIRPWLLGWYNGYLLGOGERYCHWYRNDROBWLLLLANTYSILIOGOGOGOCH
+        } else {
+            guessLocation = guessMarker!!.point
         }
 
         val currentGuess = level.getCurrentGuess()
-        val guessLocation = guessMarker!!.point
         level.guess(guessLocation) { it ->
 
+            if(userMadeGuess()){
+                showSuccessfulGuessInfoPopUp(it)
+            }
             updateUIPointsToReflectGuessResult(it)
             currentGuess.getLocation {
                 drawLinePolygonOnMap(it, guessLocation)
@@ -264,7 +270,7 @@ class GuessActivity : AppCompatActivity() {
             onClickListener = OnClickListener {
                 nextGuess()
             }
-            description = "Du hast 0 Punkte erhalten."
+            description = "Du hast nicht gesetzt. Dein Guess wurde deswegen automatisch nach Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch gesetzt. Du hast 0 Punkte erhalten"
             extraTextRight = "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
         }.show()
     }
@@ -272,7 +278,6 @@ class GuessActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun updateUIPointsToReflectGuessResult(guessResult: GuessResult) {
 
-        showSuccessfulGuessInfoPopUp(guessResult)
         updateCumulativeScorePoints()
 
 
@@ -313,8 +318,6 @@ class GuessActivity : AppCompatActivity() {
             strokeWidth = 20F
         })
     }
-
-    private fun userMadeGuess() = guessMarker != null
 
     private fun showGuessResultInfoCard() {
     }
@@ -372,6 +375,8 @@ class GuessActivity : AppCompatActivity() {
             iconOverlay.removeItem(guessMarker)
         }
     }
+
+    private fun userMadeGuess() = guessMarker != null
 
     private fun setUpOSMMap() {
 

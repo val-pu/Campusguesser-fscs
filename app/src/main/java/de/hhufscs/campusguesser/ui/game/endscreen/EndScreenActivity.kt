@@ -24,5 +24,8 @@ class EndScreenActivity : AppCompatActivity() {
             adapter = EndScreenSummaryAdapter(guesses)
         }
         binding.endScore.text = "${levelResult.points()}/${levelResult.maxPoints()}"
+        binding.btnNextGuess.setOnClickListener{
+            finish()
+        }
     }
 }
