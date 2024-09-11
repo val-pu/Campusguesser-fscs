@@ -7,14 +7,13 @@ import android.util.AttributeSet
 import android.view.View
 import de.hhufscs.campusguesser.R
 import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.sin
 
 class LoadingAnimation(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     val ballPaint = Paint()
-    val fps = 25
-    val timePerBall = 600L
+    val fps = 40
+    val timePerBall = 450L
 
     init {
         ballPaint.color = resources.getColor(R.color.back_secondary)
@@ -29,7 +28,7 @@ class LoadingAnimation(context: Context?, attrs: AttributeSet?) : View(context, 
         ballPaint.alpha = (-sin(x)*40F + 60).toInt()
         canvas.drawCircle(
             oneFourth * (ballActive + 1),
-            (height / 2F + sin(x) * height * .2).toFloat(), ((-.1F*sin(x)+1)*radius).toFloat(), ballPaint
+            (height / 2F + sin(x) * height * 0).toFloat(), ((-.15F*sin(x)+1)*radius).toFloat(), ballPaint
         )
         ballPaint.alpha = 60
         repeat(3) {
