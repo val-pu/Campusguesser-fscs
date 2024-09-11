@@ -119,8 +119,6 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/btn_back"
-        android:backgroundTint="@color/skyBlue"
         android:fontFamily="@font/quicksand_bold"
         android:padding="10dp"
         android:text="WEITER"

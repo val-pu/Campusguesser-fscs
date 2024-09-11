@@ -187,18 +187,17 @@ class GuessActivity : AppCompatActivity() {
         binding.playerBackgroundView.visibility = INVISIBLE
         progressBarTask.pause()
 
-        var guessLocation: IGeoPoint
-        if (!userMadeGuess()) {
+        val userMadeGuess = userMadeGuess()
+        if (!userMadeGuess) {
             showUnsuccessfulGuessInfoPopUp()
-            guessLocation = GEOPOINT_LLANFAIRPWLLGWYNGYLLGOGERYCHWYRNDROBWLLLLANTYSILIOGOGOGOCH
-        } else {
-            guessLocation = guessMarker!!.point
+            addGuessMarkerTo(GEOPOINT_LLANFAIRPWLLGWYNGYLLGOGERYCHWYRNDROBWLLLLANTYSILIOGOGOGOCH)
         }
+        val guessLocation = guessMarker!!.point
 
         val currentGuess = level.getCurrentGuess()
         level.guess(guessLocation) { it ->
 
-            if(userMadeGuess()){
+            if(userMadeGuess){
                 showSuccessfulGuessInfoPopUp(it)
             }
             updateUIPointsToReflectGuessResult(it)
