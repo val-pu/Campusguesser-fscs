@@ -31,7 +31,10 @@ class MenuActivity : AppCompatActivity() {
             }
 
             btnBrowser.setOnClickListener{
-                startActivity(Intent(applicationContext, ChooseLevelActivity::class.java))
+                val onlineIntent = Intent(applicationContext, GuessActivity::class.java)
+                onlineIntent.putExtra("online", true)
+                startActivity(onlineIntent)
+                //startActivity(Intent(applicationContext, ChooseLevelActivity::class.java))
             }
         }
     }

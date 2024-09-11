@@ -34,7 +34,7 @@ class OnlineGuess : IGuess {
     }
 
     private fun fetchLocation(): IGeoPoint{
-        var urlString: String = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/location?id=${this.identifier}"
+        var urlString: String = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/guess?guessUUID=${this.identifier}"
         var connection: URLConnection = URL(urlString).openConnection()
         var scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")
         var locationJSONString: String = scanner.next()
@@ -53,10 +53,9 @@ class OnlineGuess : IGuess {
     }
 
     private fun fetchBitmap(): Bitmap{
-        var urlString: String = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/picture?id=${this.identifier}"
+        val urlString = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/image/${this.identifier}"
         var connection: URLConnection = URL(urlString).openConnection()
-        var encodedBitmapArray: ByteArray = IOUtils.toByteArray(connection.getInputStream())
-        var bitmapArray: ByteArray = Base64.getDecoder().decode(encodedBitmapArray)
+        var bitmapArray: ByteArray = IOUtils.toByteArray(connection.getInputStream())
         var bitmap: Bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0 , bitmapArray.size)
         return bitmap
     }
