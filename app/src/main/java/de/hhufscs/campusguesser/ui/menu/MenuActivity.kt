@@ -19,21 +19,20 @@ class MenuActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.apply {
             btnPlayLocal.setOnClickListener {
-                val localIntent = Intent(applicationContext, GuessActivity::class.java)
-                localIntent.putExtra("online", false)
-                startActivity(localIntent)
-            }
-
-            btnEditor.setOnClickListener {
-                val localIntent = Intent(applicationContext, CreatorActivity::class.java)
-                localIntent.putExtra("online", false)
-                startActivity(localIntent)
-            }
-
-            btnBrowser.setOnClickListener{
                 val onlineIntent = Intent(applicationContext, GuessActivity::class.java)
                 onlineIntent.putExtra("online", true)
                 startActivity(onlineIntent)
+            }
+
+            btnEditor.setOnClickListener {
+                val intent = Intent(applicationContext, CreatorActivity::class.java)
+                startActivity(intent)
+            }
+
+            btnBrowser.setOnClickListener{
+                val localIntent = Intent(applicationContext, GuessActivity::class.java)
+                localIntent.putExtra("online", false)
+                startActivity(localIntent)
                 //startActivity(Intent(applicationContext, ChooseLevelActivity::class.java))
             }
         }

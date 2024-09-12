@@ -1,5 +1,7 @@
 package de.hhufscs.campusguesser.services.repositories
 
+import de.hhufscs.campusguesser.core.OnlineGuess
+import de.hhufscs.campusguesser.services.OnlineService
 import de.hhufscs.campusguesser.services.async.NetworkFileThread
 import org.json.JSONArray
 import org.json.JSONObject
@@ -11,18 +13,10 @@ import java.util.Scanner
 import java.util.stream.Collectors
 
 class OnlineGuessRepository {
-    companion object{
-        var SOURCE_IP: String = "192.168.0.100" // ToDo
-        var SOURCE_PORT: String = "8080" //ToDo
-    }
-
     private fun getNIdentifiersTask(n: Int): List<String>{
         try {
-            val urlString = "http://$SOURCE_IP:$SOURCE_PORT/guess/all"
-            val connection: URLConnection = URL(urlString).openConnection()
-            connection.connectTimeout = 3000
-            val scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")
-            val jsonString: String = scanner.next()
+            val urlString = "http://${OnlineService.SOURCE_IP}:${OnlineService.SOURCE_PORT}/guess/all"
+            val jsonString = OnlineService.requestURLBlockingly(urlString, 3000)
             val jsonArray = JSONArray(jsonString)
             val identifiersList: LinkedList<String> = LinkedList()
             for(index in 0..<jsonArray.length()){
@@ -46,11 +40,8 @@ class OnlineGuessRepository {
 
     private fun getIdentifiersUUIDTask(uuid: String): List<String>{
         try {
-            val urlString = "http://$SOURCE_IP:$SOURCE_PORT/level?id=${uuid}"
-            val connection: URLConnection = URL(urlString).openConnection()
-            connection.connectTimeout = 3000
-            val scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")
-            val jsonString: String = scanner.next()
+            val urlString = "http://${OnlineService.SOURCE_IP}:${OnlineService.SOURCE_PORT}/level?id=${uuid}"
+            val jsonString: String = OnlineService.requestURLBlockingly(urlString, 3000)
             val outerJSONObject = JSONObject(jsonString)
             val jsonArray: JSONArray = outerJSONObject.getJSONArray("guesses")
             val identifiersList: LinkedList<String> = LinkedList()

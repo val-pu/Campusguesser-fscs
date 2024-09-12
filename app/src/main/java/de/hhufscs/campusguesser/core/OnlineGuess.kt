@@ -2,6 +2,7 @@ package de.hhufscs.campusguesser.core
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import de.hhufscs.campusguesser.services.OnlineService
 import de.hhufscs.campusguesser.services.repositories.OnlineGuessRepository
 import de.hhufscs.campusguesser.services.async.NetworkFileThread
 import org.apache.commons.io.IOUtils
@@ -34,10 +35,8 @@ class OnlineGuess : IGuess {
     }
 
     private fun fetchLocation(): IGeoPoint{
-        var urlString: String = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/guess?guessUUID=${this.identifier}"
-        var connection: URLConnection = URL(urlString).openConnection()
-        var scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")
-        var locationJSONString: String = scanner.next()
+        var urlString: String = "http://${OnlineService.SOURCE_IP}:${OnlineService.SOURCE_PORT}/guess?guessUUID=${this.identifier}"
+        var locationJSONString: String = OnlineService.requestURLBlockingly(urlString, 3000)
         var locationJSON: JSONObject = JSONObject(locationJSONString)
         var latitude: Double = locationJSON.getDouble("latitude")
         var longitude: Double = locationJSON.getDouble("longitude")
@@ -53,7 +52,7 @@ class OnlineGuess : IGuess {
     }
 
     private fun fetchBitmap(): Bitmap{
-        val urlString = "http://${OnlineGuessRepository.SOURCE_IP}:${OnlineGuessRepository.SOURCE_PORT}/image/${this.identifier}"
+        val urlString = "http://${OnlineService.SOURCE_IP}:${OnlineService.SOURCE_PORT}/image/${this.identifier}"
         var connection: URLConnection = URL(urlString).openConnection()
         var bitmapArray: ByteArray = IOUtils.toByteArray(connection.getInputStream())
         var bitmap: Bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0 , bitmapArray.size)
