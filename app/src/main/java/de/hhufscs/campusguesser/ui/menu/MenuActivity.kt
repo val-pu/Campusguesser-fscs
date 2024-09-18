@@ -3,39 +3,38 @@ package de.hhufscs.campusguesser.ui.menu
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import de.hhufscs.campusguesser.creator.CreatorActivity
-import de.hhufscs.campusguesser.databinding.ActivityMenuNewBinding
+import de.hhufscs.campusguesser.databinding.ActivityMenuBinding
 import de.hhufscs.campusguesser.ui.game.GuessActivity
 
 class MenuActivity : AppCompatActivity() {
 
 
-    lateinit var binding: ActivityMenuNewBinding
+    lateinit var binding: ActivityMenuBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMenuNewBinding.inflate(layoutInflater)
+        binding = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apply {
-            btnPlayLocal.setOnClickListener {
-                val onlineIntent = Intent(applicationContext, GuessActivity::class.java)
-                onlineIntent.putExtra("online", true)
-                startActivity(onlineIntent)
+            btnQuickplay.setOnClickListener {
+                startOnlineLevel(null)
             }
 
-            btnEditor.setOnClickListener {
-                val intent = Intent(applicationContext, CreatorActivity::class.java)
-                startActivity(intent)
+            btnEsag.setOnClickListener {
+                startOnlineLevel(40)
             }
 
             btnBrowser.setOnClickListener{
-                val localIntent = Intent(applicationContext, GuessActivity::class.java)
-                localIntent.putExtra("online", false)
-                startActivity(localIntent)
-                //startActivity(Intent(applicationContext, ChooseLevelActivity::class.java))
+                //
             }
         }
+    }
+
+    fun startOnlineLevel(guessCount: Int?){
+        val onlineIntent = Intent(applicationContext, GuessActivity::class.java)
+        onlineIntent.putExtra("count", guessCount ?: 10)
+        startActivity(onlineIntent)
     }
 
 }

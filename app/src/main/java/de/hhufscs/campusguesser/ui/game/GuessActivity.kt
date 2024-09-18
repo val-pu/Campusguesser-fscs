@@ -25,7 +25,6 @@ import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
-import de.hhufscs.campusguesser.services.factories.LocalLevelFactory
 import de.hhufscs.campusguesser.services.factories.OnlineLevelFactory
 import de.hhufscs.campusguesser.ui.game.endscreen.EndScreenActivity
 import de.hhufscs.campusguesser.ui.game.endscreen.GsonFactory
@@ -91,6 +90,8 @@ class GuessActivity : AppCompatActivity() {
         )
         binding = ActivityGuessBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        loadingPopUp = AnimatedLoadingPopUp(binding.root)
+        loadingPopUp.show(1)
         setUpOSMMap()
         setupIconOverlay()
         enableMapPointGestureDetector()
@@ -98,28 +99,20 @@ class GuessActivity : AppCompatActivity() {
         initProgressBar()
         binding.imageView.setOnClickListener() { finish() }
 
-        var online = intent.getBooleanExtra("online", false)
         var onlineuuid = intent.getStringExtra("uuid")
 
-        loadingPopUp = AnimatedLoadingPopUp(binding.root)
 
-
-        if (!online) {
-            val localLevelFactory = LocalLevelFactory(baseContext)
-            level = localLevelFactory.getLevelWithNLocalGuesses(10)
-            nextGuess()
+        val n = intent.getIntExtra("count",10)
+        val onlineLevelFactory = OnlineLevelFactory()
+        if (onlineuuid == null) {
+            onlineLevelFactory.getLevelWithNOnlineGuesses(n) {
+                level = it
+                nextGuess()
+            }
         } else {
-            val onlineLevelFactory = OnlineLevelFactory()
-            if (onlineuuid == null) {
-                onlineLevelFactory.getLevelWithNOnlineGuesses(10) {
-                    level = it
-                    nextGuess()
-                }
-            } else {
-                onlineLevelFactory.getLevelByUUID(onlineuuid) {
-                    level = it
-                    nextGuess()
-                }
+            onlineLevelFactory.getLevelByUUID(onlineuuid) {
+                level = it
+                nextGuess()
             }
         }
     }
@@ -169,7 +162,7 @@ class GuessActivity : AppCompatActivity() {
                     resetOverlays()
                     setMapInteractionEnabled(true)
                 }
-            }, 3000)
+            }, 1000)
         }
     }
 
@@ -366,7 +359,7 @@ class GuessActivity : AppCompatActivity() {
         guessMarker = OverlayItem("The Spot!", "", newLocation)
         guessMarker!!.markerHotspot = OverlayItem.HotspotPlace.CENTER
         guessMarker!!.setMarker(locationMarkerDrawable())
-        iconOverlay.addItem(guessMarker)
+        iconOverlay.addItem(guessMarker!!)
     }
 
     private fun removeOldGuessMarker() {

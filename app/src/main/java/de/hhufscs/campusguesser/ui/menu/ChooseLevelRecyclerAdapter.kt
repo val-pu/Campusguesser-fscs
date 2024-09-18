@@ -12,8 +12,6 @@ import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.IGuess
 import de.hhufscs.campusguesser.core.Level
 import de.hhufscs.campusguesser.core.LevelInformation
-import de.hhufscs.campusguesser.core.LocalGuess
-import de.hhufscs.campusguesser.services.repositories.LocalGuessRepository
 import de.hhufscs.campusguesser.ui.game.GuessActivity
 
 class ChooseLevelRecyclerAdapter(val levelInformation: List<LevelInformation>, var applicationContext: Context) :

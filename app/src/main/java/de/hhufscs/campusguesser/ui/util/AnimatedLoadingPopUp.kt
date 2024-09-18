@@ -23,10 +23,14 @@ class AnimatedLoadingPopUp(val rootView: ViewGroup) {
         rootView.addView(rootLayout)
     }
 
-    fun show() {
+    fun show(time: Long) {
         rootLayout.scaleX = 1F
         rootLayout.scaleY = 1F
-        rootLayout.animate().setDuration(400).alpha(1F).start()
+        rootLayout.animate().setDuration(time).alpha(1F).start()
+    }
+
+    fun show(){
+        this.show(400)
     }
 
     fun hideAndRemove(onFinish: (() -> Unit)? = null) {
