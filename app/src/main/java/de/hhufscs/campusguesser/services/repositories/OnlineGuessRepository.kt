@@ -1,5 +1,6 @@
 package de.hhufscs.campusguesser.services.repositories
 
+import android.util.Log
 import de.hhufscs.campusguesser.core.OnlineGuess
 import de.hhufscs.campusguesser.services.OnlineService
 import de.hhufscs.campusguesser.services.async.NetworkFileThread
@@ -15,8 +16,9 @@ import java.util.stream.Collectors
 class OnlineGuessRepository {
     private fun getNIdentifiersTask(n: Int): List<String>{
         try {
-            val urlString = "http://${OnlineService.SOURCE_IP}:${OnlineService.SOURCE_PORT}/guess/all"
+            val urlString = OnlineService.buildURL("/guess/all")
             val jsonString = OnlineService.requestURLBlockingly(urlString, 3000)
+            Log.d("BUGHUNTING", "getNIdentifiersTask: $jsonString")
             val jsonArray = JSONArray(jsonString)
             val identifiersList: LinkedList<String> = LinkedList()
             for(index in 0..<jsonArray.length()){
@@ -40,7 +42,7 @@ class OnlineGuessRepository {
 
     private fun getIdentifiersUUIDTask(uuid: String): List<String>{
         try {
-            val urlString = "http://${OnlineService.SOURCE_IP}:${OnlineService.SOURCE_PORT}/level?id=${uuid}"
+            val urlString = OnlineService.buildURL("/level?id=${uuid}")
             val jsonString: String = OnlineService.requestURLBlockingly(urlString, 3000)
             val outerJSONObject = JSONObject(jsonString)
             val jsonArray: JSONArray = outerJSONObject.getJSONArray("guesses")

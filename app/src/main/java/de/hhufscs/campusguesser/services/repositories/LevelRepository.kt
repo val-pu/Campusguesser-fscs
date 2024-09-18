@@ -1,9 +1,8 @@
 package de.hhufscs.campusguesser.services.repositories
 
 import de.hhufscs.campusguesser.core.LevelInformation
+import de.hhufscs.campusguesser.services.OnlineService
 import de.hhufscs.campusguesser.services.async.NetworkFileThread
-import de.hhufscs.campusguesser.services.repositories.OnlineGuessRepository.Companion.SOURCE_IP
-import de.hhufscs.campusguesser.services.repositories.OnlineGuessRepository.Companion.SOURCE_PORT
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.SocketTimeoutException
@@ -22,7 +21,7 @@ class LevelRepository {
 
     fun getAllLevelInformationsTask(): List<LevelInformation>{
         try {
-            var urlString: String = "http://$SOURCE_IP:$SOURCE_PORT/alllevels"
+            var urlString: String = OnlineService.buildURL("/alllevels")
             var connection: URLConnection = URL(urlString).openConnection()
             connection.connectTimeout = 3000
             var scanner: Scanner = Scanner(connection.getInputStream()).useDelimiter("\\A")

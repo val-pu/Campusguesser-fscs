@@ -2,6 +2,7 @@ package de.hhufscs.campusguesser.core
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import de.hhufscs.campusguesser.services.OnlineService
 import de.hhufscs.campusguesser.services.repositories.OnlineGuessRepository
 import de.hhufscs.campusguesser.services.async.NetworkFileThread
@@ -35,8 +36,10 @@ class OnlineGuess : IGuess {
     }
 
     private fun fetchLocation(): IGeoPoint{
-        var urlString: String = "http://${OnlineService.SOURCE_IP}:${OnlineService.SOURCE_PORT}/guess?guessUUID=${this.identifier}"
+        var urlString: String = OnlineService.buildURL("/guess?guessUUID=${this.identifier}")
+        Log.d("BUGHUNTING", "fetchLocation: $urlString")
         var locationJSONString: String = OnlineService.requestURLBlockingly(urlString, 3000)
+        Log.d("BUGHUNTING", "fetchLocation: $locationJSONString")
         var locationJSON: JSONObject = JSONObject(locationJSONString)
         var latitude: Double = locationJSON.getDouble("latitude")
         var longitude: Double = locationJSON.getDouble("longitude")
@@ -52,9 +55,11 @@ class OnlineGuess : IGuess {
     }
 
     private fun fetchBitmap(): Bitmap{
-        val urlString = "http://${OnlineService.SOURCE_IP}:${OnlineService.SOURCE_PORT}/image/${this.identifier}"
+        val urlString = OnlineService.buildURL("/image/${this.identifier}")
+        Log.d("BUGHUNTING", "fetchBitmap: $urlString")
         var connection: URLConnection = URL(urlString).openConnection()
         var bitmapArray: ByteArray = IOUtils.toByteArray(connection.getInputStream())
+        Log.d("BUGHUNTING", "fetchBitmap: ${bitmapArray.joinToString()}")
         var bitmap: Bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0 , bitmapArray.size)
         return bitmap
     }
