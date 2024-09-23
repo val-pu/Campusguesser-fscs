@@ -64,6 +64,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("com.jsibbold:zoomage:1.3.1")
     implementation("androidx.activity:activity-ktx:1.9.1")
+    implementation("androidx.activity:activity:1.8.0")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     testImplementation("junit:junit:4.13.2")

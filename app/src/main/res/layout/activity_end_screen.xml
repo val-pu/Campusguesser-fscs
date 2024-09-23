@@ -111,19 +111,39 @@
 
     </de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout>
 
-
-    <de.hhufscs.campusguesser.ui.views.ElevatedButton
-        android:id="@+id/btn_next_guess"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="10dp"
-        android:fontFamily="@font/quicksand_bold"
-        android:padding="10dp"
-        android:text="WEITER"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:orientation="horizontal">
+
+        <de.hhufscs.campusguesser.ui.views.ElevatedButton
+            android:id="@+id/btn_next_guess"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/quicksand_bold"
+            android:padding="10dp"
+            android:text="WEITER"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+
+        <de.hhufscs.campusguesser.ui.views.ElevatedButton
+            android:id="@+id/btn_imprint"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/quicksand_bold"
+            android:padding="10dp"
+            android:text="IMPRESSUM"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
 
 </LinearLayout>

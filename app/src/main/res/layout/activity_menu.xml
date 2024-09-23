@@ -8,7 +8,6 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.menu.MenuActivity">
 
-
     <ImageView
         android:id="@+id/imageView9"
         android:layout_width="400dp"

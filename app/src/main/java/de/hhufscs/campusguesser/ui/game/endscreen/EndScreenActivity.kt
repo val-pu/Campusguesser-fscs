@@ -1,5 +1,6 @@
 package de.hhufscs.campusguesser.ui.game.endscreen
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +27,9 @@ class EndScreenActivity : AppCompatActivity() {
         binding.endScore.text = "${levelResult.points()}/${levelResult.maxPoints()}"
         binding.btnNextGuess.setOnClickListener{
             finish()
+        }
+        binding.btnImprint.setOnClickListener{
+            startActivity(Intent(baseContext, ImprintActivity::class.java))
         }
     }
 }
