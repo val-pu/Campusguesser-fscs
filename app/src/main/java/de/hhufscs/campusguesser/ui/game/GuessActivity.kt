@@ -34,7 +34,9 @@ import de.hhufscs.campusguesser.ui.util.AnimatedPopup
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
+import org.osmdroid.tileprovider.modules.OfflineTileProvider
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.ItemizedIconOverlay
@@ -42,6 +44,8 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay.OnItemGestureListener
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.Polygon
+import java.io.File
+import java.io.FileOutputStream
 import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.math.min
@@ -89,6 +93,7 @@ class GuessActivity : AppCompatActivity() {
             PreferenceManager.getDefaultSharedPreferences(applicationContext)
         )
         binding = ActivityGuessBinding.inflate(layoutInflater)
+        initOfflineMap()
         setContentView(binding.root)
         loadingPopUp = AnimatedLoadingPopUp(binding.root)
         loadingPopUp.show(1)
@@ -115,6 +120,23 @@ class GuessActivity : AppCompatActivity() {
                 nextGuess()
             }
         }
+    }
+
+    private fun initOfflineMap() {
+        //Achtung, hier wird gepfuscht :(
+        val file = File(cacheDir.absolutePath + "hhu_map.zip")
+        if(!file.exists()){
+            val outputStream = FileOutputStream(file)
+            val inputStream = assets.open("hhu_map.zip")
+            var byteArray: ByteArray = ByteArray(1024)
+            var len = inputStream.read(byteArray)
+            while(len != -1){
+                outputStream.write(byteArray)
+                len = inputStream.read(byteArray)
+            }
+        }
+        val tileProvider3000 = OfflineTileProvider(SimpleRegisterReceiver(this), Array<File>(1){File(cacheDir.absolutePath + "hhu_map.zip")})
+        binding.guessMap.tileProvider = tileProvider3000
     }
 
     private fun initProgressBar() {
