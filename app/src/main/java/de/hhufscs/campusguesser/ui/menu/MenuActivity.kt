@@ -22,7 +22,7 @@ class MenuActivity : AppCompatActivity() {
             }
 
             btnEsag.setOnClickListener {
-                startOnlineLevel(40)
+                startOnlineLevel(10)
             }
 
             btnBrowser.setOnClickListener{
@@ -33,7 +33,7 @@ class MenuActivity : AppCompatActivity() {
 
     fun startOnlineLevel(guessCount: Int?){
         val onlineIntent = Intent(applicationContext, GuessActivity::class.java)
-        onlineIntent.putExtra("count", guessCount ?: 10)
+        onlineIntent.putExtra("count", guessCount ?: 40)
         startActivity(onlineIntent)
     }
 
