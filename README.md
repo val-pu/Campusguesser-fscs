@@ -21,3 +21,11 @@ Please add new features here and mark all features whether they are tested and h
 1. Write expressive git commits
 2. Write documentation for the code you write or change/modify
 3. Update the README when you add a new feature
+
+
+TODO:
+
+Fix picture Zoom
+Fix Picture ratio (SOdass da keine grauen Ränder sind)
+Fix Zoom Bild nach reskalierung
+Fix button being able to be cliced after popup.
