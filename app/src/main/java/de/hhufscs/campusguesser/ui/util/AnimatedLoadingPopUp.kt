@@ -2,11 +2,9 @@ package de.hhufscs.campusguesser.ui.util
 
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import de.hhufscs.campusguesser.R
-import de.hhufscs.campusguesser.databinding.ActivityGuessBinding
 import de.hhufscs.campusguesser.databinding.LayoutLoadingBinding
 
 
@@ -23,10 +21,10 @@ class AnimatedLoadingPopUp(val rootView: ViewGroup) {
         rootView.addView(rootLayout)
     }
 
-    fun show(time: Long) {
+    fun show(showAnimationDuration: Long) {
         rootLayout.scaleX = 1F
         rootLayout.scaleY = 1F
-        rootLayout.animate().setDuration(time).alpha(1F).start()
+        rootLayout.animate().setDuration(showAnimationDuration).alpha(1F).start()
     }
 
     fun show(){

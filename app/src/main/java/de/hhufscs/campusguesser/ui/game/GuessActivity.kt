@@ -17,10 +17,13 @@ import android.view.View.INVISIBLE
 import android.view.View.OnClickListener
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toDrawable
+import androidx.transition.Transition.TransitionListener
 import de.hhufscs.campusguesser.R
 import de.hhufscs.campusguesser.core.GuessResult
 import de.hhufscs.campusguesser.core.Level
@@ -54,11 +57,12 @@ import kotlin.math.roundToInt
 class GuessActivity : AppCompatActivity() {
     companion object {
         val GEOPOINT_HHU = GeoPoint(51.18885, 6.79551)
-        val GEOPOINT_LLANFAIRPWLLGWYNGYLLGOGERYCHWYRNDROBWLLLLANTYSILIOGOGOGOCH = GeoPoint(53.22069, -4.20932)
+        val GEOPOINT_LLANFAIRPWLLGWYNGYLLGOGERYCHWYRNDROBWLLLLANTYSILIOGOGOGOCH =
+            GeoPoint(53.22069, -4.20932)
     }
 
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-    private val PROGESS_TIME_MILLIS = 30_000L
+    private val PROGESS_TIME_MILLIS = 60_000L
 
     private lateinit var binding: ActivityGuessBinding
     private lateinit var level: Level
@@ -84,7 +88,6 @@ class GuessActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         Log.i("CampusGuesser", "Started GuessActivity")
 
         // OSM will das
@@ -102,12 +105,46 @@ class GuessActivity : AppCompatActivity() {
         enableMapPointGestureDetector()
         setUpGuessButtons()
         initProgressBar()
-        binding.imageView.setOnClickListener() { finish() }
+
+        binding.playerScreenMotionLayout.addTransitionListener(object: MotionLayout.TransitionListener {
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int
+            ) {
+
+
+            }
+
+            override fun onTransitionChange(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int,
+                progress: Float
+            ) {
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                binding.guessImage
+                    .setImageDrawable(binding.guessImage.drawable)
+                binding.guessImage.postInvalidate()
+            }
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout?,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
+            }
+
+        })
+
 
         var onlineuuid = intent.getStringExtra("uuid")
 
 
-        val n = intent.getIntExtra("count",10)
+        val n = intent.getIntExtra("count", 10)
         val onlineLevelFactory = OnlineLevelFactory()
         if (onlineuuid == null) {
             onlineLevelFactory.getLevelWithNOnlineGuesses(n) {
@@ -125,17 +162,19 @@ class GuessActivity : AppCompatActivity() {
     private fun initOfflineMap() {
         //Achtung, hier wird gepfuscht :(
         val file = File(cacheDir.absolutePath + "hhu_map.zip")
-        if(!file.exists()){
+        if (!file.exists()) {
             val outputStream = FileOutputStream(file)
             val inputStream = assets.open("hhu_map.zip")
             var byteArray: ByteArray = ByteArray(1024)
             var len = inputStream.read(byteArray)
-            while(len != -1){
+            while (len != -1) {
                 outputStream.write(byteArray)
                 len = inputStream.read(byteArray)
             }
         }
-        val tileProvider3000 = OfflineTileProvider(SimpleRegisterReceiver(this), Array<File>(1){File(cacheDir.absolutePath + "hhu_map.zip")})
+        val tileProvider3000 = OfflineTileProvider(
+            SimpleRegisterReceiver(this),
+            Array<File>(1) { File(cacheDir.absolutePath + "hhu_map.zip") })
         binding.guessMap.tileProvider = tileProvider3000
     }
 
@@ -163,7 +202,10 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun setUpGuessButtons() {
-        binding.btnLockGuess.setOnClickListener { lockGuess() }
+        binding.btnLockGuess.setOnClickListener {
+            if (!progressBarTask.isStopped() && userMadeGuess())
+                lockGuess()
+        }
     }
 
     private fun nextGuess() {
@@ -199,11 +241,13 @@ class GuessActivity : AppCompatActivity() {
 
     @UiThread
     private fun lockGuess() {
+
+
         binding.playerBackgroundView.visibility = INVISIBLE
         progressBarTask.pause()
 
-        val userMadeGuess = userMadeGuess()
-        if (!userMadeGuess) {
+        if (!userMadeGuess()) {
+//            return
             showUnsuccessfulGuessInfoPopUp()
             addGuessMarkerTo(GEOPOINT_LLANFAIRPWLLGWYNGYLLGOGERYCHWYRNDROBWLLLLANTYSILIOGOGOGOCH)
         }
@@ -212,7 +256,7 @@ class GuessActivity : AppCompatActivity() {
         val currentGuess = level.getCurrentGuess()
         level.guess(guessLocation) { it ->
 
-            if(userMadeGuess){
+            if (userMadeGuess()) {
                 showSuccessfulGuessInfoPopUp(it)
             }
             updateUIPointsToReflectGuessResult(it)
@@ -234,7 +278,7 @@ class GuessActivity : AppCompatActivity() {
                     canvas.clipPath(circlePath)
                     canvas.drawBitmap(bm, 0F, 0F, Paint())
                     val imageDrawable = image.toDrawable(resources)
-                    imageDrawable.setTargetDensity(30)
+                    imageDrawable.setTargetDensity((binding.guessMap.width*.1).roundToInt())
 
                     addIconToMapAtLocationWithDrawable(it, imageDrawable.mutate())
                 }
@@ -284,7 +328,8 @@ class GuessActivity : AppCompatActivity() {
             onClickListener = OnClickListener {
                 nextGuess()
             }
-            description = "Du hast nicht gesetzt. Dein Guess wurde deswegen automatisch nach Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch gesetzt. Du hast 0 Punkte erhalten"
+            description =
+                "Du hast nicht gesetzt. Dein Guess wurde deswegen automatisch nach Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch gesetzt. Du hast 0 Punkte erhalten"
             extraTextRight = "%d/%d".format(level.getGuessesMadeCount(), level.getGuessCount())
         }.show()
     }

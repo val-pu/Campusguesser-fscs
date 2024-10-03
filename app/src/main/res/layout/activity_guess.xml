@@ -26,11 +26,11 @@
             View_labelSpace="10dp"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="5dp"
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/points"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:progressView_autoAnimate="true"
             app:progressView_colorBackground="@color/white"
@@ -38,22 +38,13 @@
             app:progressView_labelColorInner="@color/white"
             app:progressView_labelColorOuter="@color/black"
             app:progressView_labelSize="16sp"
-            app:progressView_labelText="0"
             app:progressView_labelTypeface="bold"
             app:progressView_max="100"
             app:progressView_min="0"
+            app:progressView_duration="200"
             app:progressView_progress="100"
             app:progressView_progressFromPrevious="true"
             app:progressView_radius="10dp" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_clear_black_24dp" />
 
         <TextView
             android:id="@+id/points"
@@ -75,7 +66,7 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="4dp"
+        android:layout_marginHorizontal="@dimen/default_radius"
         app:layout_constraintBottom_toBottomOf="@+id/playerScreenMotionLayout"
         app:layout_constraintTop_toBottomOf="@id/constraintLayout3">
 
@@ -91,11 +82,13 @@
         android:id="@+id/playerScreenMotionLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="10dp"
         android:layout_weight="100"
         android:animateLayoutChanges="true"
         android:background="#000077B6"
         android:padding="6dp"
+        tools:visibility="invisible"
         app:layoutDescription="@xml/guess_picture_motion_scene"
         app:layout_constraintBottom_toTopOf="@+id/btn_lock_guess"
         app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +102,7 @@
             android:animateLayoutChanges="true"
             android:background="@drawable/btn_back"
             android:backgroundTint="@color/back"
-            android:paddingHorizontal="10dp"
+            android:paddingHorizontal="14dp"
             android:paddingBottom="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -117,9 +110,9 @@
 
             <View
                 android:id="@+id/resize_view"
-                android:layout_width="30dp"
-                android:layout_height="4dp"
-                android:layout_marginTop="7.5dp"
+                android:layout_width="40dp"
+                android:layout_height="10dp"
+                android:layout_marginTop="15dp"
                 android:animateLayoutChanges="true"
                 android:background="@drawable/btn_back"
                 android:backgroundTint="@color/back_secondary"
@@ -131,7 +124,7 @@
             <de.hhufscs.campusguesser.ui.views.RoundedConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="7.5dp"
+                android:layout_marginTop="15dp"
                 android:background="#3F3F3F"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

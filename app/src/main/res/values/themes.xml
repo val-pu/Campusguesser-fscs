@@ -1,10 +1,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Campusguesser" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Campusguesser" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your light theme here. -->
     </style>
 
     <style name="Theme.Campusguesser" parent="Base.Theme.Campusguesser" >
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="colorPrimary">@color/back</item>
+        <item name="fontFamily">@font/quicksand_medium</item>
+        <item name="colorSecondary">@color/back</item>
+        <item name="colorAccent">@color/back</item>
     </style>
 
     <style name="QuicksandBoldButtonStyle">

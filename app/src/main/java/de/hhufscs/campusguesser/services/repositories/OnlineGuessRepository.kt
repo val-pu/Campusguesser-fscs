@@ -33,7 +33,7 @@ class OnlineGuessRepository {
 
     fun getNOnlineGuessIdentifiers(n: Int, onLoaded: (List<String>) -> Unit){
         fun getNIdentifiersTaskWrapper(): List<String> {return getNIdentifiersTask(n)}
-        var thread: NetworkFileThread<List<String>> = NetworkFileThread(::getNIdentifiersTaskWrapper){
+        val thread: NetworkFileThread<List<String>> = NetworkFileThread(::getNIdentifiersTaskWrapper){
             val limitedList = it.shuffled().stream().limit(n.toLong()).collect(Collectors.toList())
             onLoaded(limitedList)
         }

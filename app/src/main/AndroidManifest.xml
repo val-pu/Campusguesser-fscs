@@ -29,9 +29,6 @@
             android:name=".ui.game.endscreen.EndScreenActivity"
             android:exported="false" />
         <activity
-            android:name=".creator.CreatorNewInstanceValidatorActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.menu.MenuActivity"
             android:exported="true"
             android:label="@string/app_name"
@@ -51,6 +48,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.game.GuessActivity"
+
             android:exported="false"
             android:screenOrientation="portrait" /> <!-- Pfusch von hier https://www.youtube.com/watch?v=CYRXXOM3aGI -->
         <provider
