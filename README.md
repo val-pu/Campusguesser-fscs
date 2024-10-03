@@ -28,4 +28,3 @@ TODO:
 Fix picture Zoom
 Fix Picture ratio (SOdass da keine grauen Ränder sind)
 Fix Zoom Bild nach reskalierung
-Fix button being able to be cliced after popup.

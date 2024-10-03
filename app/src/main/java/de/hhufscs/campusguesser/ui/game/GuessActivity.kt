@@ -79,6 +79,8 @@ class GuessActivity : AppCompatActivity() {
             )
         }
 
+    private var guessSubmitted = false;
+
     private lateinit var progressBarTask: PausableTimedTask
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,7 +165,12 @@ class GuessActivity : AppCompatActivity() {
     }
 
     private fun setUpGuessButtons() {
-        binding.btnLockGuess.setOnClickListener { lockGuess() }
+        binding.btnLockGuess.setOnClickListener {
+            if(!guessSubmitted){
+                lockGuess()
+                guessSubmitted = true
+            }
+        }
     }
 
     private fun nextGuess() {
@@ -181,6 +188,7 @@ class GuessActivity : AppCompatActivity() {
                     loadingPopUp.hideAndRemove {
                         progressBarTask.restart()
                     }
+                    guessSubmitted = false
                     resetOverlays()
                     setMapInteractionEnabled(true)
                 }
